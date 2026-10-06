@@ -1,34 +1,40 @@
-# Portfolio Wiktora Szczepaniaka — GitHub Pages
+# Portfolio Wiktora Szczepaniaka
 
-## Publikacja bez terminala
+Gotowa statyczna strona na GitHub Pages. Bez instalowania pakietów, frameworka, kompilacji i kluczy API.
 
-1. Rozpakuj paczkę ZIP. Otwórz `index.html`, aby zobaczyć stronę na swoim komputerze. Zachowaj wszystkie foldery obok tego pliku.
-2. Zaloguj się na https://github.com. Kliknij **+ → New repository**, nazwij je `portfolio`, wybierz **Public**, zaznacz dodanie README i kliknij **Create repository**.
-3. W repozytorium wybierz **Add file → Upload files**. Przeciągnij **zawartość rozpakowanego folderu**: `index.html`, `style.css`, `script.js`, `content.json` i cały folder `assets`. `index.html` ma być bezpośrednio w repozytorium. Nie wgrywaj ZIP-a ani nadrzędnego folderu `portfolio`.
-4. Poczekaj, aż wszystkie pliki się wgrają. Kliknij **Commit changes**, zapisując je na gałęzi `main`.
-5. Otwórz **Settings → Pages**. W części **Build and deployment** ustaw **Source: Deploy from a branch**, **Branch: main**, folder **/(root)** i kliknij **Save**.
-6. Po zakończeniu publikacji w tym samym miejscu pojawi się link **Visit site**. Twój adres będzie miał postać `https://TWOJ-LOGIN.github.io/portfolio/`. Tego linku używaj w CV i wiadomościach.
+## Publikacja
 
-Jeśli wgrywanie całego folderu przerwie się, dodawaj jego podfoldery osobno, zachowując strukturę `assets/slides`, `assets/posters`, `assets/video`. Wszystkie pojedyncze pliki w tej paczce mieszczą się w limicie 25 MiB dla wgrywania przez przeglądarkę. Łącznie jest mniej niż 100 plików.
+1. Rozpakuj ZIP.
+2. Wgraj **zawartość** rozpakowanego folderu do repozytorium. `index.html`, `styles.css`, `app.js` i folder `assets` muszą być na głównym poziomie repozytorium. Nie wgrywaj samego ZIP-a.
+3. Otwórz **Settings → Pages**.
+4. W **Build and deployment → Source** wybierz **Deploy from a branch**.
+5. Wybierz gałąź **main**, folder **/(root)** i kliknij **Save**.
+6. Adres gotowej strony pojawi się w ustawieniach Pages po zakończeniu publikacji.
 
-## Co zawiera strona
+Instrukcja GitHuba: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
 
-- Wszystkie 22 slajdy, w oryginalnej kolejności, z zachowaną treścią i kompozycją.
-- Warstwę graficzną w SVG, z oryginalną czcionką zapisaną jako kształty. Wygląd nie zależy od fontów na komputerze odbiorcy.
-- Wszystkie 20 filmów z prezentacji jako lokalne pliki MP4. Filmy uruchamiają się po kliknięciu, mają dźwięk, przewijanie i pełny ekran. Przy uruchomieniu kolejnego filmu poprzedni zatrzymuje się.
-- Wszystkie adresy odnośników z prezentacji, w tym film na YouTube. Adres e-mail i telefon też są klikalne.
-- Nawigację O mnie / Projekty / Kontakt oraz przycisk Powiększ. Na telefonie zachowana jest kompozycja slajdów; do czytania drobnych treści użyj powiększenia albo obróć telefon.
+Jeśli aktualizujesz istniejące portfolio, zastąp wszystkie pliki plikami z tej paczki — w tym cały folder `assets`, nie tylko `index.html`. Po publikacji odśwież stronę z pominięciem pamięci podręcznej (Ctrl+Shift+R / Cmd+Shift+R). Wszystkie adresy zasobów są względne, więc strona działa zarówno pod `nazwa.github.io`, jak i `nazwa.github.io/repozytorium/`. Paczka nie wymusza własnej domeny.
 
-Linki do serwisów społecznościowych prowadzą do oryginalnych adresów. Ich dostępność zależy od autora publikacji i platformy; część platform może wymagać logowania. Film z YouTube otwiera się przez oryginalny link, tak jak w prezentacji. Pozostałe filmy odtwarzają się z plików strony, bez logowania do social mediów.
+Najwygodniej wgrać całość przez GitHub Desktop. Przy wgrywaniu przez przeglądarkę dodaj najpierw pliki z głównego folderu, a następnie osobno każdy podfolder `assets` (slajdy, filmy, podglądy itd.). Plik `.nojekyll` może być ukryty przez system operacyjny; jest dołączony do ZIP-a.
 
-## Aktualizacja i najczęstsze problemy
+## Podgląd na komputerze
 
-- Aby zmienić stronę, wgraj zmienione pliki do tego samego repozytorium i zatwierdź **Commit changes**. Adres pozostaje ten sam.
-- Błąd 404: sprawdź, czy `index.html` znajduje się w katalogu głównym, a Pages wskazuje `main` i `/(root)`. Stan publikacji sprawdzisz w zakładce **Actions**.
-- Brak filmów lub grafik: sprawdź, czy cały folder `assets` został przesłany i czy nie zmieniły się jego nazwy.
-- Bezpośredni link do projektu: dopisz np. `#slajd-14` na końcu adresu portfolio.
-- Edycja `content.json` nie przebudowuje widoku automatycznie. Układ slajdów znajduje się w `assets/slides`, a aktywne filmy i linki w `index.html`.
+Otwórz `index.html` w przeglądarce. Można też uruchomić w tym folderze `python -m http.server 8000` i wejść na http://localhost:8000.
 
-Dokumentacja GitHuba:
-- https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
-- https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository
+## Zawartość i obsługa
+
+- Wszystkie 26 slajdów, ich kolejność, teksty i kompozycje z dostarczonego PPTX.
+- Plansze WebP 2880 × 1620 z oryginalnych slajdów oraz zapasowe pliki JPEG. Taka konstrukcja utrzymuje położenie i wygląd elementów niezależnie od systemu i fontów w przeglądarce. Tekst na planszach jest częścią obrazu; kopia tekstowa jest dostępna dla technologii asystujących i po wejściu klawiaturą w „Tekst slajdu”.
+- Linki z prezentacji działają w swoich oryginalnych miejscach. Zewnętrzne witryny mogą wymagać logowania; dostępność samych publikacji zależy od ich właścicieli.
+- Wszystkie 22 filmy mają własne pliki MP4 H.264/AAC, obraz podglądu i natywne sterowanie. Dźwięk jest zachowany, jeśli występował w oryginale. Startują po kliknięciu, nie pobierają się automatycznie i zatrzymują się po przewinięciu poza ekran.
+- Pasek nawigacji, wybór slajdu, skok do kontaktu, powiększenie do 400%, klawisze ← / → / Page Up / Page Down / Home / End. Escape zamyka powiększenie.
+- Dyskretne, jednorazowe pojawianie się slajdów. Preferencja systemowa „ogranicz ruch” wyłącza animacje i płynne przewijanie.
+- Telefon zachowuje układ 16:9. Do czytania drobnego tekstu użyj przycisku **Powiększ**, gestu powiększania przeglądarki lub obróć telefon poziomo.
+
+## Edycja
+
+`styles.css` steruje nawigacją i efektami. `app.js` odpowiada za interakcje. `index.html` zawiera strukturę, linki i położenie filmów. `assets/slides` zawiera plansze, `assets/video` filmy, a `assets/posters` ich podglądy. `assets/comments` zawiera komentarze w naturalnych proporcjach, a `assets/decorations` ozdobne elementy zachowujące oryginalną kolejność nakładania. `assets/content.json` przechowuje teksty i współrzędne źródłowe jako materiał pomocniczy; strona nie pobiera go podczas działania.
+
+Zmiany treści lub układu slajdów wykonuj w źródłowej prezentacji i ponownie eksportuj odpowiednie plansze. Zmiana samego `content.json` nie aktualizuje obrazów ani HTML. Oryginalny PPTX nie jest dołączony, aby nie powielać dużego pliku w repozytorium.
+
+Brak analityki, cookies, zewnętrznych fontów i zależności CDN. Materiały portfolio pozostają własnością odpowiednich właścicieli.
