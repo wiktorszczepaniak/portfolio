@@ -11,10 +11,23 @@
   const scroller = document.querySelector('.viewer-scroll');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let current = 1, zoom = 1, scheduled = false;
+  const language = document.documentElement.lang === 'en' ? 'en' : 'pl';
+  const languageLinks = [...document.querySelectorAll('[data-language]')];
+  function updateLanguageLinks() {
+    languageLinks.forEach(link => {
+      let number = current;
+      if (link.dataset.language !== language) {
+        if (language === 'pl' && current === slides.length) number = 27;
+        if (language === 'en' && current >= 26) number = 26;
+      }
+      link.href = (link.dataset.language === 'en' ? './en.html' : './index.html') + '#slajd-' + number;
+    });
+  }
 
   function go(number, updateHash = true) {
     number = Math.max(1, Math.min(slides.length, Number(number)));
     current = number;
+    updateLanguageLinks();
     slides[number - 1].scrollIntoView({behavior: reduceMotion.matches ? 'instant' : 'smooth', block:'start'});
     if (updateHash) history.replaceState(null, '', '#slajd-' + number);
   }
@@ -28,6 +41,7 @@
       if (distance < closest) { closest = distance; current = i + 1; }
     });
     select.value = String(current);
+    updateLanguageLinks();
     prev.disabled = current === 1; next.disabled = current === slides.length;
     progress.style.transform = `scaleX(${current / slides.length})`;
   }
@@ -36,7 +50,7 @@
   prev.addEventListener('click', () => go(current - 1));
   next.addEventListener('click', () => go(current + 1));
   select.addEventListener('change', () => go(select.value));
-  document.querySelector('.contact').addEventListener('click', event => {event.preventDefault();go(26);});
+  document.querySelector('.contact').addEventListener('click', event => {event.preventDefault();go(slides.length);});
   addEventListener('keydown', event => {
     if (viewer.open || /INPUT|SELECT|TEXTAREA|VIDEO|BUTTON|A/.test(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
     const destination = {ArrowRight:current+1,ArrowLeft:current-1,PageDown:current+1,PageUp:current-1,Home:1,End:slides.length}[event.key];
@@ -120,6 +134,7 @@
   document.querySelector('#zoom-out').addEventListener('click', () => {zoom = Math.max(1,zoom-.5);applyZoom();});
   addEventListener('resize', () => {if(viewer.open) applyZoom();});
   const initial = location.hash.match(/^#slajd-(\d+)$/);
-  if(initial) requestAnimationFrame(() => slides[Math.max(0,Math.min(25,Number(initial[1])-1))].scrollIntoView());
+  if(initial) requestAnimationFrame(() => slides[Math.max(0,Math.min(slides.length-1,Number(initial[1])-1))].scrollIntoView());
   update();
 })();
+

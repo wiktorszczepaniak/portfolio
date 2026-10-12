@@ -15,3 +15,14 @@ main{max-width:1920px;margin:auto}.slide{position:relative;width:100%;scroll-mar
 .decoration{position:absolute;z-index:5;pointer-events:none;object-fit:fill}
 
 .photo{position:absolute;z-index:1}.photo.cutout{background:#fff}.photo img{display:block;width:100%;height:100%;object-fit:contain}
+
+
+/* Compact flag navigation, independent of the slide toolbar. */
+.language-switch{position:fixed;top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));z-index:45;display:flex;gap:3px;padding:4px;border:1px solid #ffffff35;border-radius:10px;background:#1d1d1df2;box-shadow:0 3px 18px #0002}
+.language-switch a{display:flex;align-items:center;gap:7px;min-height:36px;padding:0 10px;border-radius:6px;color:#fff;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.03em}
+.language-switch a:hover{background:#ffffff20}.language-switch a[aria-current="page"]{background:var(--accent);color:var(--ink)}
+.language-switch svg{width:23px;height:16px;border-radius:2px;box-shadow:0 0 0 1px #0002;overflow:hidden;flex:none}
+.language-switch :focus-visible{outline-color:var(--accent);outline-offset:2px}
+.en-media:not(.playing) video{opacity:0}.en-media.playing video{opacity:1}
+@media(max-width:600px){.language-switch{top:8px;right:8px}.language-switch a{min-height:32px;padding:0 8px;gap:5px}}
+@media print{.language-switch{display:none}}
