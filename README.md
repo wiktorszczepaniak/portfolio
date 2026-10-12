@@ -38,3 +38,11 @@ Otwórz `index.html` w przeglądarce. Można też uruchomić w tym folderze `pyt
 Zmiany treści lub układu slajdów wykonuj w źródłowej prezentacji i ponownie eksportuj odpowiednie plansze. Zmiana samego `content.json` nie aktualizuje obrazów ani HTML. Oryginalny PPTX nie jest dołączony, aby nie powielać dużego pliku w repozytorium.
 
 Brak analityki, cookies, zewnętrznych fontów i zależności CDN. Materiały portfolio pozostają własnością odpowiednich właścicieli.
+
+## Wersje PL/EN
+
+Przełącznik z flagami prowadzi do `index.html` (PL, 26 slajdów) i `en.html` (EN, 27 slajdów). Zachowuje odpowiadający slajd, w tym kontakt 26 ↔ 27. Angielska strona korzysta z istniejących 22 plików filmowych i 34 odnośników z prezentacji Canva.
+
+`assets/slides-en/01.webp`–`27.webp` to plansze 2880 × 1620 przygotowane z dostarczonego angielskiego PPTX. Obejmują angielskie podpisy przy polskich postach. Zastosowano fonty osadzone w prezentacji oraz statyczne klatki filmów; filmy uruchamiają się po kliknięciu. Angielskie transkrypcje uwzględniają tekst z dostarczonego PPTX.
+
+Źródło EN: projekt Canva DAHXbfGqvNk, eksport dostarczony 12 października 2026. Strona działa samodzielnie, bez logowania do Canva.
