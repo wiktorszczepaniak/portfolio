@@ -39,10 +39,10 @@ Zmiany treści lub układu slajdów wykonuj w źródłowej prezentacji i ponowni
 
 Brak analityki, cookies, zewnętrznych fontów i zależności CDN. Materiały portfolio pozostają własnością odpowiednich właścicieli.
 
+## Wersje PL/EN
 
+Przełącznik z flagami prowadzi do `index.html` (PL, 26 slajdów) i `en.html` (EN, 27 slajdów). Zachowuje odpowiadający slajd, w tym kontakt 26 ↔ 27. Angielska strona korzysta z istniejących 22 plików filmowych i 34 odnośników z prezentacji Canva.
 
-## Wersje PL/EN — wersja robocza
+`assets/slides-en/01.webp`–`27.webp` to plansze 2880 × 1620 przygotowane z dostarczonego angielskiego PPTX. Obejmują angielskie podpisy przy polskich postach. Zastosowano fonty osadzone w prezentacji oraz statyczne klatki filmów; filmy uruchamiają się po kliknięciu. Angielskie transkrypcje uwzględniają tekst z dostarczonego PPTX.
 
-Przełącznik flag prowadzi do `index.html` (PL, 26 slajdów) i `en.html` (EN, 27 slajdów). Zachowuje odpowiadający slajd, w tym kontakt 26 ↔ 27. Angielska strona korzysta z istniejących 22 plików filmowych i 34 odnośników z aktualnej prezentacji Canva.
-
-**Przed wdrożeniem:** `assets/slides-en/01.webp`–`27.webp` zawierają robocze podglądy Canva w rozdzielczości 596 × 335. Należy zastąpić je eksportem najnowszej prezentacji w 1920 × 1080 lub większym. Nie wdrażać podglądów jako docelowej jakości. Źródło: projekt DAHXbfGqvNk, stan odczytany 12 października 2026. Canva nie udostępnia publicznego osadzenia tego projektu bez logowania.
+Źródło EN: projekt Canva DAHXbfGqvNk, eksport dostarczony 12 października 2026. Strona działa samodzielnie, bez logowania do Canva.
