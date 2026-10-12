@@ -26,3 +26,16 @@ main{max-width:1920px;margin:auto}.slide{position:relative;width:100%;scroll-mar
 .en-media:not(.playing) video{opacity:0}.en-media.playing video{opacity:1}
 @media(max-width:600px){.language-switch{top:8px;right:8px}.language-switch a{min-height:32px;padding:0 8px;gap:5px}}
 @media print{.language-switch{display:none}}
+
+
+/* en-repaired: EN slides 7/8 use the original collage, with editable translation captions. */
+#slajd-7 .canvas,#slajd-8 .canvas{container-type:inline-size}
+.en-side-text-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;clip-path:inset(0 69.8% 24.5% 0)}
+.en-caption{position:absolute;z-index:6;display:flex;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:.35cqw .5cqw;background:#f7f6ee;color:#161616;box-shadow:0 0 0 .08cqw #2222;font:700 1.03cqw/1.17 Arial,Helvetica,sans-serif;letter-spacing:-.014em}
+.en-caption-dark{background:#101010;color:white;box-shadow:none}
+.en-caption-inline{justify-content:flex-start;text-align:left;background:#f4f2e9;font-weight:500;font-size:1cqw;box-shadow:none}
+.en-comment{text-align:left;justify-content:flex-start;font-size:.9cqw;font-weight:500;padding:.5cqw .65cqw}
+.en-metric{position:absolute;z-index:5;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:.25cqw;padding:.15cqw;background:#f3f1ea;color:#161616;font:400 .97cqw/1.3 Arial,Helvetica,sans-serif}
+.en-metric b{font-weight:800;letter-spacing:.19em;font-size:.87cqw}.en-metric span{display:block}
+#slajd-7 .canvas:has(.media.playing) .en-on-video,#slajd-8 .canvas:has(.media.playing) .en-on-video{opacity:0}
+@media print{.en-caption,.en-metric,.en-side-text-img{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
