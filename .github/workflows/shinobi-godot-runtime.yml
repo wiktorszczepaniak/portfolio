@@ -1,0 +1,86 @@
+name: Shinobi Godot 4.5.2 runtime test
+on:
+  push:
+    branches:
+      - build/shinobi-godot-test
+  workflow_dispatch:
+jobs:
+  godot:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and export templates
+        uses: lihop/setup-godot@v3
+        with:
+          version: 4.5.2-stable
+          export-templates: true
+      - name: Prepare smoke game
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path shinobi-smoke | Out-Null
+          @'
+          config_version=5
+          [application]
+          config/name="Shinobi Build Test"
+          run/main_scene="res://main.tscn"
+          config/features=PackedStringArray("4.5", "GL Compatibility")
+          [rendering]
+          renderer/rendering_method="gl_compatibility"
+          '@ | Set-Content -Encoding utf8 shinobi-smoke/project.godot
+          @'
+          [gd_scene load_steps=2 format=3]
+          [ext_resource type="Script" path="res://main.gd" id="1"]
+          [node name="Game" type="Node2D"]
+          script = ExtResource("1")
+          '@ | Set-Content -Encoding utf8 shinobi-smoke/main.tscn
+          @'
+          extends Node2D
+          func _ready() -> void:
+              print("SHINOBI GODOT SMOKE OK")
+              if DisplayServer.get_name() == "headless":
+                  get_tree().quit()
+          func _draw() -> void:
+              draw_circle(Vector2(160,120), 40.0, Color("ffb84d"))
+          '@ | Set-Content -Encoding utf8 shinobi-smoke/main.gd
+          @'
+          [preset.0]
+          name="Windows Desktop"
+          platform="Windows Desktop"
+          runnable=true
+          advanced_options=false
+          dedicated_server=false
+          custom_features=""
+          export_filter="all_resources"
+          export_path="build/ShinobiSurvivors.exe"
+          [preset.0.options]
+          binary_format/architecture="x86_64"
+          binary_format/embed_pck=false
+          texture_format/bptc=true
+          texture_format/s3tc=true
+          '@ | Set-Content -Encoding utf8 shinobi-smoke/export_presets.cfg
+      - name: Import, parse and smoke test project
+        shell: pwsh
+        run: |
+          godot --headless --path shinobi-smoke --editor --import --quit
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          godot --headless --path shinobi-smoke --quit-after 120
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Export actual Windows Godot exe
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path shinobi-smoke/build | Out-Null
+          godot --headless --path shinobi-smoke --export-release "Windows Desktop" "build/ShinobiSurvivors.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .\shinobi-smoke\build\ShinobiSurvivors.exe --headless --quit-after 120
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Package runtime and smoke project
+        shell: pwsh
+        run: |
+          Compress-Archive -Force -Path shinobi-smoke/build/* -DestinationPath Shinobi_Godot_Windows_Binary.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Shinobi_Godot_Windows_Binary
+          path: Shinobi_Godot_Windows_Binary.zip
+          retention-days: 7
