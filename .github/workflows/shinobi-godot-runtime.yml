@@ -65,36 +65,32 @@ jobs:
       - name: Import, parse and smoke test project
         shell: pwsh
         run: |
-          godot --headless --path shinobi-smoke --editor --import --quit
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          godot --headless --path shinobi-smoke --quit-after 120
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $godotExe = (Get-Command godot).Source
+          Write-Host "Godot executable: $godotExe"
+          $p = Start-Process -FilePath $godotExe -ArgumentList @("--headless","--path","shinobi-smoke","--editor","--import","--quit") -Wait -PassThru -NoNewWindow
+          if ($p.ExitCode -ne 0) { throw "Godot import failed: $($p.ExitCode)" }
+          $p = Start-Process -FilePath $godotExe -ArgumentList @("--headless","--path","shinobi-smoke","--quit-after","120") -Wait -PassThru -NoNewWindow
+          if ($p.ExitCode -ne 0) { throw "Godot smoke failed: $($p.ExitCode)" }
       - name: Export actual Windows Godot exe
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path shinobi-smoke/build | Out-Null
-          godot --headless --path shinobi-smoke --export-release "Windows Desktop" "build/ShinobiSurvivors.exe"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & .\shinobi-smoke\build\ShinobiSurvivors.exe --headless --quit-after 120
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $godotExe = (Get-Command godot).Source
+          $p = Start-Process -FilePath $godotExe -ArgumentList @("--headless","--path","shinobi-smoke","--export-release","Windows Desktop","build/ShinobiSurvivors.exe") -Wait -PassThru -NoNewWindow
+          if ($p.ExitCode -ne 0) { throw "Export failed: $($p.ExitCode)" }
+          if (!(Test-Path "shinobi-smoke/build/ShinobiSurvivors.exe")) { throw "No EXE generated" }
+          if (!(Test-Path "shinobi-smoke/build/ShinobiSurvivors.pck")) { throw "No PCK generated" }
+          $p = Start-Process -FilePath (Resolve-Path "shinobi-smoke/build/ShinobiSurvivors.exe") -ArgumentList @("--headless","--quit-after","120") -Wait -PassThru -NoNewWindow
+          if ($p.ExitCode -ne 0) { throw "Windows exe smoke failed: $($p.ExitCode)" }
       - name: Package runtime and smoke project
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           Compress-Archive -Force -Path shinobi-smoke/build/* -DestinationPath Shinobi_Godot_Windows_Binary.zip
+          if (!(Test-Path 'Shinobi_Godot_Windows_Binary.zip')) { throw 'No ZIP produced' }
       - uses: actions/upload-artifact@v4
         with:
           name: Shinobi_Godot_Windows_Binary
           path: Shinobi_Godot_Windows_Binary.zip
           retention-days: 7
 
-      - name: Record run ID for artifact retrieval
-        if: always()
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          $data = @{run_id = $env:GITHUB_RUN_ID; run_attempt = $env:GITHUB_RUN_ATTEMPT; commit = $env:GITHUB_SHA } | ConvertTo-Json -Compress
-          $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($data))
-          $payload = @{message = "ci: record shinobi Godot run"; content = $encoded; branch = $env:GITHUB_REF_NAME } | ConvertTo-Json
-          $headers = @{Authorization = "Bearer $env:GH_TOKEN"; Accept = "application/vnd.github+json"; "X-GitHub-Api-Version" = "2022-11-28"}
-          Invoke-RestMethod -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/contents/shinobi-ci-run.json" -Headers $headers -Method Put -Body $payload -ContentType "application/json"
