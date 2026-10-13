@@ -24,7 +24,10 @@ jobs:
           which godot
           godot --headless --version
           mkdir -p dist
-          cp -L "$(command -v godot)" dist/godot-linux
+          engine="$(find v4.5.2-stable -type f -name 'Godot_v4.5.2-stable_linux.x86_64' | head -1)"
+          test -n "$engine"
+          cp "$engine" dist/godot-linux
+          file dist/godot-linux | grep -q ELF
           chmod 755 dist/godot-linux
           file dist/godot-linux
           ls -lh dist/godot-linux
