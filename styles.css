@@ -26,18 +26,3 @@ main{max-width:1920px;margin:auto}.slide{position:relative;width:100%;scroll-mar
 .en-media:not(.playing) video{opacity:0}.en-media.playing video{opacity:1}
 @media(max-width:600px){.language-switch{top:8px;right:8px}.language-switch a{min-height:32px;padding:0 8px;gap:5px}}
 @media print{.language-switch{display:none}}
-
-/* EN slide 8: one clear native Canva caption.
-   Hide the line crossing the original raster lettering and render the same
-   source text once, at precisely the original caption location. */
-#slajd-8 .canvas{container-type:inline-size}
-#slajd-8 .canvas::after{
-  content:"Quick horoscope check? 👀";
-  position:absolute;z-index:2;pointer-events:none;
-  left:3.6%;top:74%;width:21.4%;height:4.2%;
-  box-sizing:border-box;background:#f2f1ea;
-  display:flex;align-items:center;justify-content:flex-start;
-  padding-left:.4cqw;color:#1d1d1d;
-  font:400 1.21cqw/1.24 Arial,Helvetica,sans-serif;
-  white-space:nowrap;
-}
