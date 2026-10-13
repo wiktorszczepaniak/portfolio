@@ -3,12 +3,14 @@ on:
   push:
     branches:
       - build/shinobi-godot-test
+    paths:
+      - '.github/workflows/shinobi-godot-runtime.yml'
   workflow_dispatch:
 jobs:
   godot:
     runs-on: windows-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Install Godot and export templates
@@ -84,3 +86,15 @@ jobs:
           name: Shinobi_Godot_Windows_Binary
           path: Shinobi_Godot_Windows_Binary.zip
           retention-days: 7
+
+      - name: Record run ID for artifact retrieval
+        if: always()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $data = @{run_id = $env:GITHUB_RUN_ID; run_attempt = $env:GITHUB_RUN_ATTEMPT; commit = $env:GITHUB_SHA } | ConvertTo-Json -Compress
+          $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($data))
+          $payload = @{message = "ci: record shinobi Godot run"; content = $encoded; branch = $env:GITHUB_REF_NAME } | ConvertTo-Json
+          $headers = @{Authorization = "Bearer $env:GH_TOKEN"; Accept = "application/vnd.github+json"; "X-GitHub-Api-Version" = "2022-11-28"}
+          Invoke-RestMethod -Uri "https://api.github.com/repos/$env:GITHUB_REPOSITORY/contents/shinobi-ci-run.json" -Headers $headers -Method Put -Body $payload -ContentType "application/json"
