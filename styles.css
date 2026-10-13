@@ -26,15 +26,3 @@ main{max-width:1920px;margin:auto}.slide{position:relative;width:100%;scroll-mar
 .en-media:not(.playing) video{opacity:0}.en-media.playing video{opacity:1}
 @media(max-width:600px){.language-switch{top:8px;right:8px}.language-switch a{min-height:32px;padding:0 8px;gap:5px}}
 @media print{.language-switch{display:none}}
-
-
-
-/* Scoped English captions, matching the PL collage without covering any media. */
-#slajd-7 .canvas,#slajd-8 .canvas{container-type:inline-size}
-.en-side-text-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;pointer-events:none;clip-path:inset(0 69.7% 23.5% 0)}
-.en-stat{position:absolute;z-index:6;pointer-events:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center;gap:1.1cqw;background:#f2f1ea;color:#171717;padding:.23cqw .12cqw;white-space:nowrap;font:400 .88cqw/1.28 Arial,Helvetica,sans-serif}
-.en-stat strong{font-weight:800;letter-spacing:.2em;font-size:.83cqw}
-.en-stat span{display:block}
-.en-native-note{position:absolute;z-index:6;display:flex;align-items:center;pointer-events:none;background:#f2f1ea;font:400 .88cqw/1.2 Arial,Helvetica,sans-serif;padding:0 .1cqw;white-space:nowrap}
-.en-native-aside{position:absolute;z-index:6;display:flex;align-items:center;justify-content:center;pointer-events:none;background:#f2f1ea;color:#171717;font:400 .49cqw/1.2 Arial,Helvetica,sans-serif;text-align:center}
-@media print{.en-stat,.en-side-text-img,.en-native-note,.en-native-aside{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
