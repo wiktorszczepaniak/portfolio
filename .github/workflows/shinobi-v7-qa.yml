@@ -1,0 +1,87 @@
+name: Shinobi V7 Windows game validation
+on:
+  push:
+    branches: [build/shinobi-godot-test]
+    paths:
+      - '.github/workflows/shinobi-v7-qa.yml'
+      - 'shinobi-v7/**'
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: shinobi-v7
+      - uses: lihop/setup-godot@v3
+        with:
+          version: 4.5.2-stable
+          export-templates: true
+      - name: Import and validate actual game
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Expand-Archive shinobi-v7/source.zip source
+          New-Item -ItemType Directory -Force release,logs | Out-Null
+          $godotExe = (Get-Command godot).Source
+          $p = Start-Process $godotExe -ArgumentList @('--headless','--path','source','--editor','--import','--quit') -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/import.txt -RedirectStandardError logs/import-errors.txt
+          if ($p.ExitCode -ne 0) { throw 'Godot import failed' }
+          if (Select-String -Path logs/import-errors.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script') { throw 'Game script import failed' }
+      - name: Build standalone Windows EXE
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $godotExe = (Get-Command godot).Source
+          $sourcePath = (Resolve-Path source).Path.Replace('\','/')
+          $pckPath = (Join-Path (Resolve-Path release).Path 'game.pck').Replace('\','/')
+          $p = Start-Process $godotExe -ArgumentList @('--headless','--path','source','--script','res://scripts/build_pack.gd','--',$sourcePath,$pckPath) -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/pack.txt -RedirectStandardError logs/pack-errors.txt
+          if ($p.ExitCode -ne 0 -or !(Test-Path $pckPath)) { throw 'Game PCK build failed' }
+          $template = Get-ChildItem "$env:APPDATA\Godot\export_templates" -Filter windows_release_x86_64.exe -Recurse | Select-Object -First 1
+          if (!$template) { throw 'Windows release template missing' }
+          $exe = Join-Path (Resolve-Path release).Path 'ShinobiSurvivors.exe'
+          $stream = [System.IO.File]::Create($exe)
+          try {
+            $engine = [System.IO.File]::ReadAllBytes($template.FullName)
+            $stream.Write($engine,0,$engine.Length)
+            while ($stream.Position % 8 -ne 0) { $stream.WriteByte(0) }
+            $pck = [System.IO.File]::ReadAllBytes($pckPath)
+            $stream.Write($pck,0,$pck.Length)
+            $length = [BitConverter]::GetBytes([UInt64]$pck.Length)
+            $stream.Write($length,0,8)
+            $magic = [System.Text.Encoding]::ASCII.GetBytes('GDPC')
+            $stream.Write($magic,0,4)
+          } finally { $stream.Dispose() }
+          Remove-Item $pckPath
+          Copy-Item source/README_V7.txt release/README.txt
+          Copy-Item source/assets/fonts/LICENSE.txt release/DejaVu-LICENSE.txt
+      - name: Run actual exported EXE and full mission regression
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = (Resolve-Path release/ShinobiSurvivors.exe).Path
+          $p = Start-Process $exe -ArgumentList @('--headless','--quit-after','120') -WorkingDirectory release -Wait -PassThru -RedirectStandardOutput logs/exe-boot.txt -RedirectStandardError logs/exe-boot-errors.txt
+          if ($p.ExitCode -ne 0) { throw 'Windows EXE boot failed' }
+          $p = Start-Process $exe -ArgumentList @('--headless','--script','res://scripts/qa_mission.gd') -WorkingDirectory release -Wait -PassThru -RedirectStandardOutput logs/mission.txt -RedirectStandardError logs/mission-errors.txt
+          if ($p.ExitCode -ne 0) { throw 'Windows mission test failed' }
+          if (!(Select-String -Path logs/mission.txt -Pattern 'QA_MISSION_PASS')) { throw 'Mission completion marker missing' }
+          if (Select-String -Path logs/*errors.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script|QA_FAIL') { throw 'Runtime script errors detected' }
+          Get-Content logs/mission.txt
+          @'
+          V7 VALIDATION
+          Actual standalone Windows EXE: boot passed on windows-latest.
+          Full mission regression: both transformations, three Sasori phases, victory.
+          UI/gameplay screenshots: verified in Godot 4.5.2 OpenGL on Linux.
+          Native Windows tests used the headless renderer.
+          '@ | Set-Content -Encoding utf8 release/QA.txt
+          Get-FileHash release/ShinobiSurvivors.exe -Algorithm SHA256 | Format-List | Out-File logs/SHA256.txt
+          Compress-Archive -Path release/* -DestinationPath ShinobiSurvivors_Shippuden_V7_Windows.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Shinobi_V7_Windows_QA
+          path: |
+            ShinobiSurvivors_Shippuden_V7_Windows.zip
+            logs/
+          retention-days: 7
