@@ -1,0 +1,35 @@
+name: Shinobi Godot Linux engine for headless verification
+on:
+  push:
+    branches:
+      - build/shinobi-godot-test
+    paths:
+      - '.github/workflows/shinobi-linux-toolchain.yml'
+jobs:
+  linux-toolchain:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Godot 4.5.2 stable
+        uses: lihop/setup-godot@v3
+        with:
+          version: 4.5.2-stable
+          export-templates: false
+      - name: Verify Linux executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          which godot
+          godot --headless --version
+          mkdir -p dist
+          cp -L "$(command -v godot)" dist/godot-linux
+          chmod 755 dist/godot-linux
+          file dist/godot-linux
+          ls -lh dist/godot-linux
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Shinobi_Godot_Linux_Toolchain
+          path: dist/godot-linux
+          retention-days: 3
