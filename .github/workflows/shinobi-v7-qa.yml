@@ -66,7 +66,7 @@ jobs:
           $p = Start-Process $exe -ArgumentList @('--headless','--script','res://scripts/qa_mission.gd') -WorkingDirectory release -Wait -PassThru -RedirectStandardOutput logs/mission.txt -RedirectStandardError logs/mission-errors.txt
           if ($p.ExitCode -ne 0) { throw 'Windows mission test failed' }
           if (!(Select-String -Path logs/mission.txt -Pattern 'QA_MISSION_PASS')) { throw 'Mission completion marker missing' }
-          if (Select-String -Path logs/*errors.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script|QA_FAIL') { throw 'Runtime script errors detected' }
+          if (Select-String -Path logs/*errors.txt -Pattern '^ERROR:|SCRIPT ERROR|Parse Error|Failed to load script|QA_FAIL') { throw 'Runtime errors detected' }
           Get-Content logs/mission.txt
           @'
           V7 VALIDATION
