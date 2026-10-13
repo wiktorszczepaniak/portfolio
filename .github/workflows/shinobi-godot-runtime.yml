@@ -55,6 +55,8 @@ jobs:
           dedicated_server=false
           custom_features=""
           export_filter="all_resources"
+          include_filter=""
+          exclude_filter=""
           export_path="build/ShinobiSurvivors.exe"
           [preset.0.options]
           binary_format/architecture="x86_64"
@@ -76,7 +78,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path shinobi-smoke/build | Out-Null
           $godotExe = (Get-Command godot).Source
-          $p = Start-Process -FilePath $godotExe -ArgumentList @("--headless","--path","shinobi-smoke","--export-release","Windows Desktop","build/ShinobiSurvivors.exe") -Wait -PassThru -NoNewWindow
+          $p = Start-Process -FilePath $godotExe -ArgumentList @("--headless","--path","shinobi-smoke","--export-release",'"Windows Desktop"',"build/ShinobiSurvivors.exe") -Wait -PassThru -NoNewWindow
           if ($p.ExitCode -ne 0) { throw "Export failed: $($p.ExitCode)" }
           if (!(Test-Path "shinobi-smoke/build/ShinobiSurvivors.exe")) { throw "No EXE generated" }
           if (!(Test-Path "shinobi-smoke/build/ShinobiSurvivors.pck")) { throw "No PCK generated" }
