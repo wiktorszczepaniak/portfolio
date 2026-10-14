@@ -33,7 +33,7 @@ func _ready() -> void:
    hero_portraits[id]=ImageTexture.create_from_image(img)
  queue_redraw()
 func _txt(s:String,p:Vector2,font_size:int=17,color:Color=PAPER,font:Font=null) -> void:
- draw_string(small_font if font==null else font,p,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,color)
+ draw_string(small_font if font==null else font,p,s,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,color)
 func _line(p:Vector2,q:Vector2,color:Color=GOLD,thick:float=1.0) -> void:draw_line(p,q,color,thick,true)
 func _panel(rect:Rect2,fill:Color=PANEL,stroke:Color=GOLD) -> void:
  draw_rect(rect,fill)
