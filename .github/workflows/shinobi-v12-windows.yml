@@ -3,7 +3,7 @@ name: Shinobi V12 Godot 4.5.2 Windows QA
 on:
   workflow_dispatch:
   push:
-    branches: ['build/shinobi-v12-art-20261014']
+    branches: ['build/shinobi-v12-art-20261014', 'build/shinobi-v12-finish-20261015']
 permissions:
   contents: read
 jobs:
@@ -105,12 +105,18 @@ jobs:
           Get-FileHash $exe -Algorithm SHA256 | Format-List | Out-File logs/SHA256.txt
           Remove-Item release/game.pck
           Compress-Archive -Path release/* -DestinationPath ShinobiSurvivors_Windows.zip
+      - name: Archive full editable source for recovery
+        shell: pwsh
+        run: |
+          if (!(Test-Path project/project.godot)) { throw 'Project source missing' }
+          Compress-Archive -Path project -DestinationPath ShinobiSurvivors_V12_Source.zip -CompressionLevel Optimal
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: shinobi-windows-and-QA
           path: |
             ShinobiSurvivors_Windows.zip
+            ShinobiSurvivors_V12_Source.zip
             logs/
           retention-days: 10
 
