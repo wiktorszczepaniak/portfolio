@@ -53,6 +53,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'QA V11 failed' }
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_v10_5.gd *> logs/qa_v10_5.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA V10.5 failed' }
+      - name: Windows software-render screenshots
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_v10_5_visual.gd -- "$pwd/logs/windows_visual" *> logs/windows_visual.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/windows_visual.txt; throw 'Windows GUI render failed' }
       - name: Pack ALL raw assets as Godot PCK
         shell: pwsh
         run: |

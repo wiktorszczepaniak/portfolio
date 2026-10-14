@@ -1,4 +1,5 @@
 extends Node2D
+const Pickups=preload("res://scripts/core/pickup_manager.gd")
 const SpawnDirector=preload("res://scripts/core/enemy_spawn_director.gd")
 ## NEW Godot gameplay architecture, not a port of the abandoned Go/Win32 code.
 ## MUGEN frames are loaded from imported community packs; temporary debug markers
@@ -1447,31 +1448,7 @@ func _update_projectiles(dt:float) -> void:
                 if shots.has(shot):shots.erase(shot)
 
 func _update_drops(dt:float) -> void:
-    for d in drops.duplicate():
-        var at:Vector2=d["pos"]
-        var distance:float=at.distance_to(player_pos)
-        var magnet_radius:float=138.0+float(upgrades["magnet"])*48.0
-        if distance<magnet_radius and distance>0.0:
-            d["pos"]+= (player_pos-at).normalized()*dt*minf(430.0,1800.0/(distance+15.0)*50.0)
-        if distance>31.0:continue
-        drops.erase(d)
-        if d["type"]=="xp":
-            exp_value+=float(d["value"])
-            stat_exp_collected+=int(d["value"])
-            if exp_value>=exp_needed:
-                exp_value-=exp_needed
-                level+=1
-                exp_needed=16.0+float(level)*9.4
-                _open_upgrade(false)
-                return
-        elif d["type"] in ["heal","ramen"]:
-            player_hp=minf(PLAYER_MAX_HP+float(upgrades["max_hp"])*18.0,player_hp+float(d["value"]))
-        elif d["type"]=="chest":
-            _open_chest()
-            return
-        else:
-            _open_upgrade(true)
-            return
+    Pickups.step(self,dt)
 
 func _update_clones(dt:float) -> void:
     for c in clones.duplicate():

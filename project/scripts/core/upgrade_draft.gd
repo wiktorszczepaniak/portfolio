@@ -22,10 +22,16 @@ func offer(kind:String="level",jackpot:bool=false) -> Array:
    out.append(rare)
    p.erase(rare)
  while out.size()<3 and not p.is_empty():
-  var weighted=[]
+  var weights=[]
+  var total=0
   for id in p:
    var weight=5 if id in build.owned() or ":" in id else 1
    if kind=="chest" and ":" in id:weight*=2
-   for i in range(weight):weighted.append(id)
-  var id=weighted[rng.randi_range(0,weighted.size()-1)];out.append(id);p.erase(id)
+   weights.append(weight);total+=weight
+  var ticket=rng.randi_range(0,total-1)
+  var selected=0
+  for i in range(weights.size()):
+   ticket-=weights[i]
+   if ticket<0:selected=i;break
+  var id=p[selected];out.append(id);p.erase(id)
  return out

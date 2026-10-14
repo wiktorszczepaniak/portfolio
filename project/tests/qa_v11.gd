@@ -82,11 +82,14 @@ func run() -> void:
  duel.queue_free();await process_frame
  for pack in ["naruto_base","naruto_kyubi","naruto_kcm","naruto_sage","naruto_sennin"]:
   var actor=Actor.new();actor.pack_name=pack;root.add_child(actor)
-  for action in ["200","210","220"]:
-   actor.play_pose(action,0.6)
-   var visited={}
-   for i in range(35):actor.tick(1.0/60);visited[actor.atlas_frame]=true
-   check(visited.size()==actor.actions[action].size(),"complete melee sequence "+pack+action)
+  for stage in range(1,4):
+   var action=["200","210","220"][stage-1]
+   for fps in [60,120]:
+    var move=Move.new();move.start(stage)
+    actor.play_pose(action,move.duration())
+    var visited={}
+    for i in range(int(ceil(move.duration()*fps))-1):actor.tick(1.0/fps);visited[actor.atlas_frame]=true
+    check(visited.size()==actor.actions[action].size(),"complete melee sequence "+pack+action+str(fps))
   actor.pose_action="41";actor.pose_time=0.1;actor.tick(1.0/60)
   var progressed=false
   for i in range(30):
@@ -94,5 +97,15 @@ func run() -> void:
    if actor.atlas_frame>0:progressed=true
   check(progressed or actor.actions["41"].size()==1,"sustained jump never restarts")
   actor.queue_free();await process_frame
+ build.reset(44);build.muted=true;build.godmode=true;build.grant("rasengan")
+ var cancel_duel=load("res://scenes/boss_duel.tscn").instantiate();root.add_child(cancel_duel);cancel_duel.set_process(false);cancel_duel.start_fight();cancel_duel.start_combo()
+ for i in range(30):cancel_duel.step(1.0/60,{"combo":true,"slot":0})
+ check(cancel_duel.skills.cast_history.has("rasengan"),"jutsu request wins over held combo")
+ cancel_duel.queue_free();await process_frame
+ var game=load("res://scenes/main.tscn").instantiate();root.add_child(game);game.set_process(false);game._start(714);game._spawn_enemy(false)
+ var first=game.enemies[0].pos;game._start(714);game._spawn_enemy(false)
+ check(first==game.enemies[0].pos,"survival seeded spawn replay")
+ game.queue_free();await process_frame
+ root.get_node("AudioDirector").silence();await create_timer(0.15).timeout
  print("QA_V11_DONE checks=",checks," failures=",failures.size()," list=",failures)
  quit(0 if failures.is_empty() else 1)

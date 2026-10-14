@@ -8,6 +8,8 @@ const Registry=preload("res://scripts/core/jutsu_registry.gd")
 const Resolver=preload("res://scripts/combat/combat_resolver.gd")
 const MoveState=preload("res://scripts/duel/move_state_machine.gd")
 const Controls=preload("res://scripts/duel/duel_input.gd")
+const Fighter=preload("res://scripts/duel/fighter_controller.gd")
+var controls=Controls.new()
 var melee=MoveState.new()
 var action_log:Array=[]
 var fighter_state:="idle"
@@ -71,7 +73,7 @@ func _ready() -> void:
  music=AudioStreamPlayer.new();add_child(music);sound=AudioStreamPlayer.new();add_child(sound)
  music.stream=AudioStreamWAV.load_from_buffer(FileAccess.get_file_as_bytes("res://assets/v8/miniboss_arcade.wav"));music.stream.loop_mode=AudioStreamWAV.LOOP_FORWARD;music.volume_db=-80 if build.muted else -16;music.play();reset_fight()
 func reset_fight() -> void:
- melee.reset();action_log.clear();combo_chain=0;last_contact=-10;shake_time=0
+ controls.queued.clear();melee.reset();action_log.clear();combo_chain=0;last_contact=-10;shake_time=0
  player_pos=Vector2(285,FLOOR);velocity=Vector2.ZERO;jumps_remaining=2;auto_guard_time=0.0;retreat_window=0.0;retreat_direction=0.0;landing_time=0.0;sfx_last.clear();player_hp=build.max_hp();chakra=100;invulnerable=1;hurt_time=0;dash_cd=0;dash_time=0;attack_time=0;combo_stage=0;combo_age=0;combo_buffer=0;hitstop=0;block=false;block_age=0
  player.set_pack(build.actor_pack());boss.actor.set_pack("sasori_hiruko");boss.pos=Vector2(970,FLOOR);boss.hp=5200.0;boss.max_hp=5200.0;boss.marked_until=0
  ai.reset();skills.reset();projectiles.clear();zones.clear();elapsed=0;finished=false;victory=false;paused=false;phase_damage=[0.0,0.0];damage_received=0;parries=0;player.position=player_pos;boss.actor.position=boss.pos;boss.actor.facing=-1;announce("SASORI / HIRUKO",2)
@@ -100,11 +102,8 @@ func _unhandled_key_input(event:InputEvent) -> void:
  if key==KEY_M:build.muted=not build.muted;music.volume_db=-80 if build.muted else -16;return
  if key==KEY_G:build.godmode=not build.godmode;return
  if paused:return
- if key in [KEY_J,KEY_K,KEY_L]:skills.request_slot([KEY_J,KEY_K,KEY_L].find(key))
- elif key==KEY_X:skills.utility()
- elif key==KEY_F:combo_buffer=0.16
- elif key==KEY_W:jump()
- elif key==KEY_SHIFT:dash()
+ controls.push(key)
+
 func _process(delta:float) -> void:
  if intro or paused or finished:
   if intro:player.tick(delta);boss.actor.tick(delta)
@@ -113,31 +112,25 @@ func _process(delta:float) -> void:
 func step(dt:float,commands:Dictionary={}) -> void:
  if intro or paused or finished:return
  if hitstop>0:hitstop=maxf(0,hitstop-dt);return
- var input=Controls.commands(commands)
+ var input=controls.consume(commands)
  elapsed+=dt;announce_time=maxf(0,announce_time-dt);invulnerable=maxf(0,invulnerable-dt);hurt_time=maxf(0,hurt_time-dt);dash_cd=maxf(0,dash_cd-dt);dash_time=maxf(0,dash_time-dt)
  var direction=float(input.move)
  var pressed_block=bool(input.block)
  auto_guard_time=maxf(0,auto_guard_time-dt)
  retreat_window=maxf(0,retreat_window-dt);landing_time=maxf(0,landing_time-dt)
  if Controls.retreat(direction,player_pos.x,float(boss.pos.x)) and player_pos.y>=FLOOR-1:retreat_window=0.16;retreat_direction=direction
- if commands.get("jump",false):jump()
- if commands.get("dash",false):dash()
- if commands.get("combo",false):combo_buffer=0.16
- if commands.has("slot"):skills.request_slot(commands.slot)
- if commands.get("utility",false):skills.utility()
+ if input.get("jump",false):jump()
+ if input.get("dash",false):dash()
+ if input.get("combo",false):combo_buffer=0.16
+ if input.has("slot"):skills.request_slot(input.slot)
+ if input.get("utility",false):skills.utility()
  block=pressed_block and player_pos.y>=FLOOR-1 and attack_time<=0 and skills.lock_time<=0 and dash_time<=0;block_age=block_age+dt if block else 0.0
- var can_move=hurt_time<=0 and not block and attack_time<=0.12 and skills.lock_time<=0.16
- if can_move and direction!=0:player_facing=1 if boss.pos.x>player_pos.x else -1
- if not can_move:direction=0
- var speed=260+float(build.passives.get("speed",0))*11+(15 if build.form_branch=="kyubi" else 0)
- player_pos.x=clampf(player_pos.x+(dash_direction*820 if dash_time>0 else direction*speed)*dt,65,1215)
- if player_pos.y<FLOOR or velocity.y<0:
-  velocity.y+=1280*dt;player_pos.y+=velocity.y*dt
-  if player_pos.y>=FLOOR:player_pos.y=FLOOR;velocity.y=0;jumps_remaining=2;landing_time=3.0/60.0;record_action("landing")
- if absf(player_pos.x-float(boss.pos.x))<66 and absf(player_pos.y-FLOOR)<70 and dash_time<=0:player_pos.x=clampf(float(boss.pos.x)+signf(player_pos.x-float(boss.pos.x))*66,65,1215)
- if direction==0 and attack_time<=0 and skills.lock_time<=0:player_facing=1 if boss.pos.x>player_pos.x else -1
+ var movement=Fighter.step(self,dt,direction)
+ direction=movement.direction;var can_move=movement.can_move
  chakra=minf(100,chakra+dt*(13+build.passives.get("magnet",0)*1.6));player_hp=minf(build.max_hp(),player_hp+dt*0.3*float(build.passives.get("regeneration",0)));combo_buffer=maxf(0,combo_buffer-dt)
- if combo_buffer>0 and (attack_time<=0 or melee.can_cancel()) and skills.lock_time<=0.12 and hurt_time<=0 and landing_time<=0 and not block:start_combo();combo_buffer=0
+ if skills.buffer_time>0 and attack_time>0 and melee.can_cancel():
+  attack_time=0;combo_buffer=0;combo_stage=0;melee.reset();record_action("jutsu_cancel")
+ if combo_buffer>0 and skills.buffer_time<=0 and (attack_time<=0 or melee.can_cancel()) and skills.lock_time<=0.12 and hurt_time<=0 and landing_time<=0 and not block:start_combo();combo_buffer=0
  if attack_time>0:
   var active_window=melee.advance(dt)
   combo_age=melee.age;attack_time=maxf(0,melee.duration()-melee.age)
@@ -167,7 +160,8 @@ func jump() -> void:
   skills.effect("wind",player_pos+Vector2(0,-10),65,0.3)
   skill_sound("dash.wav")
 func dash() -> void:
- if dash_cd>0 or hurt_time>0:return
+ if dash_cd>0 or hurt_time>0 or (attack_time>0 and not melee.can_cancel()):return
+ if attack_time>0:attack_time=0;combo_stage=0;combo_buffer=0;melee.reset();record_action("dash_cancel")
  dash_cd=maxf(1.65,3-0.18*build.passives.get("speed",0));dash_time=0.23;dash_direction=player_facing;invulnerable=0.4;skills.effect("log",player_pos+Vector2(0,-22),50,0.65);skills.effect("smoke",player_pos+Vector2(0,-25),110,0.45);skill_sound("dash.wav")
 func start_combo() -> void:
  combo_stage=combo_stage%3+1;combo_age=0;combo_hit=false

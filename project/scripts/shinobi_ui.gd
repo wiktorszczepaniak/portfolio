@@ -246,7 +246,7 @@ func _title() -> void:
     _text("SHINOBI",Vector2(77,191),70,CREAM,title)
     _text("SURVIVORS",Vector2(79,260),57,CREAM,title)
     _line(294,82,410,Color("6b7166"))
-    _text("MISJA: PUSTYNIA  /  V10.5" if g.selected_map=="desert" else "MISJA: LAS ŚMIERCI  /  V10.5",Vector2(84,331),15,GOLD,mono)
+    _text("MISJA: PUSTYNIA  /  V11" if g.selected_map=="desert" else "MISJA: LAS ŚMIERCI  /  V11",Vector2(84,331),15,GOLD,mono)
     _wrap("Przetrwaj napór ninja. Zbieraj zwoje i odblokowuj jutsu. Wybierz mapę:",Rect2(84,362,450,54),17,MUTED)
     _button(Rect2(82,415,220,38),("●  PUSTYNIA" if g.selected_map=="desert" else "PUSTYNIA"),g.selected_map=="desert")
     _button(Rect2(318,415,232,38),("●  LAS ŚMIERCI" if g.selected_map=="forest" else "LAS ŚMIERCI"),g.selected_map=="forest")
@@ -258,7 +258,7 @@ func _title() -> void:
     _center("UZUMAKI NARUTO",967,570,22,INK,title)
     _center("8 JUTSU  /  3 SLOTY  /  1 WSPARCIE",967,601,12,Color("695b47"),mono)
     _center("WYBÓR FORMY  02:30  •  STRAŻNICY  02:40 / 04:15 / 06:25",967,646,10,Color("695b47"),mono)
-    _text("V10",Vector2(1227,692),12,Color("695b47"),mono)
+    _text("V11",Vector2(1227,692),12,Color("695b47"),mono)
 
 func _hud() -> void:
     _box(Rect2(22,18,351,97),PAPER,Color("a18b61"),3)
