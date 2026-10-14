@@ -66,6 +66,13 @@ jobs:
         run: |
           & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_v12_visual.gd -- "$pwd/logs/windows_visual" *> logs/windows_visual.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/windows_visual.txt; throw 'Windows GUI render failed' }
+      - name: Render all six Alpha character compendium pages
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_alpha_visual.gd -- "$pwd/logs/alpha_codex" *> logs/alpha_codex.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/alpha_codex.txt; throw 'Alpha codex rendering failed' }
+          if ((Get-ChildItem logs/alpha_codex/*.png).Count -ne 6) { throw 'Missing character codex renders' }
       - name: Pack ALL raw assets as Godot PCK
         shell: pwsh
         run: |
