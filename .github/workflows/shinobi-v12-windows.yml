@@ -1,9 +1,9 @@
 # Isolated build branch; this workflow does not publish portfolio.
-name: Shinobi Godot 4.5.2 Windows QA
+name: Shinobi V12 Godot 4.5.2 Windows QA
 on:
   workflow_dispatch:
   push:
-    branches: ['build/shinobi-v11-20261014']
+    branches: ['build/shinobi-v12-art-20261014']
 permissions:
   contents: read
 jobs:
@@ -16,14 +16,14 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          $one = [System.IO.File]::ReadAllBytes('source.zip.part1')
-          $two = [System.IO.File]::ReadAllBytes('source.zip.part2')
           $out = [System.IO.File]::Create('source.zip')
-          try { $out.Write($one,0,$one.Length); $out.Write($two,0,$two.Length) } finally { $out.Dispose() }
-          Expand-Archive source.zip -DestinationPath _source
-          Copy-Item project/* _source/project/ -Recurse -Force
-          Remove-Item project -Recurse -Force
-          Move-Item _source/project project
+          try {
+            Get-ChildItem 'source.zip.part*' | Sort-Object Name | ForEach-Object {
+              $data = [System.IO.File]::ReadAllBytes($_.FullName)
+              $out.Write($data,0,$data.Length)
+            }
+          } finally { $out.Dispose() }
+          Expand-Archive source.zip -DestinationPath . -Force
       - uses: lihop/setup-godot@v3
         with:
           version: 4.5.2-stable
@@ -53,11 +53,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'QA V11 failed' }
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_v10_5.gd *> logs/qa_v10_5.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA V10.5 failed' }
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_v12.gd *> logs/qa_v12.txt
+          if ($LASTEXITCODE -ne 0) { throw 'QA V12 failed' }
       - name: Windows software-render screenshots
         continue-on-error: true
         shell: pwsh
         run: |
-          & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_v10_5_visual.gd -- "$pwd/logs/windows_visual" *> logs/windows_visual.txt
+          & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_v12_visual.gd -- "$pwd/logs/windows_visual" *> logs/windows_visual.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/windows_visual.txt; throw 'Windows GUI render failed' }
       - name: Pack ALL raw assets as Godot PCK
         shell: pwsh
@@ -96,8 +98,8 @@ jobs:
           $p = Start-Process -FilePath $exe -ArgumentList @('--headless','--quit-after','120') -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/exe-out.txt -RedirectStandardError logs/exe-err.txt
           if ($p.ExitCode -ne 0) { throw "Standalone EXE failed $($p.ExitCode)" }
           if (Select-String -Path logs/exe-out.txt,logs/exe-err.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script|ERROR:') { throw 'Runtime error(s) in exported EXE' }
-          $q = Start-Process -FilePath $exe -ArgumentList @('--headless','--script','res://tests/qa_v11.gd') -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/exe-qa.txt -RedirectStandardError logs/exe-qa-errors.txt
-          if ($q.ExitCode -ne 0) { throw 'Exported EXE V11 suite failed' }
+          $q = Start-Process -FilePath $exe -ArgumentList @('--headless','--script','res://tests/qa_v12.gd') -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/exe-qa.txt -RedirectStandardError logs/exe-qa-errors.txt
+          if ($q.ExitCode -ne 0) { throw 'Exported EXE V12 suite failed' }
           if (Select-String -Path logs/exe-qa.txt,logs/exe-qa-errors.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script|ERROR:') { throw 'Exported EXE suite runtime error' }
           Get-FileHash $exe -Algorithm SHA256 | Format-List | Out-File logs/SHA256.txt
           Remove-Item release/game.pck
