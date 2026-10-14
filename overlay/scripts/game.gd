@@ -17,7 +17,7 @@ const AlphaRoster=preload("res://scripts/alpha/roster.gd")
 const AlphaProgression=preload("res://scripts/alpha/progression.gd")
 const Resolver=preload("res://scripts/combat/combat_resolver.gd")
 var JUTSU=Registry.cards()
-var alpha_codex:Control
+var alpha_codex
 var alpha_progress=AlphaProgression.new("naruto",1)
 var build
 var draft
