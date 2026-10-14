@@ -16,3 +16,10 @@ Prepared 2026-10-14. **This commit contains only planning/preflight text; NO vis
 5. P2: redesign entire HUD/menus using ninja scroll / ink/paper art direction. P3: boss scene, telegraphs, SFX. P4: native Windows QA, verified Windows/source/QA ZIP.
 
 No assertions that initial V11 test results certify V11.1. Keep all real commit SHAs, logs, screenshots and SHA256 checksums. Save after every checkpoint.
+
+
+## UPDATED: latest user feedback audit (revised handoff, preferred)
+
+Use **SHINOBI_V11_1_ASTRA_READY_REVISED_2026-10-14.zip** from ChatGPT Library instead of the earlier non-revised ZIP. It has **32 files**, original unmodified V11 source + QA, revised execution prompt and two new mandatory spec documents. SHA256 of the outer ZIP: `03bdae98f74e66f93e7167f165e605d2e1e556b1271e221db99561c70e584a84`.
+
+READ **`00_START/LAST_FEEDBACK_REQUIREMENTS.md`** first. Key corrections: stop patching broken graphical effects endlessly and select an entirely new consistent replacement; two original user-provided screenshots from old conversation are not included in ZIP (the reference montage isn't the user's screenshots); first-phase SFX must ship at the same time as new attack VFX; bossfight requires a genuine arena/art redesign beyond healthbar and z-index. Four accepted Naruto forms stay unchanged; replace KCM and preserve V11 gameplay. Never touch portfolio main; don't interrupt the user every milestone, save silent commits and always persist source as token usage approaches limits.
