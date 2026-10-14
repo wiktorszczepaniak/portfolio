@@ -35,8 +35,17 @@ func _ready() -> void:
     hero.position = Vector2(957,523)
     hero.scale = Vector2.ONE * 4.0
     add_child(hero)
-    for name in ["naruto_base", "naruto_kyubi", "naruto_sage", "naruto_sennin", "naruto_kcm"]:
-        var m = JSON.parse_string(FileAccess.get_file_as_string("res://assets/mugen/%s/manifest.json" % name))
+    var packs=["naruto_base", "naruto_kyubi", "naruto_sage", "naruto_sennin", "naruto_kcm"]
+    for id in g.AlphaRoster.IDS:
+        for path in range(2):
+            for stage in range(3):
+                var pack=g.AlphaRoster.pack(id,path,stage)
+                if pack not in packs:packs.append(pack)
+    for name in packs:
+        var mf="res://assets/mugen/%s/manifest.json" % name
+        if not FileAccess.file_exists(mf):continue
+        var m=JSON.parse_string(FileAccess.get_file_as_string(mf))
+        if not m is Dictionary or not m.get("actions",{}).has("0"):continue
         var key: String = m["actions"]["0"][0]["key"]
         icons[name] = g._read_png("res://assets/mugen/%s/%s" % [name,m["sprites"][key]["file"]])
     icons["kunai"] = g.item_art.get("kunai")
@@ -244,6 +253,7 @@ func _title() -> void:
     _text("SURVIVORS",Vector2(79,250),52,CREAM,title)
     _line(294,82,410,Color("6b7166"))
     _text("MISJA: PUSTYNIA  /  V12" if g.selected_map=="desert" else "MISJA: LAS ŚMIERCI  /  V12",Vector2(84,331),15,GOLD,mono)
+    _text("C  /  POSTACIE I DRZEWKA JUTSU",Vector2(84,355),12,GOLD,mono)
     _wrap("Przetrwaj napór ninja. Zbieraj zwoje i odblokowuj jutsu. Wybierz mapę:",Rect2(84,362,450,54),17,MUTED)
     _button(Rect2(82,415,220,38),("●  PUSTYNIA" if g.selected_map=="desert" else "PUSTYNIA"),g.selected_map=="desert")
     _button(Rect2(318,415,232,38),("●  LAS ŚMIERCI" if g.selected_map=="forest" else "LAS ŚMIERCI"),g.selected_map=="forest")
@@ -260,10 +270,12 @@ func _title() -> void:
 func _hud() -> void:
     _box(Rect2(22,18,360,99),INK,GOLD)
     NinjaTheme.seal(self,Vector2(65,67),33,Color("d38843"))
-    var tex:Texture2D=icons[g.build.actor_pack()]
-    var dims=tex.get_size()*minf(1.15,76.0/tex.get_height())
-    draw_texture_rect(tex,Rect2(Vector2(65-dims.x/2,107-dims.y),dims),false)
-    _text("UZUMAKI NARUTO",Vector2(111,43),15,CREAM,title)
+    var pack=g.alpha_progress.current_pack()
+    var tex:Texture2D=icons.get(pack)
+    if tex!=null:
+        var dims=tex.get_size()*minf(1.15,76.0/tex.get_height())
+        draw_texture_rect(tex,Rect2(Vector2(65-dims.x/2,107-dims.y),dims),false)
+    _text(str(g.AlphaRoster.hero(g.selected_alpha_hero).name),Vector2(111,43),15,CREAM,title)
     _text("%02d"%g.level,Vector2(337,43),17,GOLD,mono)
     var hp_max:float=g.PLAYER_MAX_HP+float(g.upgrades.get("max_hp",0))*18
     _bar(Rect2(111,54,251,17),g.player_hp/hp_max,Color("df7855"))
@@ -504,10 +516,14 @@ func _forms() -> void:
     for i in range(2):
         var r=Rect2(180+i*480,225,440,350)
         _box(r,PAPER,GOLD,4)
-        var tex:Texture2D=icons["naruto_kyubi" if i==0 else "naruto_sage"]
-        var dims=tex.get_size()*minf(1.7,110.0/tex.get_height())
-        draw_texture_rect(tex,Rect2(Vector2(r.get_center().x-dims.x/2,r.position.y+28),dims),false)
-        _center("KYŪBI CLOAK" if i==0 else "SAGE MODE",r.get_center().x,392,25,INK,title)
-        _wrap("Szybsza ofensywa. Przy 05:30 KCM: dodatkowe ramiona chakry wspierają ataki." if i==0 else "Frog Kata: zasięg, przełamanie gardy i kontra. Przy 05:30 Sennin Mastery — własna rozwinięta forma Sage.",Rect2(r.position+Vector2(35,190),Vector2(370,100)),16,INK)
+        var hero_id=g.selected_alpha_hero
+        var which_pack=g.AlphaRoster.pack(hero_id,i,1)
+        var tex:Texture2D=icons.get(which_pack)
+        if tex!=null:
+            var dims=tex.get_size()*minf(1.7,110.0/tex.get_height())
+            draw_texture_rect(tex,Rect2(Vector2(r.get_center().x-dims.x/2,r.position.y+28),dims),false)
+        var names:Array=g.AlphaRoster.hero(hero_id).branch_names
+        _center(str(names[i]),r.get_center().x,392,21,INK,title)
+        _wrap("Dwie formy przebudzenia z własnymi atakami i rozwojem." if hero_id!="naruto" else ("Szybsza ofensywa. Przy 05:30 KCM: dodatkowe ramiona chakry wspierają ataki." if i==0 else "Frog Kata: zasięg, przełamanie gardy i kontra. Przy 05:30 Sennin Mastery — własna rozwinięta forma Sage."),Rect2(r.position+Vector2(35,190),Vector2(370,100)),16,INK)
         _center("[ %d ] WYBIERZ"%(i+1),r.get_center().x,550,16,RED,mono)
-    _center("Sennin Mastery jest jawną adaptacją — nie Six Paths.",640,641,13,MUTED)
+    _center("Wybór gałęzi jest nieodwracalny w tej misji.",640,641,13,MUTED)
