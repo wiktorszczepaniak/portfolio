@@ -446,6 +446,7 @@ func _show_title() -> void:
 func select_alpha_hero(which:String) -> bool:
     if playing or not AlphaRoster.all_assets_ready(which):return false
     selected_alpha_hero=which
+    if ui_view.hero!=null:ui_view.hero.set_pack(AlphaRoster.pack(which,0,0))
     ui_view.queue_redraw()
     return true
 
