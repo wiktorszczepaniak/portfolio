@@ -11,7 +11,7 @@ const ShinobiUI = preload("res://scripts/shinobi_ui.gd")
 const Registry=preload("res://scripts/core/jutsu_registry.gd")
 const Draft=preload("res://scripts/core/upgrade_draft.gd")
 const Forms=preload("res://scripts/core/transformation_controller.gd")
-const Adapter=preload("res://scripts/combat/survival_skill_adapter.gd")
+const Adapter=preload("res://scripts/alpha/survival_adapter.gd")
 const AlphaCodex=preload("res://scripts/alpha/codex.gd")
 const AlphaRoster=preload("res://scripts/alpha/roster.gd")
 const AlphaProgression=preload("res://scripts/alpha/progression.gd")
@@ -19,6 +19,7 @@ const Resolver=preload("res://scripts/combat/combat_resolver.gd")
 var JUTSU=Registry.cards()
 var alpha_codex
 var alpha_progress=AlphaProgression.new("naruto",1)
+var selected_alpha_hero:="naruto"
 var build
 var draft
 var skill_adapter
@@ -434,12 +435,19 @@ func _make_ui() -> void:
     ui_view.g = self
     ui.add_child(ui_view)
     alpha_codex=AlphaCodex.new()
+    alpha_codex.game=self
     alpha_codex.set_meta("progression",alpha_progress)
     alpha_codex.visible=false
     ui.add_child(alpha_codex)
 
 func _show_title() -> void:
     ui_view.queue_redraw()
+
+func select_alpha_hero(which:String) -> bool:
+    if playing or not AlphaRoster.all_assets_ready(which):return false
+    selected_alpha_hero=which
+    ui_view.queue_redraw()
+    return true
 
 func select_map(which:String) -> void:
     if playing:return
@@ -452,7 +460,7 @@ func select_map(which:String) -> void:
     ui_view.queue_redraw()
 
 func _start(seed_value:int=0) -> void:
-    build.reset(seed_value);alpha_progress.reset("naruto",build.rng_seed);rng.seed=build.rng_seed;skill_adapter.reset();form_choice=false;transition_time=-1
+    build.reset(seed_value);alpha_progress.reset(selected_alpha_hero,build.rng_seed);rng.seed=build.rng_seed;skill_adapter.reset();skill_adapter.set_hero(selected_alpha_hero);form_choice=false;transition_time=-1
     _log("run started")
     clock=0.0
     speed_index=0
@@ -534,7 +542,7 @@ func _start(seed_value:int=0) -> void:
     shots.clear()
     drops.clear()
     fx.clear()
-    player.set_pack("naruto_base")
+    player.set_pack(AlphaRoster.pack(selected_alpha_hero,0,0))
     if music_player.stream != null:
         music_player.volume_db = -80.0 if muted else -11.0
         music_player.play()
@@ -709,7 +717,7 @@ func _complete_transform(form:int) -> void:
     player_form=form
     build.form_stage=form
     if form==2:alpha_progress.advance_form()
-    player.set_pack(build.actor_pack())
+    player.set_pack(AlphaRoster.pack(selected_alpha_hero,0 if build.form_branch=="kyubi" else 1,form))
     player.attack = false
     invulnerable=2.1
     player_hp=minf(PLAYER_MAX_HP+float(upgrades["max_hp"])*18.0,player_hp+34.0+8.0*form)
@@ -1996,6 +2004,9 @@ func _begin_duel_transition() -> void:
     if transition_time>=0:return
     transition_time=0;build.elapsed=clock;build.godmode=godmode;build.muted=muted;build.kills=stat_kills;build.player_level=level
     var f=FileAccess.open("user://last_build.json",FileAccess.WRITE);f.store_string(JSON.stringify(build.snapshot(),"  "))
+    get_tree().root.set_meta("alpha_hero",selected_alpha_hero)
+    var af=FileAccess.open("user://last_alpha_build.json",FileAccess.WRITE)
+    if af!=null:af.store_string(JSON.stringify(alpha_progress.snapshot(),"  "))
     _flash("SASORI / POJEDYNEK",2.1);_sfx("boss.wav")
 func skill_origin() -> Vector2:return player_pos
 func skill_facing() -> float:return player_facing
