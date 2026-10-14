@@ -1,0 +1,98 @@
+# Isolated build branch; this workflow does not publish portfolio.
+name: Shinobi Godot 4.5.2 Windows QA
+on:
+  workflow_dispatch:
+  push:
+    branches: ['build/shinobi-v11-20261014']
+permissions:
+  contents: read
+jobs:
+  validate-and-export:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore exact source archive plus latest code overlay
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $one = [System.IO.File]::ReadAllBytes('source.zip.part1')
+          $two = [System.IO.File]::ReadAllBytes('source.zip.part2')
+          $out = [System.IO.File]::Create('source.zip')
+          try { $out.Write($one,0,$one.Length); $out.Write($two,0,$two.Length) } finally { $out.Dispose() }
+          Expand-Archive source.zip -DestinationPath _source
+          Copy-Item project/* _source/project/ -Recurse -Force
+          Remove-Item project -Recurse -Force
+          Move-Item _source/project project
+      - uses: lihop/setup-godot@v3
+        with:
+          version: 4.5.2-stable
+          export-templates: true
+      - name: Import Godot scripts/assets
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          godot --headless --path project --editor --import --quit
+          if ($LASTEXITCODE -ne 0) { throw 'Godot import failed' }
+      - name: Gameplay QA
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path logs | Out-Null
+          godot --headless --path project --script res://tests/qa_runtime.gd *> logs/qa_runtime.txt
+          if ($LASTEXITCODE -ne 0) { throw 'QA runtime failed' }
+          godot --headless --path project --script res://tests/qa_v11.gd *> logs/qa_v11.txt
+          if ($LASTEXITCODE -ne 0) { throw 'QA V11 failed' }
+          godot --headless --path project --script res://tests/qa_v10_5.gd *> logs/qa_v10_5.txt
+          if ($LASTEXITCODE -ne 0) { throw 'QA V10.5 failed' }
+      - name: Pack ALL raw assets as Godot PCK
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path release | Out-Null
+          $src = (Resolve-Path project).Path.Replace('\','/')
+          $pck = (Join-Path (Resolve-Path release).Path 'game.pck').Replace('\','/')
+          godot --headless --path project --script res://scripts/build_pack.gd -- $src $pck *> logs/pack.txt
+          if ($LASTEXITCODE -ne 0 -or !(Test-Path $pck)) { throw 'PCK build failed' }
+      - name: Assemble standalone Windows EXE with embedded PCK
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $template = Get-ChildItem "$env:APPDATA\Godot\export_templates" -Filter windows_release_x86_64.exe -Recurse | Select-Object -First 1
+          if (!$template) { throw 'Windows Godot export template not found' }
+          $exe = Join-Path (Resolve-Path release).Path 'ShinobiSurvivors.exe'
+          $pck = Join-Path (Resolve-Path release).Path 'game.pck'
+          $stream = [System.IO.File]::Create($exe)
+          try {
+            $engine = [System.IO.File]::ReadAllBytes($template.FullName)
+            $stream.Write($engine, 0, $engine.Length)
+            while ($stream.Position % 8 -ne 0) { $stream.WriteByte(0) }
+            $data = [System.IO.File]::ReadAllBytes($pck)
+            $stream.Write($data, 0, $data.Length)
+            $length = [BitConverter]::GetBytes([UInt64]$data.Length)
+            $stream.Write($length, 0, 8)
+            $magic = [System.Text.Encoding]::ASCII.GetBytes('GDPC')
+            $stream.Write($magic, 0, 4)
+          } finally { $stream.Dispose() }
+      - name: Test EXACT standalone exe on Windows
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = (Resolve-Path release/ShinobiSurvivors.exe).Path
+          $p = Start-Process -FilePath $exe -ArgumentList @('--headless','--quit-after','120') -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/exe-out.txt -RedirectStandardError logs/exe-err.txt
+          if ($p.ExitCode -ne 0) { throw "Standalone EXE failed $($p.ExitCode)" }
+          if (Select-String -Path logs/exe-out.txt,logs/exe-err.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script|ERROR:') { throw 'Runtime error(s) in exported EXE' }
+          $q = Start-Process -FilePath $exe -ArgumentList @('--headless','--script','res://tests/qa_v11.gd') -Wait -PassThru -NoNewWindow -RedirectStandardOutput logs/exe-qa.txt -RedirectStandardError logs/exe-qa-errors.txt
+          if ($q.ExitCode -ne 0) { throw 'Exported EXE V11 suite failed' }
+          if (Select-String -Path logs/exe-qa.txt,logs/exe-qa-errors.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script|ERROR:') { throw 'Exported EXE suite runtime error' }
+          Get-FileHash $exe -Algorithm SHA256 | Format-List | Out-File logs/SHA256.txt
+          Remove-Item release/game.pck
+          Compress-Archive -Path release/* -DestinationPath ShinobiSurvivors_Windows.zip
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shinobi-windows-and-QA
+          path: |
+            ShinobiSurvivors_Windows.zip
+            logs/
+          retention-days: 10

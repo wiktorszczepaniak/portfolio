@@ -1,0 +1,30 @@
+; Shinobi Survivors: Shippuden Death Forest | Godot 4.5.2
+config_version=5
+
+[application]
+config/name="SHINOBI SURVIVORS // V11"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.5", "GL Compatibility")
+run/max_fps=60
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=true
+environment/defaults/default_clear_color=Color(0.067, 0.102, 0.075, 1)
+
+[physics]
+common/physics_ticks_per_second=60
+
+
+[autoload]
+RunBuild="*res://scripts/core/run_build.gd"
+
+AudioDirector="*res://scripts/core/audio_director.gd"
