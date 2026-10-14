@@ -13,9 +13,12 @@ const Draft=preload("res://scripts/core/upgrade_draft.gd")
 const Forms=preload("res://scripts/core/transformation_controller.gd")
 const Adapter=preload("res://scripts/combat/survival_skill_adapter.gd")
 const AlphaCodex=preload("res://scripts/alpha/codex.gd")
+const AlphaRoster=preload("res://scripts/alpha/roster.gd")
+const AlphaProgression=preload("res://scripts/alpha/progression.gd")
 const Resolver=preload("res://scripts/combat/combat_resolver.gd")
 var JUTSU=Registry.cards()
 var alpha_codex:Control
+var alpha_progress=AlphaProgression.new("naruto",1)
 var build
 var draft
 var skill_adapter
@@ -431,6 +434,7 @@ func _make_ui() -> void:
     ui_view.g = self
     ui.add_child(ui_view)
     alpha_codex=AlphaCodex.new()
+    alpha_codex.set_meta("progression",alpha_progress)
     alpha_codex.visible=false
     ui.add_child(alpha_codex)
 
@@ -448,7 +452,7 @@ func select_map(which:String) -> void:
     ui_view.queue_redraw()
 
 func _start(seed_value:int=0) -> void:
-    build.reset(seed_value);rng.seed=build.rng_seed;skill_adapter.reset();form_choice=false;transition_time=-1
+    build.reset(seed_value);alpha_progress.reset("naruto",build.rng_seed);rng.seed=build.rng_seed;skill_adapter.reset();form_choice=false;transition_time=-1
     _log("run started")
     clock=0.0
     speed_index=0
@@ -704,6 +708,7 @@ func _transform(form:int) -> void:
 func _complete_transform(form:int) -> void:
     player_form=form
     build.form_stage=form
+    if form==2:alpha_progress.advance_form()
     player.set_pack(build.actor_pack())
     player.attack = false
     invulnerable=2.1
@@ -1623,6 +1628,16 @@ func _open_upgrade(scroll:bool) -> void:
     scroll_count+=int(scroll);ui_view.from_scroll=scroll;_open_draft("level")
 func _grant_upgrade(stat:String) -> void:
     if not build.grant(stat):return
+    if stat in AlphaRoster.SLOT_IDS:
+        alpha_progress.grant(stat)
+    elif ":" in stat:
+        var parts=stat.split(":")
+        if parts.size()==2 and parts[0] in AlphaRoster.SLOT_IDS:
+            var paths=Registry.DATA[str(parts[0])].evolutions
+            var index=paths.find(parts[1])
+            if index>=0:alpha_progress.grant(parts[0]+(":left" if index==0 else ":right"))
+    elif stat in Registry.UTILITY:
+        alpha_progress.grant("utility_"+str(Registry.UTILITY.find(stat)))
     for id in LEGACY_JUTSU:upgrades[id]=0
     for id in build.passives:upgrades[id]=build.passives[id]
     for id in build.levels:upgrades[id]=build.levels[id]
@@ -1974,7 +1989,9 @@ func _open_draft(kind:String) -> void:
     picking=not selected_cards.is_empty();_sfx("upgrade.wav")
 func _choose_form(index:int) -> void:
     if not form_choice:return
-    if Forms.choose(build,"kyubi" if index==0 else "sage"):form_choice=false;_transform(1)
+    if Forms.choose(build,"kyubi" if index==0 else "sage"):
+        alpha_progress.choose_form(index)
+        form_choice=false;_transform(1)
 func _begin_duel_transition() -> void:
     if transition_time>=0:return
     transition_time=0;build.elapsed=clock;build.godmode=godmode;build.muted=muted;build.kills=stat_kills;build.player_level=level
