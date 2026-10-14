@@ -58,6 +58,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'QA V12 failed' }
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha.gd *> logs/qa_alpha.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha.txt; throw 'QA Alpha progression failed' }
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_combat.gd *> logs/qa_alpha_combat.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_combat.txt; throw 'QA Alpha combat failed' }
       - name: Windows software-render screenshots
         continue-on-error: true
         shell: pwsh
