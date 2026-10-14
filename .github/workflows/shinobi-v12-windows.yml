@@ -24,6 +24,7 @@ jobs:
             }
           } finally { $out.Dispose() }
           Expand-Archive source.zip -DestinationPath . -Force
+          if (Test-Path overlay) { Copy-Item overlay/* project/ -Recurse -Force }
       - uses: lihop/setup-godot@v3
         with:
           version: 4.5.2-stable
@@ -112,3 +113,4 @@ jobs:
             ShinobiSurvivors_Windows.zip
             logs/
           retention-days: 10
+
