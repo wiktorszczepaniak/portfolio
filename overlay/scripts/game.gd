@@ -12,8 +12,10 @@ const Registry=preload("res://scripts/core/jutsu_registry.gd")
 const Draft=preload("res://scripts/core/upgrade_draft.gd")
 const Forms=preload("res://scripts/core/transformation_controller.gd")
 const Adapter=preload("res://scripts/combat/survival_skill_adapter.gd")
+const AlphaCodex=preload("res://scripts/alpha/codex.gd")
 const Resolver=preload("res://scripts/combat/combat_resolver.gd")
 var JUTSU=Registry.cards()
+var alpha_codex:Control
 var build
 var draft
 var skill_adapter
@@ -428,6 +430,9 @@ func _make_ui() -> void:
     ui_view = ShinobiUI.new()
     ui_view.g = self
     ui.add_child(ui_view)
+    alpha_codex=AlphaCodex.new()
+    alpha_codex.visible=false
+    ui.add_child(alpha_codex)
 
 func _show_title() -> void:
     ui_view.queue_redraw()
@@ -533,6 +538,13 @@ func _start(seed_value:int=0) -> void:
 
 func _input(event:InputEvent) -> void:
     if event is InputEventKey and event.pressed and not event.echo:
+        if event.keycode==KEY_C and not playing:
+            if alpha_codex.visible:alpha_codex.visible=false
+            else:alpha_codex.open()
+            return
+        if alpha_codex.visible:
+            if event.keycode==KEY_ESCAPE:alpha_codex.visible=false
+            return
         if form_choice:
             if event.keycode in [KEY_1,KEY_2]:_choose_form(event.keycode-KEY_1)
             return
