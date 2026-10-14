@@ -13,8 +13,10 @@ var display_font:Font
 func _ready() -> void:
  size=Vector2(1280,720);mouse_filter=Control.MOUSE_FILTER_STOP
  texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST
- small_font=load("res://assets/fonts/mono.ttf")
- display_font=load("res://assets/fonts/ninja.ttf")
+ small_font=FontFile.new()
+ (small_font as FontFile).data=FileAccess.get_file_as_bytes("res://assets/fonts/mono.ttf")
+ display_font=FontFile.new()
+ (display_font as FontFile).data=FileAccess.get_file_as_bytes("res://assets/fonts/ninja.ttf")
  for id in R.IDS:
   var p=R.pack(id,0,0)
   var f="res://assets/mugen/%s/manifest.json"%p
