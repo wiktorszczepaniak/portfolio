@@ -278,7 +278,9 @@ func _hud() -> void:
     _text(g.build.form_name(),Vector2(993,43),14,CREAM,title)
     var next="WYBÓR DROGI · %ds"%ceili(maxf(0,150-g.clock)) if g.player_form==0 else "PRZEBUDZENIE · %ds"%ceili(maxf(0,330-g.clock)) if g.player_form==1 else "SASORI · %ds"%ceili(maxf(0,480-g.clock))
     _text(next,Vector2(993,69),11,GOLD,mono)
-    if g.godmode:_text("NIEŚMIERTELNOŚĆ",Vector2(993,110),11,CREAM,mono)
+    if g.godmode:
+        # Keep status badge inside the form card, not over the playfield.
+        _text("GOD",Vector2(1217,68),11,Color("ffb275"),mono)
     if g.miniboss_active:
         for e in g.enemies:
             if e.get("mini_boss",false):
