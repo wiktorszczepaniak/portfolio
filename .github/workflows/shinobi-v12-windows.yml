@@ -42,7 +42,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           & $env:GODOT_CLI --headless --path project --editor --import --quit *> logs/import.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/import.txt; throw 'Godot import failed' }
-          if (Select-String -Path logs/import.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script') { throw 'Import parse error' }
+          if (Select-String -Path logs/import.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script') { Get-Content logs/import.txt; throw 'Import parse error' }
       - name: Gameplay QA
         shell: pwsh
         run: |
