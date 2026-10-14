@@ -6,6 +6,7 @@ const PAPER=Color("#e9d7b2")
 const MUTED=Color("#99acac")
 const GOLD=Color("#dab77c")
 var selected:="naruto"
+var game
 var hero_portraits:Dictionary={}
 var small_font:Font
 var display_font:Font
@@ -94,6 +95,8 @@ func _gui_input(event:InputEvent) -> void:
    visible=false;accept_event();return
   for i in range(R.IDS.size()):
    if _hero_rect(i).has_point(p):
-    selected=str(R.IDS[i]);queue_redraw();accept_event();return
+    selected=str(R.IDS[i])
+    if R.all_assets_ready(selected) and game!=null:game.select_alpha_hero(selected)
+    queue_redraw();accept_event();return
 func open() -> void:
  visible=true;queue_redraw()
