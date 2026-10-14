@@ -100,4 +100,7 @@ func run():
  var result={"checks":checks,"failures":failures,"damage":damage_results,"battles":battles,"missions":missions}
  var args=OS.get_cmdline_user_args();var output=args[0] if args.size()>0 else "user://qa_runtime.json"
  var f=FileAccess.open(output,FileAccess.WRITE);f.store_string(JSON.stringify(result,"  "));f.close()
- print("QA_DONE checks=",checks," failures=",failures.size()," output=",output);quit(0 if failures.is_empty() else 1)
+ print("QA_DONE checks=",checks," failures=",failures.size()," output=",output)
+ root.get_node("AudioDirector").silence()
+ await create_timer(0.15).timeout
+ quit(0 if failures.is_empty() else 1)

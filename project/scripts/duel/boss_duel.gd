@@ -149,10 +149,12 @@ func step(dt:float,commands:Dictionary={}) -> void:
  shake_time=maxf(0,shake_time-dt)
  position=Vector2(sin(elapsed*150)*3.0,cos(elapsed*170)*1.5) if shake_time>0 else Vector2.ZERO
  skills.tick(dt);ai.tick(dt);update_hazards(dt);player.position=player_pos;player.facing=player_facing;player.moving=absf(direction)>0.01 and can_move;player.dashing=dash_time>0
- if player_pos.y<FLOOR-1:player.pose_action="41" if velocity.y<-140 else "42" if velocity.y<140 else "43";player.pose_time=0.1
+ if hurt_time>0:player.pose_action="5000";player.pose_time=0.1
  elif block or auto_guard_time>0:player.pose_action="130";player.pose_time=0.1
- elif hurt_time>0:player.pose_action="5000";player.pose_time=0.1
- elif attack_time<=0 and skills.lock_time<=0 and direction!=0 and Controls.retreat(direction,player_pos.x,float(boss.pos.x)):player.pose_action="21";player.pose_time=0.1
+ elif attack_time<=0 and skills.lock_time<=0:
+  if player_pos.y<FLOOR-1:player.pose_action="41" if velocity.y<-140 else "42" if velocity.y<140 else "43";player.pose_time=0.1
+  elif direction!=0 and Controls.retreat(direction,player_pos.x,float(boss.pos.x)):player.pose_action="21";player.pose_time=0.1
+
  player.tick(dt);boss.actor.position=boss.pos;boss.actor.facing=-1 if boss.pos.x>player_pos.x else 1;boss.actor.tick(dt);player.z_index=100;boss.actor.z_index=100
  if player_hp<=0:finish(false)
  queue_redraw()

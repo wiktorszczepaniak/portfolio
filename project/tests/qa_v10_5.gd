@@ -68,4 +68,6 @@ func run() -> void:
  check(duel.skills.cast_history.has("gama_teppo"),"suiton in arcade independent of melee")
  duel.queue_free();await process_frame
  print("QA_V10_5_DONE checks=",checks," failures=",failures.size()," list=",failures)
+ root.get_node("AudioDirector").silence()
+ await create_timer(0.15).timeout
  quit(0 if failures.is_empty() else 1)

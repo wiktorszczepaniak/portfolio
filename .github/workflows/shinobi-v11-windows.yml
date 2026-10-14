@@ -28,22 +28,30 @@ jobs:
         with:
           version: 4.5.2-stable
           export-templates: true
+      - name: Select synchronous console executable
+        shell: pwsh
+        run: |
+          $cli = Get-ChildItem "$pwd/v4.5.2-stable" -Filter '*console.exe' -Recurse | Select-Object -First 1
+          if (!$cli) { throw 'Godot console executable missing' }
+          Add-Content $env:GITHUB_ENV "GODOT_CLI=$($cli.FullName)"
+          New-Item -ItemType Directory -Force -Path logs | Out-Null
       - name: Import Godot scripts/assets
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          godot --headless --path project --editor --import --quit
-          if ($LASTEXITCODE -ne 0) { throw 'Godot import failed' }
+          & $env:GODOT_CLI --headless --path project --editor --import --quit *> logs/import.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/import.txt; throw 'Godot import failed' }
+          if (Select-String -Path logs/import.txt -Pattern 'SCRIPT ERROR|Parse Error|Failed to load script') { throw 'Import parse error' }
       - name: Gameplay QA
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           New-Item -ItemType Directory -Force -Path logs | Out-Null
-          godot --headless --path project --script res://tests/qa_runtime.gd *> logs/qa_runtime.txt
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_runtime.gd *> logs/qa_runtime.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA runtime failed' }
-          godot --headless --path project --script res://tests/qa_v11.gd *> logs/qa_v11.txt
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_v11.gd *> logs/qa_v11.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA V11 failed' }
-          godot --headless --path project --script res://tests/qa_v10_5.gd *> logs/qa_v10_5.txt
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_v10_5.gd *> logs/qa_v10_5.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA V10.5 failed' }
       - name: Pack ALL raw assets as Godot PCK
         shell: pwsh
@@ -52,7 +60,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path release | Out-Null
           $src = (Resolve-Path project).Path.Replace('\','/')
           $pck = (Join-Path (Resolve-Path release).Path 'game.pck').Replace('\','/')
-          godot --headless --path project --script res://scripts/build_pack.gd -- $src $pck *> logs/pack.txt
+          & $env:GODOT_CLI --headless --path project --script res://scripts/build_pack.gd -- $src $pck *> logs/pack.txt
           if ($LASTEXITCODE -ne 0 -or !(Test-Path $pck)) { throw 'PCK build failed' }
       - name: Assemble standalone Windows EXE with embedded PCK
         shell: pwsh

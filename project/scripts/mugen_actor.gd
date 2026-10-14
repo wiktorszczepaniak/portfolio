@@ -87,15 +87,18 @@ func tick(dt: float) -> void:
     if frames.is_empty(): return
     var duration := 0.0
     for entry in frames: duration += maxf(1.0, float(entry.get("ticks", 6)))
-    var rate := duration / maxf(0.1, pose_total) if one_shot else 60.0
-    frame_time += dt * rate
+    frame_time += dt
     var loops := 0
-    while frame_time >= maxf(1.0, float(frames[atlas_frame].get("ticks", 6))) and loops < 30:
-        frame_time -= maxf(1.0, float(frames[atlas_frame].get("ticks", 6)))
+    var minimum := minf(1.0/60.0, pose_total/maxi(1,frames.size())) if one_shot else 0.0
+    var remaining := maxf(0.0,pose_total-minimum*frames.size())
+    var frame_duration := minimum+remaining*maxf(1.0,float(frames[atlas_frame].get("ticks",6)))/duration if one_shot else maxf(1.0,float(frames[atlas_frame].get("ticks",6)))/60.0
+    while frame_time >= frame_duration and loops < 30:
+        frame_time -= frame_duration
         if one_shot and atlas_frame == frames.size() - 1:
             frame_time = 0.0
             break
         atlas_frame = (atlas_frame + 1) % frames.size()
+        frame_duration = minimum+remaining*maxf(1.0,float(frames[atlas_frame].get("ticks",6)))/duration if one_shot else maxf(1.0,float(frames[atlas_frame].get("ticks",6)))/60.0
         loops += 1
     # Always recompute pivot on facing changes, even between animation frames.
     _paint_frame()
