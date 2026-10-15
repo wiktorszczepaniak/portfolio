@@ -17,8 +17,8 @@ var mono_font:FontFile
 var cursor:Vector2=Vector2.ZERO
 var inspected:int=-1
 var time:=0.0
-const NODES=[Vector2(640,210),Vector2(412,320),Vector2(868,320),Vector2(412,440),Vector2(868,440),Vector2(640,544),Vector2(640,649)]
-const PARENTS=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,5],[5,6]]
+const NODES=[Vector2(640,237),Vector2(412,313),Vector2(868,313),Vector2(412,405),Vector2(868,405),Vector2(640,491),Vector2(640,571),Vector2(640,651)]
+const PARENTS=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,5],[5,6],[6,7]]
 
 func _ready()->void:
  size=Vector2(1280,720)
@@ -46,10 +46,10 @@ func _gui_input(event:InputEvent)->void:
   var p:Vector2=event.position
   if Rect2(1163,19,90,43).has_point(p):
    alpha.tree_open=false;accept_event();return
-  for i in range(6):
-   if Rect2(28+i*204,96,194,53).has_point(p):
+  for i in range(10):
+   if Rect2(28+(i%5)*244,92+int(i/5)*53,232,47).has_point(p):
     alpha.tree_tab=i;accept_event();return
-  for n in range(7):
+  for n in range(8):
    if _card(n).has_point(p):
     if alpha.buy(alpha.tree_tab,n):
      g._sfx("upgrade.wav")
@@ -83,16 +83,16 @@ func _draw()->void:
  _text("%s  •  %d PUNKTÓW TALENTU" % [str(alpha.hero()["name"]),alpha.points],Vector2(480,52),17,TEAL,mono_font)
  _panel(Rect2(1163,19,90,43),RED,GOLD)
  _center("[T] X",Vector2(1208,46),15,PAPER,mono_font)
- for t in range(6):
-  var r=Rect2(28+t*204,96,194,53)
+ for t in range(10):
+  var r=Rect2(28+(t%5)*244,92+int(t/5)*53,232,47)
   var active:bool=t==alpha.tree_tab
   var count:int=alpha.count_focus(t)
   _panel(r,Color("3a3a37") if active else INK,GOLD if active else Color("607075"))
-  _center(alpha.tree_name(t),Vector2(r.get_center().x,121),13,PAPER if active else Color("b7c6c5"),title_font)
-  _center("%d / 7"%count,Vector2(r.get_center().x,142),11,GOLD if active else Color("8c9da1"),mono_font)
+  _center(alpha.tree_name(t),Vector2(r.get_center().x,r.position.y+22),13,PAPER if active else Color("b7c6c5"),title_font)
+  _center("%d / 8"%count,Vector2(r.get_center().x,r.position.y+41),11,GOLD if active else Color("8c9da1"),mono_font)
  var active_tree:int=alpha.tree_tab
  inspected=-1
- for hover_index in range(7):
+ for hover_index in range(8):
   if _card(hover_index).has_point(cursor):inspected=hover_index
  _draw_compendium(active_tree)
  var root_color:Color=Color("5e7b9b")
@@ -102,7 +102,7 @@ func _draw()->void:
   var open_edge:bool=alpha.invested(active_tree,a) and alpha.can_buy(active_tree,b)
   var color:Color=GOLD if linked else TEAL if open_edge else Color(.4,.45,.45,.42)
   draw_line(NODES[a]+Vector2(0,20),NODES[b]-Vector2(0,24),color,4 if linked else 2.0,true)
- for n in range(7):
+ for n in range(8):
   var rect:Rect2=_card(n)
   var owned:bool=alpha.invested(active_tree,n)
   var available:bool=alpha.can_buy(active_tree,n)
@@ -119,8 +119,8 @@ func _draw()->void:
   var ring_pos:Vector2=Vector2(rect.position.x+18,rect.position.y+16)
   draw_circle(ring_pos,12,edge)
   _center(str(n+1),ring_pos+Vector2(0,5),10,DARK,mono_font)
- _center("ODNOGI: 2 WYBORY  /  2 ROZWINIĘCIA  /  FUZJA  /  TECHNIKA LEGENDARNA",Vector2(640,693),12,Color("a3aea9"),mono_font)
- _text("1–6 ZMIEŃ DRZEWKO    •    T / ESC ZAMKNIJ",Vector2(28,706),10,Color("849797"),mono_font)
+ _center("10 DRZEWEK  •  8 WĘZŁÓW  •  PRAWDZIWE ODNOGI I SYGNATURY",Vector2(640,701),11,Color("a3aea9"),mono_font)
+ _text("1–9 / 0 DRZEWKA   •   T / ESC ZAMKNIJ",Vector2(28,714),10,Color("849797"),mono_font)
 
 const ABILITY_DESCRIPTIONS={
  "nova":["ROZBŁYSK CHAKRY","Eksplozja w punkcie trafienia","Dodatkowe fale i obrażenia"],
@@ -139,7 +139,8 @@ const NODE_HINTS=[
  ["WIELOKROTNOŚĆ","Co 2 talenty dodatkowy pocisk","Wzmacnia obrażenia obszarowe"],
  ["MOBILNOŚĆ","+3,7% prędkości ruchu","Łatwiej unikać i doskakiwać"],
  ["SYGNATURA","Odblokuj unikalną technikę","Uaktywnia się podczas walki"],
- ["APEX","Wersja legendarna techniki","Większy zasięg, moc i kontrola"]
+ ["APEX","Wersja legendarna techniki","Większy zasięg, moc i kontrola"],
+ ["MISTRZOSTWO","Synergia ścieżek i charakteru","Wymaga odblokowanego APEX"]
 ]
 func _draw_compendium(tree:int)->void:
  var primary:String=alpha.tree_name(tree)
@@ -164,7 +165,7 @@ func _draw_compendium(tree:int)->void:
  var can:bool=alpha.can_buy(tree,n)
  var hint:Array=NODE_HINTS[n]
  _text("PIECZĘĆ TALENTU",Vector2(1037,217),12,GOLD,mono_font)
- _text("%02d / 07" % (n+1),Vector2(1037,255),25,TEAL,title_font)
+ _text("%02d / 08" % (n+1),Vector2(1037,255),25,TEAL,title_font)
  _text(alpha.node_name(tree,n).substr(0,27),Vector2(1037,285),12,PAPER,title_font)
  draw_line(Vector2(1037,300),Vector2(1250,300),Color(GOLD,.45),2)
  _text(str(hint[0]),Vector2(1037,335),14,TEAL,title_font)
