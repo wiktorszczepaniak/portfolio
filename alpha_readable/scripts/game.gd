@@ -972,7 +972,9 @@ func _closest_target(at:Vector2,max_distance:float)->Dictionary:
 func _alpha_proc() -> void:
     var tree:int=alpha.current_signature()
     if tree<0:return
-    if AlphaAbilities.activate(self,alpha.selected,tree,alpha.apex_unlocked(tree),alpha.damage_multiplier()):
+    var fork:int=-1 if alpha.invested(tree,1) else 1 if alpha.invested(tree,2) else 0
+    var focus_power:float=alpha.damage_multiplier()*(1.0+0.035*float(alpha.count_focus(tree)))
+    if AlphaAbilities.activate(self,alpha.selected,tree,alpha.apex_unlocked(tree),focus_power,fork):
         _flash("%s  /  %s" % [alpha.hero()["name"],alpha.tree_name(tree)],1.05)
 
 func _fire_kunai() -> void:
