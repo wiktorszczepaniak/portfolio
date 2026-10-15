@@ -77,9 +77,7 @@ func max_hp() -> float:return 165.0+18.0*float(passives.get("max_hp",0))
 func form_name() -> String:
  var alpha=get_node_or_null("/root/AlphaProgress")
  if alpha!=null and alpha.selected!="naruto":
-  var name:String=str(alpha.hero()["name"])
-  if form_stage==0:return name
-  return "%s · %s" % [name,"PRZEBUDZENIE" if form_stage==1 else "WIELKA MOC"]
+  return str(alpha.hero()["name"]) if form_stage==0 else str(alpha.awakening_title(form_branch,form_stage))
  if form_stage==0:return "NARUTO"
  if form_branch=="kyubi":return "KYŪBI CLOAK" if form_stage==1 else "KURAMA CHAKRA MODE"
  return "SAGE MODE" if form_stage==1 else "SENNIN MASTERY"
