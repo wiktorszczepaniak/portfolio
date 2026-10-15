@@ -1,4 +1,4 @@
-# SHINOBI // BOSS RUSH — Alpha 01
+# SHINOBI // BOSS RUSH — Alpha 01.1
 
 Playable vertical slice (Godot 4.5+), independent of Shinobi Survivors. Current encounter: **Naruto Uzumaki vs. Zabuza Momochi**, three boss phases, controlled chakra transformation, manual dodge and bullet hell patterns.
 
@@ -15,7 +15,7 @@ Playable vertical slice (Godot 4.5+), independent of Shinobi Survivors. Current 
 | Shift (hold) | Precision / focus movement and hitbox indicator |
 | X | Kawarimi-style dash with brief invulnerability (1.8s CD) |
 | C | Shadow clone support, 8s, costs 22 chakra (18s CD) |
-| Q | Chakra transformation for 14s, costs 90 chakra, clears boss bullets |
+| Q | Chakra transformation for 8s, costs 90 chakra, clears boss bullets |
 | Space | Rasengan ultimate, 9s cooldown and 35 chakra cost |
 | Esc / P | Pause |
 
