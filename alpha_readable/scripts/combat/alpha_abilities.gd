@@ -20,12 +20,21 @@ const SFX={
 static func ability_type(hero:String,tree:int)->String:
  if not PATTERNS.has(hero) or tree<0 or tree>=6:return ""
  return str(PATTERNS[hero][tree])
-static func activate(g,hero:String,tree:int,apex:bool,power:float)->bool:
+static func activate(g,hero:String,tree:int,apex:bool,power:float,route:int=0)->bool:
  var pattern:String=ability_type(hero,tree)
  if pattern.is_empty():return false
  var mult:float=(1.44 if apex else 1.0)*maxf(0.7,power)
  var damage:float=(47.0+float(tree)*9.5)*mult
  var area:float=(72.0+float(tree%3)*13.0)*(1.18 if apex else 1.0)
+ # Both talent forks influence the actual attack, not only the UI.
+ # Left: concentrated damage; right: battlefield control and wider impact.
+ if route<0:
+  damage*=1.27
+  area*=0.84
+ elif route>0:
+  damage*=0.89
+  area*=1.35
+  if "invulnerable" in g:g.invulnerable=maxf(g.invulnerable,0.12)
  var player_at:Vector2=g.player_pos
  var target:Dictionary=g._closest_target(player_at,560.0)
  var at:Vector2=target["pos"] if not target.is_empty() else player_at+Vector2(g.player_facing*90.0,0)
