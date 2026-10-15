@@ -101,6 +101,7 @@ var simulation_accumulator := 0.0
 var speed_labels := ["1x","1.5x","2x","3x","4x","5x"]
 var playing := false
 var paused := false
+var training_mode:bool=false
 var finished := false
 var muted := false
 var low_fx := false
@@ -548,6 +549,32 @@ func _start(seed_value:int=0) -> void:
         music_player.play()
     queue_redraw()
 
+func start_training() -> void:
+    if playing:return
+    training_mode=true
+    _start(762310)
+    godmode=true
+    alpha.level_awarded=48
+    alpha.points=86
+    for id in ["rasengan","naruto_rendan","gama_teppo"]:
+        for step in range(3):_grant_upgrade(id)
+    _grant_upgrade("kage_bunshin")
+    var dummies=[Vector2(82,0),Vector2(132,72),Vector2(380,0)]
+    for dummy in dummies:
+        var actor=_enemy_actor("sound_heavy",dummy,Color(0.78,0.84,0.89))
+        enemies.append({"pos":dummy,"hp":999999.0,"max_hp":999999.0,
+            "actor":actor,"kind":"sound_heavy","elite":false,"stagger":0.0,"hit_cd":0.0})
+    _flash("DOJO TESTOWE  •  F1 / F2 FORMY  •  T DRZEWKA",2.5)
+
+func training_form(branch:String,stage:int) -> void:
+    if not training_mode:return
+    build.form_branch=branch
+    build.form_stage=stage
+    player_form=stage
+    player.set_pack(build.actor_pack())
+    player.form_tint=Color.WHITE if alpha.selected=="naruto" else Color(str(alpha.hero()["color"])).lerp(Color.WHITE,0.43)
+    _flash(build.form_name(),1.2)
+
 func choose_character(id:String) -> void:
     if playing:return
     if alpha.choose(id):
@@ -567,6 +594,13 @@ func _input(event:InputEvent) -> void:
                 alpha.tree_tab=9 if event.keycode==KEY_0 else int(event.keycode-KEY_1)
             elif event.keycode==KEY_ESCAPE:alpha.tree_open=false
             ui_view.queue_redraw()
+            return
+        if event.keycode==KEY_F6:
+            if not playing:start_training()
+            elif training_mode:return_to_menu()
+            return
+        if training_mode and event.keycode in [KEY_F1,KEY_F2]:
+            training_form("sage" if event.keycode==KEY_F1 else "kyubi",2 if player_form==1 else 1)
             return
         if not playing and event.keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6]:
             choose_character(str(alpha.IDS[int(event.keycode-KEY_1)]))
@@ -673,6 +707,15 @@ func _simulation_step(dt:float) -> void:
     clock+=dt
     _update_player(dt)
     build.elapsed=clock
+    if training_mode:
+        # Stationary high-HP practice targets; no waves, XP/chests or boss transition.
+        skill_adapter.tick(dt)
+        _update_projectiles(dt)
+        _update_fx(dt)
+        _update_hud()
+        camera.position=player_pos
+        queue_redraw()
+        return
     var due=Forms.due(build,clock)
     if due=="choice":form_choice=true;return
     if due=="second":_transform(2);return
