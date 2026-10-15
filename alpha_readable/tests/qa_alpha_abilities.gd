@@ -48,9 +48,9 @@ func _test()->void:
  var registered:=0
  for hero in alpha.IDS:
   check(Moves.PATTERNS.has(hero),"registered "+hero)
-  check(Moves.PATTERNS[hero].size()==6,"six signatures per hero")
+  check(Moves.PATTERNS[hero].size()==10,"ten signatures per hero")
   alpha.choose(hero)
-  for tree in range(6):
+  for tree in range(10):
    registered+=1
    var kind:String=Moves.ability_type(hero,tree)
    check(not kind.is_empty(),"nonempty pattern "+hero+"/"+str(tree))
@@ -74,6 +74,6 @@ func _test()->void:
   check(alpha.buy(0,3),"left followup "+hero)
   check(alpha.buy(0,5),"signature "+hero)
   check(alpha.buy(0,6),"apex "+hero)
- check(registered==36,"36 runtime-validated class signatures")
+ check(registered==60,"60 runtime-validated class signatures")
  print("ALPHA_ABILITIES_QA: %d checks; %d failures"%[assertions,failures.size()])
  quit(1 if failures.size()>0 else 0)
