@@ -80,10 +80,33 @@ static func paint(c:CanvasItem,id:String,at:Vector2,width:float,t:float,angle:fl
    c.draw_circle(p,r*(.24+sin(i)*.05),color)
    c.draw_arc(p,r*.25,PI,TAU,14,Color(color.lightened(.3),alpha*.7),1.5,true)
  elif id=="sand":
-  for i in range(8):
-   var p=Vector2(-r+i*r*.25,sin(i*3+t*9)*r*.25)
-   c.draw_colored_polygon(PackedVector2Array([p+Vector2(-9,8),p+Vector2(2,-19-i%3*6),p+Vector2(10,9)]),Color(.22,.24,.29,alpha))
-   c.draw_line(p+Vector2(2,-19-i%3*6),p+Vector2(10,9),Color(.62,.71,.76,alpha),1.5)
+  # Sand is ochre/brown particulate matter, not the old grey polygon spikes.
+  # A moving, layered stream with turbulent grains and an optional spiral shell.
+  var palette=[
+   Color(0.32,0.20,0.10,alpha*0.85),
+   Color(0.63,0.39,0.18,alpha*0.92),
+   Color(0.82,0.59,0.29,alpha),
+   Color(0.95,0.77,0.41,alpha*0.92)
+  ]
+  var rise:float=r*0.18
+  for lane in range(4):
+   var path=PackedVector2Array()
+   for i in range(16):
+    var k=float(i)/15.0
+    var x=-r*1.08+k*r*2.18
+    var y=sin(k*6.8+t*7.5+float(lane)*0.78)*r*0.18+float(lane-2)*rise
+    path.append(Vector2(x,y))
+   c.draw_polyline(path,Color(palette[lane],alpha*(0.34+float(lane)*0.08)),2.5+float(lane),true)
+  for i in range(42):
+   var lane:int=i%4
+   var u:float=fposmod(float(i)*0.129+t*(0.85+float(lane)*0.10),1.0)
+   var x:float=-r*1.10+u*r*2.2
+   var y:float=sin(u*7.2+t*8.0+float(i)*1.34)*r*(0.14+float(lane)*0.025)+float(lane-2)*rise
+   var dust:float=maxf(1.0,r*(0.027+float(i%5)*0.012))
+   var grain:Color=palette[(i+lane)%4]
+   c.draw_circle(Vector2(x,y),dust,grain)
+   if i%7==0:c.draw_circle(Vector2(x-3.0,y-2.0),dust*0.47,Color(1.0,0.87,0.58,alpha*0.8))
+
  else:
   for i in range(3):c.draw_arc(Vector2.ZERO,r*(.4+i*.22),t*9+i*1.7,t*9+i*1.7+PI*1.2,24,Color(white,alpha*(1-i*.2)),2,true)
  c.draw_set_transform(Vector2.ZERO)
