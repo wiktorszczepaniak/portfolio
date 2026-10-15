@@ -299,10 +299,18 @@ func _draw() -> void:
 func _hero_id()->String:
  var alpha=get_node_or_null("/root/AlphaProgress")
  return str(alpha.selected) if alpha!=null else "naruto"
-func _class_art(hero:String)->String:
+func _class_art(hero:String,id:String="")->String:
  match hero:
-  "sasuke":return "blast"
-  "kakashi":return "rasengan"
+  "sasuke":
+   if id=="rasengan":return "lightning"
+   if id=="naruto_rendan":return "hit"
+   if id=="kuchiyose":return "smoke"
+   return "fire"
+  "kakashi":
+   if id=="gama_teppo":return "water_dragon"
+   if id=="kunai_kibaku":return "sand"
+   if id=="kuchiyose":return "smoke"
+   return "lightning"
   "rock_lee":return "lee_air"
   "neji":return "gentle_palm"
   "gaara":return "sand"
@@ -323,7 +331,7 @@ func _class_cast(c:Dictionary,hero:String)->bool:
   power*=0.92
   counter_time=maxf(counter_time,0.65)
  var level:int=int(c.lv)
- var art:String=_class_art(hero)
+ var art:String=_class_art(hero,id)
  var extra_hits:int=2 if level>=3 else 1
  match id:
   "rasengan":
