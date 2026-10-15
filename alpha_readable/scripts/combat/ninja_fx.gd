@@ -1,6 +1,6 @@
 extends RefCounted
 ## Resolution-independent effects; no chroma keys or opaque mattes.
-const IDS=["rasengan","rasenshuriken","water","water_dragon","wind","hit","blast","slam","sand","poison","chakra","smoke","chakra_arm"]
+const IDS=["rasengan","rasenshuriken","water","water_dragon","wind","hit","blast","slam","sand","poison","chakra","smoke","chakra_arm","lee_air","gentle_palm"]
 static func paint(c:CanvasItem,id:String,at:Vector2,width:float,t:float,angle:float=0.0,alpha:float=1.0) -> void:
  c.draw_set_transform(at,angle)
  var r=width*0.45
