@@ -273,7 +273,7 @@
         "key": "9876_0",
         "x": 0,
         "y": 0,
-        "ticks": 2,
+        "ticks": 5,
         "flip_h": false,
         "flip_v": false
       },
@@ -281,8 +281,8 @@
         "key": "9876_0",
         "x": 0,
         "y": 0,
-        "ticks": 2,
-        "flip_h": true,
+        "ticks": 5,
+        "flip_h": false,
         "flip_v": false
       }
     ],
