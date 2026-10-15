@@ -7,7 +7,7 @@ patterns = (root / 'scripts/bullet_patterns.gd').read_text()
 scene = (root / 'scenes/main.tscn').read_text()
 assert 'res://scripts/boss_rush.gd' in scene
 assert 'res://scenes/main.tscn' in (root / 'project.godot').read_text()
-for p in re.findall(r'"(res://[^"%]+\\.(?:gd|tscn))"', script + scene):
+for p in re.findall(r'"(res://[^"%]+\.(?:gd|tscn))"', script + scene):
     assert (root / p[6:]).exists(), p
 for keyword in ('run_logic_qa','QA_LOGIC_PASS','QA_SMOKE_PASS','transform_stage += 1',
                 'clone_shot_cd = 0.50','phase_shift(2)','phase_shift(3)',
