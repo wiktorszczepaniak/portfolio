@@ -1,6 +1,6 @@
 extends RefCounted
 ## Resolution-independent effects; no chroma keys or opaque mattes.
-const IDS=["rasengan","rasenshuriken","water","water_dragon","wind","hit","blast","slam","sand","poison","chakra","smoke","chakra_arm","lee_air","gentle_palm"]
+const IDS=["rasengan","rasenshuriken","water","water_dragon","wind","hit","blast","slam","sand","poison","chakra","smoke","chakra_arm","lee_air","gentle_palm","fire","lightning"]
 static func paint(c:CanvasItem,id:String,at:Vector2,width:float,t:float,angle:float=0.0,alpha:float=1.0) -> void:
  c.draw_set_transform(at,angle)
  var r=width*0.45
@@ -95,6 +95,43 @@ static func paint(c:CanvasItem,id:String,at:Vector2,width:float,t:float,angle:fl
    var u:float=float(i)/6.0
    var p:Vector2=Vector2.from_angle(PI*(1.22+u*.68)+t*1.3)*r*(0.4+u*.23)
    c.draw_circle(p,1.1+float(i%3),Color(inner,alpha*(0.42+u*.45)))
+ elif id=="lightning":
+  # Chidori / Raikiri: branching electric filaments and saturated cobalt core.
+  var phase:float=floor(t*33.0)
+  var glow:Color=Color(0.12,0.43,0.95,alpha*0.42)
+  var white_bolt:Color=Color(0.86,0.97,1.0,alpha)
+  for branch in range(5):
+   var line=PackedVector2Array()
+   for i in range(9):
+    var q:float=float(i)/8.0
+    var offset:float=sin(float(i*7+branch*11)+phase*1.73)*r*(0.09+float(branch%2)*.03)
+    line.append(Vector2((-0.98+q*1.96)*r,offset+(float(branch)-2.0)*r*0.115))
+   c.draw_polyline(line,glow,9.0-float(branch)*0.7,true)
+   c.draw_polyline(line,Color(0.27,0.73,1.0,alpha),3.5,true)
+   if branch%2==0:c.draw_polyline(line,white_bolt,1.2,true)
+  for spark in range(9):
+   var q:float=float(spark)/8.0
+   var p:Vector2=Vector2((-0.9+q*1.8)*r,sin(q*37.0+phase)*r*.17)
+   c.draw_circle(p,1.6+float(spark%3),Color(0.65,0.92,1.0,alpha*.8))
+ elif id=="fire":
+  # Katon: orange hot-core flame tongues, embers and dark red outer silhouette.
+  var colors=[Color(0.49,0.08,0.02,alpha*.75),Color(0.89,0.19,0.02,alpha*.86),
+   Color(1.0,0.47,0.05,alpha),Color(1.0,0.84,0.21,alpha*.96)]
+  for tongue in range(7):
+   var q:float=float(tongue)/6.0
+   var x:float=(-0.72+q*1.40)*r
+   var height:float=r*(0.56+0.18*sin(t*21.0+float(tongue)*1.6))
+   var skew:float=sin(t*11.0+float(tongue)*2.9)*r*.15
+   for layer in range(3):
+    var width:float=r*(.20-float(layer)*.044)
+    var top:Vector2=Vector2(x+skew*(1.0-float(layer)*.19),-height*(1.0-float(layer)*.23))
+    var bot:Vector2=Vector2(x,height*.48)
+    c.draw_colored_polygon(PackedVector2Array([bot+Vector2(-width,0),top,bot+Vector2(width,0)]),colors[(tongue+layer)%4])
+  for ember in range(10):
+   var q:float=float(ember)/10.0
+   var p:Vector2=Vector2((-1.0+2.0*q)*r+sin(float(ember)*5.3+t*11.0)*r*.13,
+    -r*.43-fposmod(t*(0.8+q)+q,1.0)*r*.65)
+   c.draw_circle(p,1.5+float(ember%3),colors[3])
  elif id=="sand":
   # Sand is ochre/brown particulate matter, not the old grey polygon spikes.
   # A moving, layered stream with turbulent grains and an optional spiral shell.
