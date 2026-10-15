@@ -66,5 +66,5 @@ func _test()->void:
   check(alpha.buy(0,5),"signature "+hero)
   check(alpha.buy(0,6),"apex "+hero)
  check(registered==36,"36 runtime-validated class signatures")
- print("ALPHA_ABILITIES_QA: %d checks; %d failures"%(assertions,failures.size()))
+ print("ALPHA_ABILITIES_QA: %d checks; %d failures"%[assertions,failures.size()])
  quit(1 if failures.size()>0 else 0)
