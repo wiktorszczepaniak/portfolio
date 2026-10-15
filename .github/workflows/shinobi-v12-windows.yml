@@ -87,6 +87,12 @@ jobs:
           $ErrorActionPreference = 'Stop'
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_v02_melee.gd *> logs/qa_alpha_v02_melee.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_v02_melee.txt; throw 'Alpha P2 melee QA failed' }
+      - name: ALPHA v0.2 P9 Dojo training mode QA
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_v02_dojo.gd *> logs/qa_alpha_v02_dojo.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_v02_dojo.txt; throw 'Alpha Dojo regression failed' }
       - name: Windows software-render screenshots
         continue-on-error: true
         shell: pwsh
