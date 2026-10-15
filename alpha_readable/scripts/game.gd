@@ -2,6 +2,7 @@ extends Node2D
 const CleanFX=preload("res://scripts/combat/ninja_fx.gd")
 const AlphaSystem=preload("res://scripts/core/alpha_progress.gd")
 const AlphaAbilities=preload("res://scripts/combat/alpha_abilities.gd")
+const AlphaMelee=preload("res://scripts/combat/alpha_melee.gd")
 const Pickups=preload("res://scripts/core/pickup_manager.gd")
 const SpawnDirector=preload("res://scripts/core/enemy_spawn_director.gd")
 ## NEW Godot gameplay architecture, not a port of the abandoned Go/Win32 code.
@@ -132,6 +133,9 @@ var invulnerable := 0.0
 var attack_timer := 0.0
 var rasengan_timer := 0.0
 var kunai_sequence := 0
+var melee_combo:int=-1
+var melee_cast:Dictionary={}
+var melee_64:Dictionary={}
 var oiroke_cd := 10.0
 var oiroke_time := 0.0
 var oiroke_hits: Dictionary = {}
@@ -471,6 +475,9 @@ func _start(seed_value:int=0) -> void:
     attack_timer=0
     rasengan_timer=1.0
     kunai_sequence=0
+    melee_combo=-1
+    melee_cast.clear()
+    melee_64.clear()
     oiroke_cd=12.0
     oiroke_time=0.0
     oiroke_hits.clear()
@@ -730,9 +737,13 @@ func _update_player(dt:float) -> void:
     player.dashing = dash_timer > 0.0
     player.tick(visual_delta)
     clone_cooldown=maxf(0.0,clone_cooldown-dt)
+    AlphaMelee.tick(self,dt)
     attack_timer-=dt
     if attack_timer<=0:
-        _fire_kunai()
+        if AlphaMelee.uses_melee(alpha.selected):
+            AlphaMelee.begin(self)
+        else:
+            _fire_kunai()
         attack_timer=maxf(0.12,0.54-float(upgrades["kunai_rapid"])*0.07)*TRANSFORM_RATE_BOOST[player_form]*alpha.attack_interval_multiplier()*AlphaAbilities.attack_rate(alpha.selected)
 
 func _transform(form:int) -> void:
@@ -1003,6 +1014,9 @@ func _closest_target(at:Vector2,max_distance:float)->Dictionary:
 func _alpha_proc() -> void:
     var tree:int=alpha.current_signature()
     if tree<0:return
+    if alpha.selected=="neji" and tree==1 and alpha.special_unlocked(1):
+        if AlphaMelee.start_palms(self,alpha.apex_unlocked(1)):
+            return
     var fork:int=-1 if alpha.invested(tree,1) else 1 if alpha.invested(tree,2) else 0
     var focus_power:float=alpha.damage_multiplier()*(1.0+0.035*float(alpha.count_focus(tree)))
     if AlphaAbilities.activate(self,alpha.selected,tree,alpha.apex_unlocked(tree),focus_power,fork):
@@ -1998,6 +2012,10 @@ func _draw() -> void:
         draw_texture_rect(frame,Rect2(tornado["pos"]-Vector2.ONE*r/2,Vector2.ONE*r),false)
 
     for v in fx:
+        if str(v.get("kind","")) in ["lee_air","gentle_palm"]:
+            var fade:float=clampf(float(v["life"])/maxf(0.01,float(v["max"])),0.0,1.0)
+            CleanFX.paint(self,str(v["kind"]),Vector2(v["pos"]),float(v.get("radius",70.0))*2.0,clock,float(v.get("direction",1.0))*0.08,fade)
+            continue
         if v.kind in ["impact","rasen_blast","smoke_blast","chakra_blast","futon_blast","melee_rasengan","sand_blast"]:
             var progress=1.0-float(v.life)/maxf(.01,float(v.max))
             var clean_art="hit" if v.kind=="impact" else "wind" if v.kind=="futon_blast" else "sand" if v.kind=="sand_blast" else "blast"
