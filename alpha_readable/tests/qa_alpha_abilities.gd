@@ -23,13 +23,16 @@ class MockBattle:
  ]
  var build=MockBuild.new()
  var hits:=0
+ var total_damage:=0.0
+ var max_radius:=0.0
  var effects:=0
  var sounds:=0
  var summons:=0
  func _closest_target(_at:Vector2,_range:float)->Dictionary:
   return enemies[0] if not enemies.is_empty() else {}
  func _aoe_damage(_at:Vector2,_radius:float,power:float)->void:
-  if power>0.0:hits+=1
+  if power>0.0:
+   hits+=1;total_damage+=power;max_radius=maxf(max_radius,_radius)
  func _add_blast(_at:Vector2,_radius:float,_kind:String="chakra_blast")->void:effects+=1
  func _sfx(_id:String)->void:sounds+=1
  func _spawn_clones()->void:summons+=1
@@ -58,6 +61,12 @@ func _test()->void:
    var advanced=MockBattle.new()
    check(Moves.activate(advanced,hero,tree,true,1.3),"apex cast "+hero+"/"+str(tree))
    check(advanced.hits>=game.hits or advanced.summons>=game.summons,"apex doesn't remove attacks "+hero+"/"+str(tree))
+   var left=MockBattle.new()
+   var right=MockBattle.new()
+   check(Moves.activate(left,hero,tree,false,1.0,-1),"left branch cast "+hero+"/"+str(tree))
+   check(Moves.activate(right,hero,tree,false,1.0,1),"right branch cast "+hero+"/"+str(tree))
+   check(left.total_damage>=right.total_damage,"left branch favors power "+hero+"/"+str(tree))
+   check(right.max_radius>=left.max_radius,"right branch favors control radius "+hero+"/"+str(tree))
   alpha.reset_run();alpha.level_awarded=20;alpha.points=40
   check(alpha.buy(0,0),"root "+hero)
   check(alpha.buy(0,1),"left fork "+hero)
