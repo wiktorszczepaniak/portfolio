@@ -1,5 +1,6 @@
 extends Control
 const NinjaTheme=preload("res://scripts/ninja_theme.gd")
+const Registry=preload("res://scripts/core/jutsu_registry.gd")
 ## Resolution-independent parchment UI. All text stays native and readable.
 const INK := Color("141d2a")
 const PAPER := Color("f1dfb7")
@@ -39,6 +40,14 @@ func _ready() -> void:
         var m = JSON.parse_string(FileAccess.get_file_as_string("res://assets/mugen/%s/manifest.json" % name))
         var key: String = m["actions"]["0"][0]["key"]
         icons[name] = g._read_png("res://assets/mugen/%s/%s" % [name,m["sprites"][key]["file"]])
+        # Source-matched MUGEN attack poses for class scrolls; genuine skill-specific
+        # elemental atlases remain P4 (tracked as not yet implemented).
+        for action_id in ["200","210","220"]:
+            if not m["actions"].has(action_id) or m["actions"][action_id].is_empty():continue
+            var attack_key:String=str(m["actions"][action_id][0]["key"])
+            var frame_info:Dictionary=m["sprites"].get(attack_key,{})
+            if frame_info.has("file"):
+                icons[name+":action:"+action_id]=g._read_png("res://assets/mugen/%s/%s"%[name,frame_info["file"]])
     icons["kunai"] = g.item_art.get("kunai")
     icons["rasengan"] = g.rasengan_frames[0] if not g.rasengan_frames.is_empty() else null
     icons["rasenshuriken"] = g.shuriken_frames[0] if not g.shuriken_frames.is_empty() else null
@@ -455,6 +464,21 @@ func _scroll(card: Dictionary, index: int, hot: bool) -> void:
             draw_line(Vector2(x+4,y),Vector2(x+4,y+15),Color("f1d492"),2)
 
 func _icon(key: String, at: Vector2, color: Color) -> void:
+    # Never show Naruto's Rasengan/clone icon for another character's technique.
+    var hero_id:String=str(g.alpha.selected)
+    var basic:String=key.get_slice(":",0)
+    if hero_id!="naruto" and Registry.DATA.has(basic):
+        var pack:String=str(g.alpha.hero()["pack"])
+        var pose:String="200" if basic in ["rasengan","naruto_rendan","henge_feint"] else "210" if basic in ["fuma_shuriken","shuriken_barrage","kunai_kibaku"] else "220"
+        var art_key:String=pack+":action:"+pose
+        if icons.has(art_key) and icons[art_key]!=null:
+            var art:Texture2D=icons[art_key]
+            var size:Vector2=art.get_size()
+            var scale:float=minf(105.0/maxf(1.0,size.x),105.0/maxf(1.0,size.y))
+            var dimensions:Vector2=size*scale
+            draw_texture_rect(art,Rect2(at-dimensions*0.5,dimensions),false)
+            draw_arc(at,59.0,-PI*.86,PI*.14,36,Color(color,0.62),2.0,true)
+            return
     if icons.has(key) and icons[key]!=null and key not in ["kunai"]:
         var icon_tex:Texture2D=icons[key]
         var width:float=85.0 if key=="oiroke" else 115.0 if key in ["naruto_rendan","melee_rasengan","melee_combo"] else 88.0
