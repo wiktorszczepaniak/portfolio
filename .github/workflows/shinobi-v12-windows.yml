@@ -3,7 +3,7 @@ name: Shinobi V12 Godot 4.5.2 Windows QA
 on:
   workflow_dispatch:
   push:
-    branches: ['build/shinobi-v12-art-20261014', 'build/shinobi-v12-finish-20261015']
+    branches: ['build/shinobi-alpha-20261015']
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,7 @@ jobs:
           } finally { $out.Dispose() }
           Expand-Archive source.zip -DestinationPath . -Force
           if (Test-Path overlay) { Copy-Item overlay/* project/ -Recurse -Force }
+          if (Test-Path alpha_overlay.zip) { Expand-Archive alpha_overlay.zip -DestinationPath . -Force }
       - uses: lihop/setup-godot@v3
         with:
           version: 4.5.2-stable
@@ -56,6 +57,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'QA V10.5 failed' }
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_v12.gd *> logs/qa_v12.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA V12 failed' }
+      - name: ALPHA character and 252-talent QA
+        shell: pwsh
+        run: |
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha.gd *> logs/qa_alpha.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha.txt; throw 'ALPHA QA failed' }
       - name: Windows software-render screenshots
         continue-on-error: true
         shell: pwsh
