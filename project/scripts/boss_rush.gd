@@ -118,14 +118,39 @@ func read_sprite_pack() -> Dictionary:
 	return result
 
 func load_audio() -> void:
+	var packed: Dictionary = read_audio_pack()
 	for name in ["rasengan", "dash", "transform", "water_cast", "water_hit", "boss_tell", "impact", "parry", "clone_smoke", "swing", "chakra_charge", "boss", "pickup"]:
 		var path := "res://assets/audio/%s.wav" % name
+		var stream: AudioStream = null
 		if ResourceLoader.exists(path):
+			stream = load(path)
+		elif packed.has(name):
+			stream = packed[name]
+		if stream != null:
 			var p := AudioStreamPlayer.new()
-			p.stream = load(path)
+			p.stream = stream
 			p.volume_db = -10.0
 			add_child(p)
 			audio_players[name] = p
+
+func read_audio_pack() -> Dictionary:
+	var result: Dictionary = {}
+	var archive := "res://assets/packed_audio.b64"
+	if not FileAccess.file_exists(archive): return result
+	var raw := Marshalls.base64_to_raw(FileAccess.get_file_as_string(archive).strip_edges())
+	var path := "user://boss_rush_audio_pack.zip"
+	var writer := FileAccess.open(path, FileAccess.WRITE)
+	if writer == null: return result
+	writer.store_buffer(raw)
+	writer.close()
+	var zipper := ZIPReader.new()
+	if zipper.open(path) != OK: return result
+	for entry in zipper.get_files():
+		if entry.ends_with(".ogg"):
+			var key := entry.get_file().get_basename()
+			result[key] = AudioStreamOggVorbis.load_from_buffer(zipper.read_file(entry))
+	zipper.close()
+	return result
 
 func sfx(name: String, pitch: float = 1.0) -> void:
 	if audio_players.has(name):
