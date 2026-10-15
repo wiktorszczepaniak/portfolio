@@ -63,7 +63,7 @@ jobs:
         run: |
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha.gd *> logs/qa_alpha.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha.txt; throw 'ALPHA QA failed' }
-      - name: ALPHA gameplay ability QA (36 signatures, six basic styles, branch exclusion)
+      - name: ALPHA gameplay ability QA (60 signatures, six basic styles, branch exclusion)
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
