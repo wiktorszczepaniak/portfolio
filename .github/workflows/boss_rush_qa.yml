@@ -84,6 +84,13 @@ jobs:
           & $godot --headless --path project --export-release 'Windows Desktop' $exportPath
           if ($LASTEXITCODE -ne 0) { throw 'Godot export returned non-zero exit code' }
           if (!(Test-Path $exportPath)) { throw 'No exported Windows EXE' }
+      - name: Verify exported standalone Windows executable
+        shell: pwsh
+        run: |
+          $exportPath = Join-Path (Resolve-Path 'build').Path 'ShinobiBossRush.exe'
+          & $exportPath --headless --quit-after 480 -- --qa-smoke 2>&1 | Tee-Object -FilePath win_exe_smoke.log
+          if ($LASTEXITCODE -ne 0) { throw 'Standalone exe returned non-zero status' }
+          if (-not (Select-String -Path win_exe_smoke.log -Pattern 'QA_SMOKE_PASS' -Quiet)) { throw 'Standalone exe could not run encounter' }
       - name: Upload Windows build and QA log
         if: always()
         uses: actions/upload-artifact@v4
@@ -93,4 +100,5 @@ jobs:
             build/ShinobiBossRush.exe
             win_smoke.log
             win_logic.log
+            win_exe_smoke.log
           if-no-files-found: ignore
