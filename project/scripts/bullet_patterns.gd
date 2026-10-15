@@ -19,7 +19,9 @@ static func fan(origin: Vector2, target: Vector2, count: int, spread: float, spe
 	return result
 
 static func aimed(origin: Vector2, target: Vector2, speed: float, tint: Color, size: float = 8.0) -> Array[Dictionary]:
-	return [_shot(origin, (target - origin).normalized() * speed, tint, size)]
+	var result: Array[Dictionary] = []
+	result.append(_shot(origin, (target - origin).normalized() * speed, tint, size))
+	return result
 
 static func spiral(origin: Vector2, spokes: int, turns: float, speed: float, tint: Color, size: float = 7.0) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
