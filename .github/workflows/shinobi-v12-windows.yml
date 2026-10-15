@@ -3,7 +3,7 @@ name: Shinobi V12 Godot 4.5.2 Windows QA
 on:
   workflow_dispatch:
   push:
-    branches: ['build/shinobi-alpha-20261015', 'build/shinobi-alpha-final-20261015']
+    branches: ['build/shinobi-alpha-v02-rework-20261015']
 permissions:
   contents: read
 jobs:
@@ -75,6 +75,12 @@ jobs:
           $ErrorActionPreference = 'Stop'
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_class_jutsu.gd *> logs/qa_alpha_class_jutsu.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_class_jutsu.txt; throw 'ALPHA class jutsu QA failed' }
+      - name: Alpha v0.2 P1 fixed-step x5 + menu + Sasuke & Gaara regression
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_v02_p1.gd *> logs/qa_alpha_v02_p1.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_v02_p1.txt; throw 'Alpha v0.2 P1 regression failed' }
       - name: Windows software-render screenshots
         continue-on-error: true
         shell: pwsh
