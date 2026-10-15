@@ -1,5 +1,5 @@
 extends RefCounted
-## Six genuinely different playstyles and 36 triggered tree signatures.
+## Six class playstyles and 60 tree signatures (some still share core combat patterns).
 ## All attack forms use the existing capped FX, AoE and collision machinery.
 const PATTERNS={
  "naruto":["nova","summon","fan","ring","chain","guard","ring","fan","pierce","guard"],
