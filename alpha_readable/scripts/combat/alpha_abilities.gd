@@ -20,7 +20,7 @@ const SFX={
 static func ability_type(hero:String,tree:int)->String:
  if not PATTERNS.has(hero) or tree<0 or tree>=6:return ""
  return str(PATTERNS[hero][tree])
-static func activate(g:Node,hero:String,tree:int,apex:bool,power:float)->bool:
+static func activate(g,hero:String,tree:int,apex:bool,power:float)->bool:
  var pattern:String=ability_type(hero,tree)
  if pattern.is_empty():return false
  var mult:float=(1.44 if apex else 1.0)*maxf(0.7,power)
