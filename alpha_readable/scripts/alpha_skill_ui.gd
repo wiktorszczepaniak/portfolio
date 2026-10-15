@@ -2,6 +2,7 @@ extends Control
 ## Full-screen branching skill constellation, not a static mockup.
 ## Every node is clickable and validates parent/points in AlphaProgress.
 const NinjaTheme=preload("res://scripts/ninja_theme.gd")
+const Moves=preload("res://scripts/combat/alpha_abilities.gd")
 const INK=Color("15232c")
 const DARK=Color("09151e")
 const GOLD=Color("dfb36e")
@@ -90,6 +91,10 @@ func _draw()->void:
   _center(alpha.tree_name(t),Vector2(r.get_center().x,121),13,PAPER if active else Color("b7c6c5"),title_font)
   _center("%d / 7"%count,Vector2(r.get_center().x,142),11,GOLD if active else Color("8c9da1"),mono_font)
  var active_tree:int=alpha.tree_tab
+ inspected=-1
+ for hover_index in range(7):
+  if _card(hover_index).has_point(cursor):inspected=hover_index
+ _draw_compendium(active_tree)
  var root_color:Color=Color("5e7b9b")
  for edge in PARENTS:
   var a:int=edge[0];var b:int=edge[1]
@@ -116,3 +121,55 @@ func _draw()->void:
   _center(str(n+1),ring_pos+Vector2(0,5),10,DARK,mono_font)
  _center("ODNOGI: 2 WYBORY  /  2 ROZWINIĘCIA  /  FUZJA  /  TECHNIKA LEGENDARNA",Vector2(640,693),12,Color("a3aea9"),mono_font)
  _text("1–6 ZMIEŃ DRZEWKO    •    T / ESC ZAMKNIJ",Vector2(28,706),10,Color("849797"),mono_font)
+
+const ABILITY_DESCRIPTIONS={
+ "nova":["ROZBŁYSK CHAKRY","Eksplozja w punkcie trafienia","Dodatkowe fale i obrażenia"],
+ "fan":["ROZPROSZENIE","Pięć technik w szerokim stożku","Szerokość i skuteczność rosną"],
+ "pierce":["PRZEBICIE","Seria uderzeń wzdłuż jednej linii","Przełamuje zwarte grupy ninja"],
+ "ring":["OBRÓT OBRONNY","Osiem ciosów wokół bohatera","Okno nietykalności i zasięg"],
+ "chain":["ŁAŃCUCH UDERZEŃ","Technika przeskakuje między celami","Kolejny cel przy legendarnej"],
+ "guard":["TARCZA CHAKRY","Krótka ochrona i kontratak","Leczenie i dłuższa ochrona"],
+ "summon":["WEZWANIE WSPARCIA","Atak wspierających wojowników","Klon lub wsparcie obszarowe"],
+ "suppress":["PRZERWANIE JUTSU","Powstrzymuje ataki grupy przeciwników","Dłuższe ogłuszenie i presja"]
+}
+const NODE_HINTS=[
+ ["PODSTAWA","+6,5% mocy ofensywnej","Działa także w walce z bossem"],
+ ["TEMPO","-3,5% czasu między atakami","Szybsze kombosy i częstsze jutsu"],
+ ["WYTRZYMAŁOŚĆ","Zmniejsza otrzymywany DMG","Zwiększa szanse na kontratak"],
+ ["WIELOKROTNOŚĆ","Co 2 talenty dodatkowy pocisk","Wzmacnia obrażenia obszarowe"],
+ ["MOBILNOŚĆ","+3,7% prędkości ruchu","Łatwiej unikać i doskakiwać"],
+ ["SYGNATURA","Odblokuj unikalną technikę","Uaktywnia się podczas walki"],
+ ["APEX","Wersja legendarna techniki","Większy zasięg, moc i kontrola"]
+]
+func _draw_compendium(tree:int)->void:
+ var primary:String=alpha.tree_name(tree)
+ var profile:String=str(alpha.hero()["role"])
+ var ability:String=str(Moves.ability_type(alpha.selected,tree))
+ var labels:Array=ABILITY_DESCRIPTIONS.get(ability,["SYGNATURA","Osobista technika","Wybierz pieczęć"])
+ _panel(Rect2(14,185,244,366),INK,Color(GOLD,.49))
+ _text("ŚCIEŻKA SHINOBI",Vector2(30,217),12,GOLD,mono_font)
+ _text(profile.substr(0,24),Vector2(30,253),11,TEAL,mono_font)
+ _text(primary.substr(0,22),Vector2(30,288),17,PAPER,title_font)
+ draw_line(Vector2(30,300),Vector2(238,300),Color(GOLD,.45),2)
+ _text("TECHNIKA SYGNATURY",Vector2(30,331),11,GOLD,mono_font)
+ _text(str(labels[0]),Vector2(30,358),14,TEAL,title_font)
+ _text(str(labels[1]).substr(0,31),Vector2(30,385),11,PAPER)
+ _text(str(labels[2]).substr(0,31),Vector2(30,405),11,PAPER)
+ _text("PUNKT 6: "+("ODKRYTY" if alpha.special_unlocked(tree) else "ZABLOKOWANY"),Vector2(30,463),10,TEAL if alpha.special_unlocked(tree) else Color("879097"),mono_font)
+ _text("APEX: "+("AKTYWNY" if alpha.apex_unlocked(tree) else "ZABLOKOWANY"),Vector2(30,488),10,GOLD if alpha.apex_unlocked(tree) else Color("879097"),mono_font)
+ _text("ZAWALCZ O SWÓJ STYL",Vector2(30,526),11,GOLD,mono_font)
+ _panel(Rect2(1021,185,244,366),INK,Color(GOLD,.49))
+ var n:int=inspected if inspected>=0 else 5
+ var unlocked:bool=alpha.invested(tree,n)
+ var can:bool=alpha.can_buy(tree,n)
+ var hint:Array=NODE_HINTS[n]
+ _text("PIECZĘĆ TALENTU",Vector2(1037,217),12,GOLD,mono_font)
+ _text("%02d / 07" % (n+1),Vector2(1037,255),25,TEAL,title_font)
+ _text(alpha.node_name(tree,n).substr(0,27),Vector2(1037,285),12,PAPER,title_font)
+ draw_line(Vector2(1037,300),Vector2(1250,300),Color(GOLD,.45),2)
+ _text(str(hint[0]),Vector2(1037,335),14,TEAL,title_font)
+ _text(str(hint[1]).substr(0,32),Vector2(1037,368),11,PAPER)
+ _text(str(hint[2]).substr(0,32),Vector2(1037,389),11,PAPER)
+ _text("KOSZT: %d PKT"%alpha.node_cost(n),Vector2(1037,445),12,GOLD,mono_font)
+ _text("ODBLOKOWANY" if unlocked else "KLIKNIJ ABY ODKRYĆ" if can else "WYMAGANE INNE PIECZĘCIE",Vector2(1037,488),10,TEAL if can or unlocked else Color("879097"),mono_font)
+ _text("LEWA / PRAWA GAŁĄŹ",Vector2(1037,524),10,GOLD,mono_font)
