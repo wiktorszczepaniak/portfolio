@@ -79,6 +79,22 @@ static func paint(c:CanvasItem,id:String,at:Vector2,width:float,t:float,angle:fl
    var color=Color(.23,.61,.39,alpha*.45) if id=="poison" else Color(.8,.87,.91,alpha*.5)
    c.draw_circle(p,r*(.24+sin(i)*.05),color)
    c.draw_arc(p,r*.25,PI,TAU,14,Color(color.lightened(.3),alpha*.7),1.5,true)
+ elif id in ["lee_air","gentle_palm"]:
+  # Near-body trails for taijutsu. These strokes appear only on active contact frames.
+  var green:bool=id=="lee_air"
+  var outer:Color=Color(0.08,0.34,0.12,alpha*0.72) if green else Color(0.36,0.25,0.52,alpha*0.62)
+  var inner:Color=Color(0.40,0.95,0.34,alpha) if green else Color(0.79,0.88,1.0,alpha)
+  var center:Vector2=Vector2.ZERO
+  for k in range(3):
+   var rad:float=r*(0.43+float(k)*0.17)
+   var begin:float=PI*1.17+float(k)*0.14+t*2.3
+   var span:float=PI*(0.68+float(k)*0.03)
+   c.draw_arc(center,rad,begin,begin+span,24,outer,6.5-float(k)*1.3,true)
+   c.draw_arc(center,rad,begin+0.11,begin+span-0.07,24,inner,3.0-float(k)*0.38,true)
+  for i in range(7):
+   var u:float=float(i)/6.0
+   var p:Vector2=Vector2.from_angle(PI*(1.22+u*.68)+t*1.3)*r*(0.4+u*.23)
+   c.draw_circle(p,1.1+float(i%3),Color(inner,alpha*(0.42+u*.45)))
  elif id=="sand":
   # Sand is ochre/brown particulate matter, not the old grey polygon spikes.
   # A moving, layered stream with turbulent grains and an optional spiral shell.
