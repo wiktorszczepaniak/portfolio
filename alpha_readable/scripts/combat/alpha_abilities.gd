@@ -10,7 +10,7 @@ const PATTERNS={
  "gaara":["nova","guard","chain","suppress","fan","ring","suppress","nova","guard","summon"]
 }
 const FX_COLORS={
- "naruto":"chakra_blast","sasuke":"chakra_blast","kakashi":"futon_blast",
+ "naruto":"chakra_blast","sasuke":"fire_blast","kakashi":"lightning_blast",
  "rock_lee":"lee_air","neji":"gentle_palm","gaara":"sand_blast"
 }
 const SFX={
@@ -43,6 +43,8 @@ static func activate(g,hero:String,tree:int,apex:bool,power:float,route:int=0)->
  var direction:Vector2=(at-player_at).normalized()
  if direction.length_squared()<0.01:direction=Vector2.RIGHT
  var art:String=str(FX_COLORS.get(hero,"chakra_blast"))
+ if hero=="sasuke" and tree in [0,1,7,9]:art="lightning_blast"
+ if hero=="kakashi" and tree in [3,4,5,7]:art="sand_blast" if tree==4 else "lightning_blast"
  match pattern:
   "nova":
    g._aoe_damage(at,area*1.50,damage*1.25)
