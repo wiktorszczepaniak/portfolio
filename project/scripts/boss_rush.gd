@@ -70,8 +70,7 @@ func _ready() -> void:
 	if "--qa-logic" in OS.get_cmdline_user_args():
 		run_logic_qa()
 	elif "--qa-smoke" in OS.get_cmdline_user_args():
-		start_battle()
-		demo_mode = true
+		run_smoke_qa()
 	set_process(true)
 	queue_redraw()
 
@@ -255,6 +254,23 @@ func _process(dt: float) -> void:
 	if screen_shake > 0.0:
 		screen_shake = maxf(0.0, screen_shake - 26.0 * delta)
 	queue_redraw()
+
+func run_smoke_qa() -> void:
+	# Execute a deterministic four-second encounter instead of relying on
+	# --quit-after wall-clock timing (headless rendering can run faster).
+	start_battle()
+	player_invuln = 99.0
+	boss_intro = 0.0
+	for i in range(240):
+		tick_battle(1.0 / 60.0)
+	assert(battle_time >= 3.99, "battle simulation did not advance")
+	assert(volley >= 2, "boss attack pattern did not run")
+	assert(hero_frames.has("base") and hero_frames["base"].size() > 0, "Naruto sprites missing")
+	assert(zabuza_frames.size() > 0, "Zabuza sprites missing")
+	print("QA_SMOKE_PASS: four-second encounter, attacks=", volley,
+		" bullets=", bullets.size(), " Naruto frames=", hero_frames["base"].size(),
+		" Zabuza frames=", zabuza_frames.size())
+	get_tree().quit(0)
 
 func run_logic_qa() -> void:
 	# Deterministic mechanics smoke, only activated by --qa-logic.
