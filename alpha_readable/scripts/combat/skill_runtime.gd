@@ -316,6 +316,12 @@ func _class_cast(c:Dictionary,hero:String)->bool:
  var dir:Vector2=c.dir
  var target:Vector2=c.point
  var power:float=float(Registry.DATA[id].damage)*float(c.power)
+ var evo:String=str(c.get("evo",""))
+ var evo_index:int=Registry.DATA[id].get("evolutions",[]).find(evo) if not evo.is_empty() else -1
+ if evo_index==0:power*=1.25
+ elif evo_index==1:
+  power*=0.92
+  counter_time=maxf(counter_time,0.65)
  var level:int=int(c.lv)
  var art:String=_class_art(hero)
  var extra_hits:int=2 if level>=3 else 1
@@ -402,6 +408,12 @@ func _class_close_jutsu(c:Dictionary,hero:String)->bool:
  var dir:Vector2=c.dir
  var lv:int=int(c.lv)
  var power:float=float(Registry.DATA[id].damage)*float(c.power)
+ var evo:String=str(c.get("evo",""))
+ var evo_index:int=Registry.DATA[id].get("evolutions",[]).find(evo) if not evo.is_empty() else -1
+ if evo_index==0:power*=1.25
+ elif evo_index==1:
+  power*=0.92
+  counter_time=maxf(counter_time,0.65)
  var close:Vector2=origin+dir*72.0
  if hero=="rock_lee":
   match id:
