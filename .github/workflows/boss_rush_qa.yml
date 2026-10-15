@@ -1,0 +1,77 @@
+name: Shinobi Boss Rush Alpha - Godot QA
+
+on:
+  push:
+    branches:
+      - game/boss-rush-zabuza-alpha-20261015
+  workflow_dispatch:
+
+jobs:
+  linux-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Godot 4.5.2 Linux
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 --output godot.zip https://github.com/godotengine/godot-builds/releases/download/4.5.2-stable/Godot_v4.5.2-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          mv Godot_v4.5.2-stable_linux.x86_64 godot
+          chmod +x godot
+      - name: Import resources and parse scripts
+        run: ./godot --headless --path project --editor --import --quit
+      - name: Six-second encounter smoke
+        shell: bash
+        run: |
+          set -o pipefail
+          ./godot --headless --path project --quit-after 480 -- --qa-smoke 2>&1 | tee smoke.log
+          grep -q QA_SMOKE_PASS smoke.log
+      - name: Save QA log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: boss-rush-linux-qa
+          path: smoke.log
+          if-no-files-found: ignore
+
+  windows-smoke-export:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Godot 4.5.2 Windows
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri 'https://github.com/godotengine/godot-builds/releases/download/4.5.2-stable/Godot_v4.5.2-stable_win64.exe.zip' -OutFile godot.zip
+          Expand-Archive -Path godot.zip -DestinationPath . -Force
+          Get-ChildItem -Filter '*console.exe' | Select-Object -First 1 | ForEach-Object { $_.FullName } | Out-File godot_path.txt
+      - name: Import and smoke test Windows runtime
+        shell: pwsh
+        run: |
+          $godot = (Get-Content godot_path.txt -Raw).Trim()
+          & $godot --headless --path project --editor --import --quit
+          & $godot --headless --path project --quit-after 480 -- --qa-smoke 2>&1 | Tee-Object -FilePath win_smoke.log
+          if (-not (Select-String -Path win_smoke.log -Pattern 'QA_SMOKE_PASS' -Quiet)) { throw 'Godot smoke did not complete' }
+      - name: Download export templates
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri 'https://github.com/godotengine/godot-builds/releases/download/4.5.2-stable/Godot_v4.5.2-stable_export_templates.tpz' -OutFile export_templates.zip
+          Expand-Archive -Path export_templates.zip -DestinationPath . -Force
+          $dst = Join-Path $env:APPDATA 'Godot/export_templates/4.5.2.stable'
+          New-Item -Path $dst -ItemType Directory -Force | Out-Null
+          Copy-Item -Path 'templates/*' -Destination $dst -Recurse -Force
+      - name: Export standalone Windows EXE
+        shell: pwsh
+        run: |
+          New-Item -Path 'build' -ItemType Directory -Force | Out-Null
+          $godot = (Get-Content godot_path.txt -Raw).Trim()
+          & $godot --headless --path project --export-release 'Windows Desktop' 'build/ShinobiBossRush.exe'
+          if (!(Test-Path 'build/ShinobiBossRush.exe')) { throw 'No exported Windows EXE' }
+      - name: Upload Windows build and QA log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShinobiBossRush-Alpha01-Windows
+          path: |
+            build/ShinobiBossRush.exe
+            win_smoke.log
+          if-no-files-found: ignore
