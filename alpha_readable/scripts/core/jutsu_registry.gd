@@ -1,4 +1,5 @@
 extends RefCounted
+const ClassDescriptions=preload("res://scripts/core/class_jutsu_descriptions.gd")
 const OFFENSIVE = ["rasengan", "naruto_rendan", "fuma_shuriken", "shuriken_barrage", "kunai_kibaku", "kuchiyose", "henge_feint", "gama_teppo"]
 const UTILITY = ["kage_bunshin", "oiroke", "gamakichi_support", "bunshin_decoy"]
 const DATA = {"rasengan": {"name": "RASENGAN", "short": "Rasengan", "desc": "Doskok i uderzenie chakry. II: odrzut. III: większy zasięg.", "cooldowns": [4.4, 5.2], "damage": 80, "startup": 0.24, "active": 0.16, "recovery": 0.32, "art": "rasengan", "evolutions": ["odama", "rasenshuriken"]}, "naruto_rendan": {"name": "NARUTO RENDAN", "short": "Rendan", "desc": "Seria ciosów klonów. II: dodatkowy cios. III: silny finał. Działa bez Rasengana.", "cooldowns": [5.6, 6.4], "damage": 27, "startup": 0.18, "active": 0.8, "recovery": 0.23, "art": "clone", "evolutions": ["nisen", "combo_rush"]}, "fuma_shuriken": {"name": "FŪMA SHURIKEN", "short": "Fūma", "desc": "Przebijające ostrze. II: powrót. III: szerszy tor.", "cooldowns": [3.6, 4.8], "damage": 58, "startup": 0.18, "active": 0.16, "recovery": 0.25, "art": "fuma", "evolutions": ["double_fuma", "blade_orbit"]}, "shuriken_barrage": {"name": "SHURIKEN BARRAGE", "short": "Shurikeny", "desc": "Salwa ostrzy. II: oznaczanie celu. III: większa salwa.", "cooldowns": [3, 3.6], "damage": 22, "startup": 0.12, "active": 0.3, "recovery": 0.2, "art": "shuriken", "evolutions": ["shuriken_rain", "shadow_shuriken"]}, "kunai_kibaku": {"name": "KUNAI + KIBAKU FUDA", "short": "Kibaku Fuda", "desc": "Notka wybuchowa. II: większy obszar. III: szybsza detonacja.", "cooldowns": [4.8, 5.4], "damage": 112, "startup": 0.2, "active": 0.15, "recovery": 0.22, "art": "note", "evolutions": ["chain_blast", "fragment_trap"]}, "kuchiyose": {"name": "KUCHIYOSE: ATAK", "short": "Kuchiyose", "desc": "Żaba ląduje na wrogu. II: druga fala. III: większy zasięg.", "cooldowns": [7, 8.5], "damage": 140, "startup": 0.52, "active": 0.22, "recovery": 0.32, "art": "frog", "evolutions": ["gamabunta", "gamakichi_assault"]}, "henge_feint": {"name": "HENGE: SHURIKEN FEINT", "short": "Henge Feint", "desc": "Shuriken zamienia się w klona za celem. II: kontra. III: wabik. Adaptacja.", "cooldowns": [4.5, 6], "damage": 100, "startup": 0.25, "active": 0.2, "recovery": 0.25, "art": "clone", "evolutions": ["double_feint", "clone_counter"]}, "gama_teppo": {"name": "FŪTON: GAMA TEPPŌ", "short": "Gama Teppō", "desc": "Żaba i fala wody/wiatru. II: podwójny strumień. III: odrzut.", "cooldowns": [5.8, 7.2], "damage": 28, "startup": 0.48, "active": 0.75, "recovery": 0.3, "art": "water", "evolutions": ["suiton_wave", "futon_wave"]}, "kage_bunshin": {"name": "KAGE BUNSHIN", "short": "Kage Bunshin", "desc": "Klony wspierają ataki; synergia z Rasenganem i Rendan.", "cooldowns": [18, 19], "art": "clone"}, "oiroke": {"name": "OIROKE NO JUTSU", "short": "Oiroke No Jutsu", "desc": "Przemiana i para. Rani wrogów i przerywa podatne ataki bossa.", "cooldowns": [17, 18], "art": "oiroke"}, "gamakichi_support": {"name": "GAMAKICHI: OCHRONA", "short": "Gamakichi: Ochrona", "desc": "Defensywna żaba pochłania pociski i zmniejsza obrażenia.", "cooldowns": [19, 20], "art": "frog"}, "bunshin_decoy": {"name": "BUNSHIN DECOY", "short": "Bunshin Decoy", "desc": "Wabik odciąga wrogów i celowanie bossa; okno kontry.", "cooldowns": [14, 16], "art": "clone"}}
@@ -36,9 +37,9 @@ const CLASS_NAMES = {
  "rock_lee": {
   "rasengan": "OMOTE RENGE",
   "naruto_rendan": "KONOHA SENPŪ",
-  "fuma_shuriken": "OSTRZA TAIJUTSU",
-  "shuriken_barrage": "LOTOS SZYBKOŚCI",
-  "kunai_kibaku": "MOCNY PODMUCH",
+  "fuma_shuriken": "KONOHA REPPŪ",
+  "shuriken_barrage": "KONOHA DAI SENPŪ",
+  "kunai_kibaku": "KONOHA SHŌFŪ",
   "kuchiyose": "DYNAMIC ENTRY",
   "henge_feint": "DRUNKEN FEINT",
   "gama_teppo": "URA RENGE",
@@ -50,11 +51,11 @@ const CLASS_NAMES = {
  "neji": {
   "rasengan": "HAKKE KŪSHŌ",
   "naruto_rendan": "HAKKE 64 PALMS",
-  "fuma_shuriken": "BIAŁE SHURIKENY",
+  "fuma_shuriken": "JŪKEN: TENKETSU",
   "shuriken_barrage": "JUUKEN: SERIA",
-  "kunai_kibaku": "KAITEN: FALA",
+  "kunai_kibaku": "HAKKE KAITEN",
   "kuchiyose": "HAKKE KŪHEKISHŌ",
-  "henge_feint": "BYAKUGAN FEINT",
+  "henge_feint": "BYAKUGAN COUNTER",
   "gama_teppo": "HAKKE: WIR",
   "kage_bunshin": "BIAŁE OKO",
   "oiroke": "KAITEN: KULA",
@@ -90,7 +91,7 @@ static func cards() -> Dictionary:
   d["name"]=hero_jutsu_name(str(id))
   if Engine.get_main_loop() is SceneTree:
    var alpha=(Engine.get_main_loop() as SceneTree).root.get_node_or_null("AlphaProgress")
-   if alpha!=null and alpha.selected!="naruto":d["desc"]="Technika %s. Awans na II/III wzmacnia cios, następnie wybierasz ewolucję."%alpha.hero()["name"]
+   if alpha!=null and alpha.selected!="naruto":d["desc"]=str(ClassDescriptions.DATA.get(str(alpha.selected),{}).get(id,d["desc"]))
   d.merge({"tier":1 if id in OFFENSIVE else 2,"max":3,"kind":"offensive" if id in OFFENSIVE else "utility"});out[id]=d
   for e in d.get("evolutions",[]):out[id+":"+e]={"name":EVOLUTIONS[e][0],"desc":EVOLUTIONS[e][1],"tier":3,"max":1,"kind":"evolution","art":d.art}
  for id in PASSIVES:out[id]={"name":PASSIVES[id][0],"desc":PASSIVES[id][1],"tier":0,"max":PASSIVES[id][2],"kind":"passive"}
