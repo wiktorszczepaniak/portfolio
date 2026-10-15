@@ -528,7 +528,11 @@ func _forms() -> void:
         var tex:Texture2D=icons[pack]
         var dims=tex.get_size()*minf(1.7,110.0/tex.get_height())
         draw_texture_rect(tex,Rect2(Vector2(r.get_center().x-dims.x/2,r.position.y+28),dims),false)
-        _center(("KYŪBI CLOAK" if i==0 else "SAGE MODE") if g.alpha.selected=="naruto" else ("OFENSYWNE PRZEBUDZENIE" if i==0 else "TAJNA DROGA OBRONY"),r.get_center().x,392,21,INK,title)
+        var path:String="kyubi" if i==0 else "sage"
+        var first:String=g.alpha.awakening_title(path,1)
+        var last:String=g.alpha.awakening_title(path,2)
+        _center(first,r.get_center().x,392,20,INK,title)
+        _center("DALEJ: "+last,r.get_center().x,422,13,RED,mono)
         var description:String=("Szybsza ofensywa. Przy 05:30 KCM: dodatkowe ramiona chakry wspierają ataki." if i==0 else "Frog Kata: zasięg, przełamanie gardy i kontra. Przy 05:30 Sennin Mastery.") if g.alpha.selected=="naruto" else ("Wyzwól ukrytą moc swojego shinobi, by zadać większe obrażenia i walczyć agresywniej." if i==0 else "Zyskuj okna na kontry, niezłomność i większą kontrolę walki.")
         _wrap(description,Rect2(r.position+Vector2(35,190),Vector2(370,100)),16,INK)
         _center("[ %d ] WYBIERZ"%(i+1),r.get_center().x,550,16,RED,mono)
