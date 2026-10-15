@@ -40,7 +40,11 @@ func _gui_input(event:InputEvent) -> void:
 func _draw() -> void:
  if g.build==null:return
  box(Rect2(24,20,510,87),INK);box(Rect2(746,20,510,87),INK)
- text("NARUTO",Vector2(40,45),22,CREAM,title);text(g.build.form_name(),Vector2(178,44),12,GOLD,mono)
+ var alpha=get_node_or_null("/root/AlphaProgress")
+ var full_name:String=str(alpha.hero()["name"]) if alpha!=null else "NARUTO"
+ var words:PackedStringArray=full_name.split(" ")
+ var short_name:String="ROCK LEE" if full_name=="ROCK LEE" else words[words.size()-1]
+ text(short_name,Vector2(40,45),22,CREAM,title);text(g.build.form_name(),Vector2(178,44),12,GOLD,mono)
  text("SASORI / MARIONETKI",Vector2(763,45),20,CREAM,title)
  bar(Rect2(40,58,477,16),g.player_hp/g.build.max_hp(),Color("df7855"));bar(Rect2(763,58,477,16),g.boss.hp/g.boss.max_hp,Color("b44e37"))
  text("HP %d/%d"%[g.player_hp,g.build.max_hp()],Vector2(40,96),11,GOLD,mono);bar(Rect2(169,86,254,8),g.chakra/100,NinjaTheme.CYAN);text("CHAKRA %d"%g.chakra,Vector2(437,96),11,GOLD,mono)
