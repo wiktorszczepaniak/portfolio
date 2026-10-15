@@ -77,7 +77,7 @@ func tick(dt:float) -> void:
  for c in casts.duplicate():
   c.age+=dt
   if not c.active and c.age>=c.startup:c.active=true;activate(c)
-  if c.id=="naruto_rendan" and c.active:
+  if c.id=="naruto_rendan" and _hero_id()=="naruto" and c.active:
    var count=3+int(c.lv)+(2 if c.evo=="nisen" else 0);var spacing=0.11 if c.evo=="combo_rush" else 0.15
    while c.pulses<count and c.age>=float(c.startup)+float(c.pulses)*spacing:
     var point:Vector2=c.point
@@ -114,6 +114,7 @@ func oiroke_points() -> Array[Vector2]:
 func activate(c:Dictionary) -> void:
  var id:String=c.id;var origin:Vector2=c.origin;var point:Vector2=c.point;var dir:Vector2=c.dir;var lv=int(c.lv);var evo:String=c.evo
  var power=float(Registry.DATA[id].damage)*float(c.power);var sage=build.form_branch=="sage" and build.form_stage>0;var rb=1.22 if sage else 1.0
+ if _hero_id()!="naruto" and _class_cast(c,_hero_id()):return
  match id:
   "rasengan":
    if evo=="rasenshuriken":projectile(id,"rasenshuriken",origin+Vector2(0,-30),dir,420,power,31,1.65,{"blast":true,"pierce":1})
@@ -161,7 +162,7 @@ func activate(c:Dictionary) -> void:
    effect("frog",origin-dir*30,125,1.15)
    for i in range(2 if lv>=2 and evo!="suiton_wave" else 1):projectile(id,"water_dragon" if evo=="suiton_wave" else "wind" if evo=="futon_wave" else "water",origin+Vector2(0,-27)+dir*i*38,dir,360 if evo=="futon_wave" else 290 if evo=="suiton_wave" else 265,power*1.8 if evo=="suiton_wave" else power,38 if evo=="suiton_wave" else 19+lv*3,1.7 if evo=="suiton_wave" else 1.3,{"pierce":99,"interval":0.21,"push":22.0 if evo=="suiton_wave" else 17.0 if lv>=3 else 9.0})
    if sage:projectile(id,"wind",origin+Vector2(0,-36),dir,400,power*0.5,40,1.15,{"pierce":99,"interval":0.28})
- if build.form_branch=="kyubi" and build.form_stage==2 and id in ["rasengan","naruto_rendan","kuchiyose"]:effect("chakra_arm",origin+dir*48+Vector2(0,-35),130,0.45);trap(point,0.32,80*render_scale,power*0.2,id,"hit")
+ if _hero_id()=="naruto" and build.form_branch=="kyubi" and build.form_stage==2 and id in ["rasengan","naruto_rendan","kuchiyose"]:effect("chakra_arm",origin+dir*48+Vector2(0,-35),130,0.45);trap(point,0.32,80*render_scale,power*0.2,id,"hit")
  if not assistants.is_empty() and id in ["rasengan","naruto_rendan"]:clone_effect(point-dir*50,dir.x,0.6);trap(point,0.4,70*render_scale,power*0.26,id,"hit")
 func volley(origin:Vector2,point:Vector2,dir:Vector2,lv:int,power:float,evo:String) -> void:
  for i in range(3+lv):
@@ -225,7 +226,7 @@ func utility() -> bool:
   "oiroke":
    oiroke_time=3.0+lv;oiroke_pos=pos;oiroke_tick=0
    for spot in oiroke_points():area(spot,82*render_scale,19*build.power("oiroke"),"oiroke",0.55)
-   host.skill_sound("oiroke_puff.wav")
+   host.skill_sound("oiroke_puff.wav" if _hero_id()=="naruto" else "heavy_hit.wav")
   "gamakichi_support":support_time=3.5+lv;support_charges=4+lv*2;support_pos=pos
   "bunshin_decoy":decoy_pos=pos;decoy_time=3.0+lv;counter_time=2.3
  return true
@@ -285,6 +286,71 @@ func _draw() -> void:
    draw_set_transform(Vector2.ZERO)
  for a in assistants:draw_clone(a.pos,clock,a.facing,0.8)
  if decoy_time>0:draw_clone(decoy_pos,clock,host.skill_facing(),0.5)
- if support_time>0:draw_art("frog",support_pos,110,clock,0,0.9,true)
+ if support_time>0:draw_art("frog" if _hero_id()=="naruto" else _class_art(_hero_id()),support_pos,110,clock,0,0.9,true)
  if oiroke_time>0:
-  for spot in oiroke_points():draw_art("oiroke",spot,65*render_scale,clock,0,1,true)
+  for spot in oiroke_points():draw_art("oiroke" if _hero_id()=="naruto" else _class_art(_hero_id()),spot,65*render_scale,clock,0,1,true)
+
+## Alpha uses actual class-specific effects instead of repurposed Naruto frogs, Oiroke, and Rasengan.
+func _hero_id()->String:
+ var alpha=get_node_or_null("/root/AlphaProgress")
+ return str(alpha.selected) if alpha!=null else "naruto"
+func _class_art(hero:String)->String:
+ match hero:
+  "sasuke":return "blast"
+  "kakashi":return "rasengan"
+  "rock_lee":return "wind"
+  "neji":return "chakra"
+  "gaara":return "sand"
+ return "rasengan"
+func _class_cast(c:Dictionary,hero:String)->bool:
+ var id:String=str(c.id)
+ if id not in ["rasengan","naruto_rendan","kuchiyose","gama_teppo"]:return false
+ var origin:Vector2=c.origin
+ var dir:Vector2=c.dir
+ var target:Vector2=c.point
+ var power:float=float(Registry.DATA[id].damage)*float(c.power)
+ var level:int=int(c.lv)
+ var art:String=_class_art(hero)
+ var extra_hits:int=2 if level>=3 else 1
+ match id:
+  "rasengan":
+   # Sasuke Chidori, Kakashi Raikiri, Lee Omote Renge, Neji Air Palm, Gaara Sand Coffin.
+   if hero in ["sasuke","kakashi","rock_lee"] and mode=="duel":
+    host.skill_dash(dir*130.0,130.0)
+    origin=host.skill_origin()
+    target=origin+dir*105.0
+   effect(art,target+Vector2(0,-28),125.0+level*11.0,0.53,dir.angle())
+   area(target,68.0*render_scale+level*8.0,power*1.15,id,0.25,dir*32.0)
+   if level>=2:trap(target+dir*35.0,0.19,70.0*render_scale,power*0.31,id,art)
+  "naruto_rendan":
+   # Personal multi-hit kata, not the Naruto clone Rendan.
+   host.skill_sound("impact.wav")
+   for n in range(3+extra_hits):
+    var hit_at:Vector2=target+dir*float(n-1)*18.0
+    trap(hit_at,0.04+float(n)*0.13,60.0*render_scale,power*0.44,id,art)
+   effect(art,target+Vector2(0,-28),92,0.55)
+  "kuchiyose":
+   # Character-specific ultimate without the Gamabunta frog sprite.
+   effect(art,target+Vector2(0,-35),225.0,0.72)
+   if hero in ["gaara","sasuke"]:
+    for n in range(3):
+     var at:Vector2=target+Vector2.from_angle(float(n)*TAU/3.0)*67.0
+     trap(at,0.15+0.13*float(n),87.0*render_scale,power*0.51,id,art)
+   elif hero=="kakashi":
+    for n in range(3):
+     var at:Vector2=target+Vector2(float(n-1)*76.0,-19.0)
+     trap(at,0.13+float(n)*0.16,80.0*render_scale,power*0.56,id,art)
+   else:
+    area(target,140.0*render_scale,power*0.86,id,0.38)
+    trap(target,0.24,123.0*render_scale,power*0.47,id,art)
+  "gama_teppo":
+   # Katon / lightning / lotus rush / vacuum palms / desert rain.
+   host.skill_sound("water_cast.wav" if hero=="kakashi" else "throw.wav")
+   var count:int=1+extra_hits+(1 if level>=3 else 0)
+   for n in range(count):
+    var heading:Vector2=dir.rotated((float(n)-float(count-1)*0.5)*0.15)
+    projectile(id,art,origin+Vector2(0,-29),heading,360.0+float(level)*35.0,
+      power*(0.79 if count>2 else 0.98),20.0+float(level)*5.0,1.45,
+      {"pierce":2 if level>=3 else 0,"push":22.0})
+ host.skill_sound("explosion_v8.wav" if hero=="sasuke" else "heavy_hit.wav" if hero=="gaara" else "impact.wav")
+ return true
