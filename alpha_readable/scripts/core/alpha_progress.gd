@@ -1,6 +1,6 @@
 extends Node
 const ExtraTrees=preload("res://scripts/core/alpha_extra_trees.gd")
-## 6 playable MUGEN heroes, 36 branching trees, 252 unique named nodes.
+## 6 playable MUGEN heroes, 60 branching trees, 480 named talent nodes.
 ## Each tree splits after its root, reconverges at signature and apex.
 const HEROES = {
  "naruto": {
