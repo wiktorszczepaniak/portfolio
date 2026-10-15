@@ -1555,13 +1555,13 @@ func _spawn_clones() -> void:
     clone_cooldown=maxf(7.7,20.0-float(upgrades["clones"])*2.2-float(upgrades.get("clone_army",0))*1.2)
     for i in range(2+int(upgrades["clones"])+int(upgrades.get("clone_army",0))):
         var at=player_pos+Vector2.from_angle(TAU*i/maxf(2,2+int(upgrades["clones"])+int(upgrades.get("clone_army",0)))) * 52.0
-        var actor = _enemy_actor(["naruto_base","naruto_sage","naruto_kcm"][player_form],at,Color("e8ae48"))
+        var actor = _enemy_actor(build.actor_pack(),at,Color(str(alpha.hero()["color"])))
         actor.form_tint=Color(0.77,0.9,1,0.80)
         clones.append({"pos":at,"life":5.0+float(upgrades["clones"])*0.8,
                        "hp":90.0,"actor":actor,"fire_cd":rng.randf_range(0.18,0.7),
                        "rendan_hits":(1+int(upgrades["naruto_rendan"])+int(upgrades.get("rendan_finisher",0))) if int(upgrades["naruto_rendan"])>0 else 0,
                        "rendan_cd":0.2+float(i)*0.1})
-    _flash("NARUTO RENDAN!" if int(upgrades["naruto_rendan"])>0 else "KAGE BUNSHIN")
+    _flash(("NARUTO RENDAN!" if int(upgrades["naruto_rendan"])>0 else "KAGE BUNSHIN") if alpha.selected=="naruto" else (str(alpha.hero()["name"])+" / TECHNIKA KLONÓW"))
     _sfx("clone.wav")
 
 func _update_fx(dt:float) -> void:
