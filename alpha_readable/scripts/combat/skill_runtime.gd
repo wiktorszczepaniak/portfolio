@@ -303,12 +303,14 @@ func _class_art(hero:String)->String:
  match hero:
   "sasuke":return "blast"
   "kakashi":return "rasengan"
-  "rock_lee":return "wind"
-  "neji":return "chakra"
+  "rock_lee":return "lee_air"
+  "neji":return "gentle_palm"
   "gaara":return "sand"
  return "rasengan"
 func _class_cast(c:Dictionary,hero:String)->bool:
  var id:String=str(c.id)
+ if hero in ["rock_lee","neji"] and id in ["fuma_shuriken","shuriken_barrage","kunai_kibaku","henge_feint"]:
+  return _class_close_jutsu(c,hero)
  if id not in ["rasengan","naruto_rendan","kuchiyose","gama_teppo"]:return false
  var origin:Vector2=c.origin
  var dir:Vector2=c.dir
@@ -391,3 +393,62 @@ func _class_cast(c:Dictionary,hero:String)->bool:
       {"pierce":2 if level>=3 else 0,"push":22.0})
  host.skill_sound("explosion_v8.wav" if hero=="sasuke" else "heavy_hit.wav" if hero=="gaara" else "impact.wav")
  return true
+
+## Lore-specific close techniques. Most common Naruto 'fuma' slots now mean
+## *different physical melee techniques* for Lee/Neji, never reskinned missiles.
+func _class_close_jutsu(c:Dictionary,hero:String)->bool:
+ var id:String=str(c.id)
+ var origin:Vector2=c.origin
+ var dir:Vector2=c.dir
+ var lv:int=int(c.lv)
+ var power:float=float(Registry.DATA[id].damage)*float(c.power)
+ var close:Vector2=origin+dir*72.0
+ if hero=="rock_lee":
+  match id:
+   "fuma_shuriken":
+    # Leaf Gale: low sweep and close stagger.
+    effect("lee_air",close,94,0.34,dir.angle())
+    trap(close,0.14,72.0*render_scale,power*1.12,id,"lee_air")
+   "shuriken_barrage":
+    # Konoha Dai Senpū: animated series of physical kicks.
+    for i in range(4+lv):trap(close+dir*float(i%2)*13.0,0.11+float(i)*0.09,64.0*render_scale,power*0.36,id,"lee_air")
+    effect("lee_air",close,117.0,0.63,dir.angle())
+   "kunai_kibaku":
+    # Leaf Rising Wind, a launching blow (not explosive kunai).
+    effect("lee_air",close,122,0.43,dir.angle())
+    trap(close,0.19,79.0*render_scale,power*1.22,id,"lee_air")
+   "henge_feint":
+    # Drunken Fist step: physical counter/feint, not Naruto Henge clone.
+    counter_time=maxf(counter_time,1.5+float(lv)*0.35)
+    decoy_time=maxf(decoy_time,0.42)
+    decoy_pos=origin+Vector2(-dir.x*24.0,0)
+    effect("lee_air",origin,90.0,0.38)
+    trap(close,0.24,59.0*render_scale,power*0.65,id,"lee_air")
+  host.skill_sound("swing.wav")
+  return true
+ if hero=="neji":
+  match id:
+   "fuma_shuriken":
+    # Hakke Kūshō only unlocks a short/midrange vacuum strike at level 3.
+    if lv>=3:
+     projectile(id,"gentle_palm",origin+Vector2(0,-27),dir,310,power,25,0.8,{"pierce":0})
+    else:
+     effect("gentle_palm",close,87.0,0.42,dir.angle())
+     trap(close,0.16,73.0*render_scale,power*0.90,id,"gentle_palm")
+   "shuriken_barrage":
+    # Gentle Fist uninterrupted close-range hits.
+    for i in range(4+lv):trap(close,0.09+float(i)*0.08,48.0*render_scale,power*0.34,id,"gentle_palm")
+    effect("gentle_palm",close,113.0,0.55)
+   "kunai_kibaku":
+    # Kaiten interrupts incoming attackers around the actor.
+    effect("gentle_palm",origin,165.0,0.55)
+    for i in range(3+lv):trap(origin,0.12+float(i)*0.09,87.0*render_scale,power*0.36,id,"gentle_palm")
+    counter_time=maxf(counter_time,0.55+0.12*float(lv))
+   "henge_feint":
+    # Byakugan precision counter, small radial chakra seal.
+    counter_time=maxf(counter_time,1.25+float(lv)*0.25)
+    effect("gentle_palm",origin,90.0,0.4)
+    trap(close,0.28,72.0*render_scale,power*0.88,id,"gentle_palm")
+  host.skill_sound("impact.wav")
+  return true
+ return false
