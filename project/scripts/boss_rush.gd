@@ -550,7 +550,7 @@ func draw_menu() -> void:
 		panel(rect,Color("1c2b36") if sel else Color("101b28"), GOLD if sel else Color("365361"))
 		if sel: draw_rect(Rect2(x+4.0,209.0,262.0,4.0),GOLD)
 		var unlocked := is_hero_unlocked(i)
-		var show_form := FORM_IDS[i]
+		var show_form: String = str(FORM_IDS[i])
 		var frames: Array = hero_frames.get(show_form,[])
 		if frames.size() > 0:
 			var idx := (int(time_s*5.0)% mini(frames.size(),3))
