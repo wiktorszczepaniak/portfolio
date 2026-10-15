@@ -563,8 +563,8 @@ func _input(event:InputEvent) -> void:
             ui_view.queue_redraw()
             return
         if alpha.tree_open:
-            if event.keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6]:
-                alpha.tree_tab=int(event.keycode-KEY_1)
+            if event.keycode in [KEY_1,KEY_2,KEY_3,KEY_4,KEY_5,KEY_6,KEY_7,KEY_8,KEY_9,KEY_0]:
+                alpha.tree_tab=9 if event.keycode==KEY_0 else int(event.keycode-KEY_1)
             elif event.keycode==KEY_ESCAPE:alpha.tree_open=false
             ui_view.queue_redraw()
             return
