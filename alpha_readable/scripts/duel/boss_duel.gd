@@ -232,6 +232,14 @@ func skill_hit(target:Dictionary,damage:float,id:String,stagger:float,push:Vecto
 func _duel_talent_effect(tree_index:int)->void:
  if alpha==null or tree_index<0:return
  var style:String=AlphaAbilities.ability_type(alpha.selected,tree_index)
+ var offense_route:bool=alpha.invested(tree_index,1)
+ var control_route:bool=alpha.invested(tree_index,2)
+ if offense_route:
+  chakra=minf(100.0,chakra+3.5)
+  combo_chain=maxi(0,combo_chain-1)
+ elif control_route:
+  invulnerable=maxf(invulnerable,0.32)
+  chakra=minf(100.0,chakra+6.0)
  var apex:bool=alpha.apex_unlocked(tree_index)
  var at:Vector2=boss.pos+Vector2(0,-70)
  var visual:String="blast" if style in ["nova","fan","summon","chain"] else "wind" if style in ["pierce","ring"] else "hit"
