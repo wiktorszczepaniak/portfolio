@@ -1,4 +1,5 @@
 extends SceneTree
+## Tests ALL eight jutsu slots for all five non-Naruto heroes.
 ## Regression: every non-Naruto hero casts four personal jutsu through real Godot SkillRuntime.
 const Runtime=preload("res://scripts/combat/skill_runtime.gd")
 class MockHost:
@@ -34,7 +35,7 @@ func _run()->void:
  var tested:int=0
  for hero in ["sasuke","kakashi","rock_lee","neji","gaara"]:
   verify(alpha.choose(hero),"choose "+hero)
-  for spell in ["rasengan","naruto_rendan","kuchiyose","gama_teppo"]:
+  for spell in ["rasengan","naruto_rendan","fuma_shuriken","shuriken_barrage","kunai_kibaku","kuchiyose","henge_feint","gama_teppo"]:
    runtime.reset()
    var command:Dictionary={
     "id":spell,"origin":Vector2(100,100),"point":Vector2(180,100),
@@ -45,10 +46,12 @@ func _run()->void:
    verify(actions>0,"working cast "+hero+"/"+spell)
    for fx in runtime.effects:
     verify(str(fx.art) not in ["frog","bunta","oiroke"],"no wrong MUGEN art "+hero+"/"+spell)
+   if hero in ["rock_lee","neji"]:
+    verify(runtime.projectiles.is_empty(),"no auto ranged ninja weapon in melee class "+hero+"/"+spell)
    for bullet in runtime.projectiles:
     verify(str(bullet.art) not in ["water","water_dragon"],"no mismatched water "+hero+"/"+spell)
    tested+=1
- verify(tested==20,"20 personal class casts")
+ verify(tested==40,"40 class-specific slot casts")
  alpha.choose(saved)
  print("ALPHA_CLASS_JUTSU_QA: %d checks, %d failed, %d casts"%[checks,errors.size(),tested])
  quit(1 if errors.size()>0 else 0)
