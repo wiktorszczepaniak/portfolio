@@ -18,7 +18,7 @@ const SFX={
  "rock_lee":"impact.wav","neji":"rasengan.wav","gaara":"heavy_hit.wav"
 }
 static func ability_type(hero:String,tree:int)->String:
- if not PATTERNS.has(hero) or tree<0 or tree>=6:return ""
+ if not PATTERNS.has(hero) or tree<0 or tree>=PATTERNS[hero].size():return ""
  return str(PATTERNS[hero][tree])
 static func activate(g,hero:String,tree:int,apex:bool,power:float,route:int=0)->bool:
  var pattern:String=ability_type(hero,tree)
