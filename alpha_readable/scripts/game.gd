@@ -702,7 +702,7 @@ func _update_player(dt:float) -> void:
     attack_timer-=dt
     if attack_timer<=0:
         _fire_kunai()
-        attack_timer=maxf(0.12,0.54-float(upgrades["kunai_rapid"])*0.07)*TRANSFORM_RATE_BOOST[player_form]*alpha.attack_interval_multiplier()
+        attack_timer=maxf(0.12,0.54-float(upgrades["kunai_rapid"])*0.07)*TRANSFORM_RATE_BOOST[player_form]*alpha.attack_interval_multiplier()*AlphaAbilities.attack_rate(alpha.selected)
 
 func _transform(form:int) -> void:
     if transform_pause > 0.0:
@@ -987,6 +987,7 @@ func _fire_kunai() -> void:
         "neji":tint=Color("e7d9ff")
         "gaara":tint=Color("d6a269")
     if alpha.proc_ready():_alpha_proc()
+    AlphaAbilities.basic_burst(self,alpha.selected,kunai_sequence)
 
     for i in range(count):
         var heading := aim.rotated((float(i)-float(count-1)*0.5)*0.105)
