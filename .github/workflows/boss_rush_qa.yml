@@ -26,12 +26,20 @@ jobs:
           set -o pipefail
           ./godot --headless --path project --quit-after 480 -- --qa-smoke 2>&1 | tee smoke.log
           grep -q QA_SMOKE_PASS smoke.log
+      - name: Gameplay mechanics smoke
+        shell: bash
+        run: |
+          set -o pipefail
+          ./godot --headless --path project --quit-after 480 -- --qa-logic 2>&1 | tee logic.log
+          grep -q QA_LOGIC_PASS logic.log
       - name: Save QA log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: boss-rush-linux-qa
-          path: smoke.log
+          path: |
+            smoke.log
+            logic.log
           if-no-files-found: ignore
 
   windows-smoke-export:
@@ -51,6 +59,12 @@ jobs:
           & $godot --headless --path project --editor --import --quit
           & $godot --headless --path project --quit-after 480 -- --qa-smoke 2>&1 | Tee-Object -FilePath win_smoke.log
           if (-not (Select-String -Path win_smoke.log -Pattern 'QA_SMOKE_PASS' -Quiet)) { throw 'Godot smoke did not complete' }
+      - name: Gameplay mechanics smoke Windows
+        shell: pwsh
+        run: |
+          $godot = (Get-Content godot_path.txt -Raw).Trim()
+          & $godot --headless --path project --quit-after 480 -- --qa-logic 2>&1 | Tee-Object -FilePath win_logic.log
+          if (-not (Select-String -Path win_logic.log -Pattern 'QA_LOGIC_PASS' -Quiet)) { throw 'Godot mechanics smoke failed' }
       - name: Download export templates
         shell: pwsh
         run: |
@@ -74,4 +88,5 @@ jobs:
           path: |
             build/ShinobiBossRush.exe
             win_smoke.log
+            win_logic.log
           if-no-files-found: ignore
