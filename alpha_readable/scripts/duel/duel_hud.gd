@@ -32,6 +32,7 @@ func bar(r:Rect2,value:float,c:Color) -> void:NinjaTheme.meter(self,r,value,c)
 func card(i:int,y:float=270) -> Rect2:return Rect2(134+i*342,y,320,215)
 func _gui_input(event:InputEvent) -> void:
  if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:
+  if g.paused and Rect2(440,425,400,64).has_point(event.position):g.return_to_menu();accept_event();return
   if g.intro:
    for i in range(3):
     if card(i).has_point(event.position):g.swap_slot(i)
@@ -85,4 +86,8 @@ func _draw() -> void:
   center("CZAS %.1f s   •   PERFEKCYJNE BLOKI %d"%[g.elapsed,g.parries],640,360,15,GOLD,mono)
   if not g.victory and not g.build.retry_used:box(Rect2(440,480,400,55),Color("b65038"));center("POWTÓRZ POJEDYNEK  [R]",640,515,18,CREAM,mono)
   center("ENTER — MENU",640,600,17,CREAM,mono)
- elif g.paused:draw_rect(Rect2(0,0,1280,720),Color(0.025,0.05,0.06,0.85));center("PAUZA  /  ESC",640,355,32,CREAM,title)
+ elif g.paused:
+  draw_rect(Rect2(0,0,1280,720),Color(0.025,0.05,0.06,0.85))
+  center("PAUZA  /  ESC",640,355,32,CREAM,title)
+  box(Rect2(440,425,400,64),Color("8b4e37"))
+  center("POWRÓT DO MENU  [BACKSPACE]",640,465,17,CREAM,mono)
