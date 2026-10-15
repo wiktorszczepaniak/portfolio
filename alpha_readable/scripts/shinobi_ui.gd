@@ -438,8 +438,8 @@ func _scroll(card: Dictionary, index: int, hot: bool) -> void:
         draw_line(Vector2(19,y),Vector2(285,y+1),Color(0.4,0.27,0.09,0.033),1)
     draw_rect(Rect2(23,44,258,35),Color(color,0.14))
     _center(TIER_NAMES[tier],152,66,12,color,mono)
-    draw_circle(Vector2(152,151),57,Color("e4d0a5"))
-    draw_arc(Vector2(152,151),57,0,TAU,64,Color(color,0.40),1.0,true)
+    draw_circle(Vector2(152,151),78,Color("e4d0a5"))
+    draw_arc(Vector2(152,151),79,0,TAU,64,Color(color,0.40),2.0,true)
     _icon(key,Vector2(152,151),color)
     _wrap(str(data.name),Rect2(29,240,246,60),18,INK,title,true)
     _line(284,37,230,Color("cbb387"))
@@ -474,14 +474,14 @@ func _icon(key: String, at: Vector2, color: Color) -> void:
         if icons.has(art_key) and icons[art_key]!=null:
             var art:Texture2D=icons[art_key]
             var size:Vector2=art.get_size()
-            var scale:float=minf(105.0/maxf(1.0,size.x),105.0/maxf(1.0,size.y))
+            var scale:float=minf(139.0/maxf(1.0,size.x),139.0/maxf(1.0,size.y))
             var dimensions:Vector2=size*scale
             draw_texture_rect(art,Rect2(at-dimensions*0.5,dimensions),false)
-            draw_arc(at,59.0,-PI*.86,PI*.14,36,Color(color,0.62),2.0,true)
+            draw_arc(at,78.0,-PI*.86,PI*.14,36,Color(color,0.62),2.0,true)
             return
     if icons.has(key) and icons[key]!=null and key not in ["kunai"]:
         var icon_tex:Texture2D=icons[key]
-        var width:float=85.0 if key=="oiroke" else 115.0 if key in ["naruto_rendan","melee_rasengan","melee_combo"] else 88.0
+        var width:float=132.0 if key=="oiroke" else 145.0 if key in ["naruto_rendan","melee_rasengan","melee_combo"] else 128.0
         var original_dims:Vector2=icon_tex.get_size()
         var aspect:float=original_dims.x/maxf(1.0,original_dims.y)
         var dimensions:Vector2=Vector2(minf(width,width*aspect),minf(width,width/aspect))
