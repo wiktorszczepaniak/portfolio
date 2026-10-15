@@ -92,12 +92,22 @@ func swap_slot(slot:int) -> void:
 func retry() -> void:
  if not finished or victory or build.retry_used:return
  build.retry_used=true;reset_fight();intro=false
+func return_to_menu() -> void:
+ var alpha=get_node_or_null("/root/AlphaProgress")
+ if alpha!=null:alpha.tree_open=false;alpha.reset_run()
+ var director=get_node_or_null("/root/AudioDirector")
+ if director!=null:director.silence()
+ if music!=null:music.stop()
+ build.reset()
+ get_tree().change_scene_to_file("res://scenes/main.tscn")
+
 func _input(event:InputEvent) -> void:
  if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed and not intro and not paused and not finished:
   controls.queued.combo=true
 
  if not event is InputEventKey or not event.pressed or event.echo:return
  var key=event.physical_keycode if event.physical_keycode!=0 else event.keycode
+ if key==KEY_BACKSPACE and (paused or intro):return_to_menu();return
  if intro:
   if key==KEY_ENTER:start_fight()
   elif key in [KEY_J,KEY_K,KEY_L]:swap_slot([KEY_J,KEY_K,KEY_L].find(key))
