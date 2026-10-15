@@ -233,7 +233,7 @@ func _draw() -> void:
         _hud()
         if g.transform_pause > 0:
             draw_rect(Rect2(0,0,1280,720),Color(0.05,0.07,0.08,0.25))
-            _center(("KYŪBI CLOAK" if g.transform_target_form==1 else "KURAMA CHAKRA MODE") if g.build.form_branch=="kyubi" else ("SAGE MODE" if g.transform_target_form==1 else "SENNIN MASTERY"),640,191,35,CREAM,title)
+            _center(g.alpha.awakening_title(g.build.form_branch,g.transform_target_form),640,191,31,CREAM,title)
             _center("PRZEBUDZENIE CHAKRY",640,222,13,GOLD,mono)
 
 func _title() -> void:
