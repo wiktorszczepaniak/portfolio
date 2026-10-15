@@ -98,7 +98,7 @@ func _over_button() -> bool:
             if _hero_rect(i).has_point(p):return true
         return Rect2(82,463,390,62).has_point(p) or Rect2(82,551,470,86).has_point(p) or Rect2(82,415,470,38).has_point(p)
     if g.finished: return Rect2(467,551,346,56).has_point(p)
-    if g.paused: return Rect2(467,400,346,56).has_point(p) or Rect2(467,476,346,42).has_point(p)
+    if g.paused: return Rect2(467,400,346,56).has_point(p) or Rect2(467,476,346,42).has_point(p) or Rect2(467,531,346,48).has_point(p)
     return Rect2(1090,647,160,44).has_point(p)
 
 func _gui_input(event: InputEvent) -> void:
@@ -138,7 +138,8 @@ func _gui_input(event: InputEvent) -> void:
         elif g.paused:
             if Rect2(467,400,346,56).has_point(p): g.paused = false
             elif Rect2(467,476,346,42).has_point(p): _sound()
-        elif Rect2(1090,647,160,44).has_point(p): g.speed_index = (g.speed_index+1)%3
+            elif Rect2(467,531,346,48).has_point(p): g.return_to_menu()
+        elif Rect2(1090,647,160,44).has_point(p): g.speed_index = (g.speed_index+1)%g.speeds.size()
         accept_event()
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -497,8 +498,9 @@ func _pause() -> void:
     _center("Misja wstrzymana. Twoje zwoje czekają.",640,359,16,MUTED)
     _button(Rect2(467,400,346,56),"WRÓĆ DO WALKI    [ ESC ]")
     _button(Rect2(467,476,346,42),"DŹWIĘK: " + ("WYŁ." if g.muted else "WŁ."),false)
-    _center("WASD  RUCH     SHIFT  KAWARIMI     X  WSPARCIE",640,582,12,MUTED,mono)
-    _center("SPACJA  TEMPO     F  EFEKTY     G  NIEŚMIERTELNOŚĆ",640,611,11,MUTED,mono)
+    _button(Rect2(467,531,346,48),"POWRÓT DO MENU    [BACKSPACE]",false)
+    _center("WASD RUCH   SHIFT KAWARIMI   X WSPARCIE",640,630,12,MUTED,mono)
+    _center("SPACJA  1x–5x   F EFEKTY   G NIEŚMIERTELNOŚĆ",640,661,11,MUTED,mono)
 
 func _result() -> void:
     draw_rect(Rect2(0,0,1280,720),Color(0.06,0.10,0.11,0.93))
