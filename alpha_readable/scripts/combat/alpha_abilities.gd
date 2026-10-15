@@ -109,3 +109,39 @@ static func activate(g,hero:String,tree:int,apex:bool,power:float)->bool:
   g.invulnerable=maxf(g.invulnerable,0.32)
  g._sfx(str(SFX.get(hero,"impact.wav")))
  return true
+
+## Distinct neutral attacks that work before any scroll or talent is purchased.
+static func attack_rate(hero:String)->float:
+ return float({"naruto":1.0,"sasuke":0.94,"kakashi":0.89,
+ "rock_lee":0.72,"neji":0.88,"gaara":1.11}.get(hero,1.0))
+static func basic_burst(g,hero:String,sequence:int)->void:
+ var enemy:Dictionary=g._closest_target(g.player_pos,345.0)
+ var at:Vector2=enemy["pos"] if not enemy.is_empty() else g.player_pos+Vector2(g.player_facing*66.0,0)
+ match hero:
+  "sasuke":
+   if sequence%4==0:
+    g._aoe_damage(at,62.0,22.0)
+    g._add_blast(at,72.0,"chakra_blast")
+  "kakashi":
+   if sequence%5==0:
+    g._aoe_damage(at,50.0,19.0)
+    g.dash_cooldown=maxf(0.0,g.dash_cooldown-0.16)
+    g._add_blast(at,54.0,"futon_blast")
+  "rock_lee":
+   if sequence%2==0:
+    g._aoe_damage(g.player_pos,84.0,31.0)
+    g._add_blast(g.player_pos+Vector2(g.player_facing*33.0,-18.0),68.0,"smoke_blast")
+  "neji":
+   if sequence%4==0:
+    g._aoe_damage(g.player_pos,89.0,21.0)
+    g.invulnerable=maxf(g.invulnerable,0.13)
+    g._add_blast(g.player_pos,85.0,"chakra_blast")
+  "gaara":
+   if sequence%4==0:
+    g._aoe_damage(at,77.0,29.0)
+    g._add_blast(at,78.0,"smoke_blast")
+    g.invulnerable=maxf(g.invulnerable,0.16)
+  "naruto":
+   if sequence%6==0:
+    g._aoe_damage(at,48.0,16.0)
+    g._add_blast(at,51.0,"chakra_blast")
