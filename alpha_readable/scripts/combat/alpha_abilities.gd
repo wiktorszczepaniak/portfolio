@@ -11,11 +11,11 @@ const PATTERNS={
 }
 const FX_COLORS={
  "naruto":"chakra_blast","sasuke":"chakra_blast","kakashi":"futon_blast",
- "rock_lee":"smoke_blast","neji":"chakra_blast","gaara":"smoke_blast"
+ "rock_lee":"lee_air","neji":"gentle_palm","gaara":"sand_blast"
 }
 const SFX={
  "naruto":"rasengan.wav","sasuke":"explosion_v8.wav","kakashi":"heavy_hit.wav",
- "rock_lee":"impact.wav","neji":"rasengan.wav","gaara":"heavy_hit.wav"
+ "rock_lee":"impact.wav","neji":"mid_hit.wav","gaara":"heavy_hit.wav"
 }
 static func ability_type(hero:String,tree:int)->String:
  if not PATTERNS.has(hero) or tree<0 or tree>=PATTERNS[hero].size():return ""
