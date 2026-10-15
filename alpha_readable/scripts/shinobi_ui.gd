@@ -142,6 +142,7 @@ func _gui_input(event: InputEvent) -> void:
             elif Rect2(82,551,220,36).has_point(p): g._toggle_fx()
             elif Rect2(320,551,230,36).has_point(p): g._toggle_godmode()
             elif Rect2(82,601,220,36).has_point(p): _sound()
+            elif Rect2(320,601,230,36).has_point(p): g.start_training()
         elif g.finished:
             if Rect2(467,551,346,56).has_point(p): g._start()
         elif g.paused:
@@ -270,9 +271,10 @@ func _title() -> void:
     _button(Rect2(82,551,220,36),"EFEKTY: " + ("NISKIE" if g.low_fx else "PEŁNE"),false)
     _button(Rect2(320,551,230,36),"NIEŚMIERTELNOŚĆ: " + ("TAK" if g.godmode else "NIE"),false)
     _button(Rect2(82,601,220,36),"DŹWIĘK: " + ("WYŁ." if g.muted else "WŁ."),false)
+    _button(Rect2(320,601,230,36),"DOJO TESTOWE [F6]",false)
     _text("WASD  RUCH    SHIFT  KAWARIMI    X  WSPARCIE    T  DRZEWKA",Vector2(83,682),11,MUTED,mono)
     _center(str(g.alpha.hero()["name"]),967,443,22,INK,title)
-    _center("6 POSTACI   •   36 DRZEWEK   •   252 TALENTY",967,470,12,Color("695b47"),mono)
+    _center("6 POSTACI   •   60 DRZEWEK   •   480 WĘZŁÓW",967,470,12,Color("695b47"),mono)
     for i in range(6):
         var id:String=str(g.alpha.IDS[i]);var data:Dictionary=g.alpha.HEROES[id];var r:Rect2=_hero_rect(i)
         var active:bool=g.alpha.selected==id
@@ -306,7 +308,8 @@ func _hud() -> void:
     _box(Rect2(974,18,284,71),INK,GOLD)
     _text(g.build.form_name(),Vector2(993,43),14,CREAM,title)
     var next="WYBÓR DROGI · %ds"%ceili(maxf(0,150-g.clock)) if g.player_form==0 else "PRZEBUDZENIE · %ds"%ceili(maxf(0,330-g.clock)) if g.player_form==1 else "SASORI · %ds"%ceili(maxf(0,480-g.clock))
-    _text(next,Vector2(993,69),11,GOLD,mono)
+    if g.training_mode:next="DOJO • F1/F2 FORMY • F6 MENU"
+    _text(next,Vector2(993,69),10,GOLD,mono)
     if g.godmode:
         # Keep status badge inside the form card, not over the playfield.
         _text("GOD",Vector2(1217,68),11,Color("ffb275"),mono)
