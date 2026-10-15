@@ -36,7 +36,9 @@ static func activate(g,hero:String,tree:int,apex:bool,power:float,route:int=0)->
   area*=1.35
   g.invulnerable=maxf(g.invulnerable,0.12)
  var player_at:Vector2=g.player_pos
- var target:Dictionary=g._closest_target(player_at,560.0)
+ var permitted_range:float=170.0 if hero=="rock_lee" else (255.0 if tree==7 else 172.0) if hero=="neji" else 560.0
+ var target:Dictionary=g._closest_target(player_at,permitted_range)
+ if hero in ["rock_lee","neji"] and target.is_empty():return false
  var at:Vector2=target["pos"] if not target.is_empty() else player_at+Vector2(g.player_facing*90.0,0)
  var direction:Vector2=(at-player_at).normalized()
  if direction.length_squared()<0.01:direction=Vector2.RIGHT
