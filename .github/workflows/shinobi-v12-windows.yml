@@ -81,6 +81,12 @@ jobs:
           $ErrorActionPreference = 'Stop'
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_v02_p1.gd *> logs/qa_alpha_v02_p1.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_v02_p1.txt; throw 'Alpha v0.2 P1 regression failed' }
+      - name: ALPHA P2 actual Lee / Neji melee and 64 palms QA
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha_v02_melee.gd *> logs/qa_alpha_v02_melee.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_v02_melee.txt; throw 'Alpha P2 melee QA failed' }
       - name: Windows software-render screenshots
         continue-on-error: true
         shell: pwsh
