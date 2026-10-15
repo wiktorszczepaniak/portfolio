@@ -36,13 +36,15 @@ var player_invuln: float = 0.0
 var dash_cd: float = 0.0
 var clone_cd: float = 0.0
 var clone_time: float = 0.0
+var clone_shot_cd: float = 0.0
+var transform_stage: int = 0 # 0 base, 1 chakra awakening, 2 final cloak
 var buff_time: float = 0.0
 var shot_cd: float = 0.0
 var special_cd: float = 0.0
 var last_direction := Vector2.UP
 var boss_p := Vector2(640.0, 217.0)
-var boss_hp: float = 2400.0
-var boss_max_hp: float = 2400.0
+var boss_hp: float = 9000.0
+var boss_max_hp: float = 9000.0
 var boss_phase: int = 1
 var boss_clock: float = 0.0
 var boss_intro: float = 2.7
@@ -65,7 +67,9 @@ func _ready() -> void:
 	load_frames()
 	load_audio()
 	load_progress()
-	if "--qa-smoke" in OS.get_cmdline_user_args():
+	if "--qa-logic" in OS.get_cmdline_user_args():
+		run_logic_qa()
+	elif "--qa-smoke" in OS.get_cmdline_user_args():
 		start_battle()
 		demo_mode = true
 	set_process(true)
@@ -183,6 +187,8 @@ func start_battle() -> void:
 	dash_cd = 0.0
 	clone_cd = 0.0
 	clone_time = 0.0
+	clone_shot_cd = 0.0
+	transform_stage = 0
 	buff_time = 0.0
 	shot_cd = 0.0
 	special_cd = 0.0
@@ -250,6 +256,28 @@ func _process(dt: float) -> void:
 		screen_shake = maxf(0.0, screen_shake - 26.0 * delta)
 	queue_redraw()
 
+func run_logic_qa() -> void:
+	# Deterministic mechanics smoke, only activated by --qa-logic.
+	start_battle()
+	player_chakra = 100.0
+	attempt_transform()
+	assert(transform_stage == 1, "first transformation did not activate")
+	buff_time = 0.0
+	player_chakra = 100.0
+	attempt_transform()
+	assert(transform_stage == 2, "second transformation did not activate")
+	assert(boss_max_hp >= 8000.0, "boss duration below design target")
+	clone_cd = 0.0
+	player_chakra = 100.0
+	attempt_clone()
+	boss_intro = 0.0
+	tick_battle(0.016)
+	var count_after_first_tick := shots.size()
+	tick_battle(0.016)
+	assert(shots.size() <= count_after_first_tick + 2, "clone projectile flood")
+	print("QA_LOGIC_PASS: staged_transformations=2, clone_rate_limited=true")
+	get_tree().quit(0)
+
 func tick_battle(dt: float) -> void:
 	battle_time += dt
 	boss_clock += dt
@@ -257,6 +285,7 @@ func tick_battle(dt: float) -> void:
 	dash_cd = maxf(0.0, dash_cd - dt)
 	clone_cd = maxf(0.0, clone_cd - dt)
 	clone_time = maxf(0.0, clone_time - dt)
+	clone_shot_cd = maxf(0.0, clone_shot_cd - dt)
 	buff_time = maxf(0.0, buff_time - dt)
 	shot_cd -= dt
 	special_cd = maxf(0.0, special_cd - dt)
@@ -273,14 +302,16 @@ func tick_battle(dt: float) -> void:
 	if dir.length_squared() > 0.0:
 		last_direction = dir.normalized()
 		var rate := 165.0 if Input.is_key_pressed(KEY_SHIFT) else 310.0
+		rate *= 1.0 + 0.04 * float(transform_stage)
 		if buff_time > 0.0: rate *= 1.16
 		player_p += last_direction * rate * dt
 	player_p.x = clampf(player_p.x, ARENA.position.x + 22.0, ARENA.end.x - 22.0)
 	player_p.y = clampf(player_p.y, 310.0, ARENA.end.y - 21.0)
 	if boss_intro <= 0.0 and (Input.is_key_pressed(KEY_Z) or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)) and shot_cd <= 0.0:
 		shoot_rasengan()
-		shot_cd = 0.14 if buff_time > 0.0 else 0.185
-	if clone_time > 0.0 and shot_cd <= 0.03 and boss_intro <= 0.0:
+		shot_cd = (0.14 if buff_time > 0.0 else 0.185) * (1.0 - 0.11 * float(transform_stage))
+	if clone_time > 0.0 and clone_shot_cd <= 0.0 and boss_intro <= 0.0:
+		clone_shot_cd = 0.50 if transform_stage == 0 else 0.42
 		for signum in [-1, 1]:
 			var launch := player_p + Vector2(float(signum) * 55.0, 28.0)
 			shots.append({"p": launch, "v": (boss_p - launch).normalized() * 610.0, "age": 0.0, "r": 9.0, "dmg": 9.0, "clone": true})
@@ -386,10 +417,10 @@ func spawn_bullets(group: Array) -> void:
 func shoot_rasengan() -> void:
 	var fire_dir := (boss_p - player_p).normalized()
 	var spread := 0.10 if buff_time <= 0.0 else 0.15
-	var shots_count := 1 if buff_time <= 0.0 else 3
+	var shots_count := 1 + transform_stage
 	for i in range(shots_count):
 		var angle := (float(i) - float(shots_count-1)*0.5) * spread
-		shots.append({"p": player_p + Vector2(0.0, -37.0), "v": fire_dir.rotated(angle) * 695.0, "age": 0.0, "r": 11.0 if buff_time <= 0.0 else 13.0, "dmg": 17.0 if buff_time <= 0.0 else 13.0, "clone": false})
+		shots.append({"p": player_p + Vector2(0.0, -37.0), "v": fire_dir.rotated(angle) * 695.0, "age": 0.0, "r": 11.0 if buff_time <= 0.0 else 13.0, "dmg": 17.0 if buff_time <= 0.0 else 14.0, "clone": false})
 	if randi() % 6 == 0: sfx("rasengan", 1.15)
 
 func attempt_dash() -> void:
@@ -407,14 +438,16 @@ func attempt_clone() -> void:
 	if clone_cd > 0.0 or player_chakra < 22.0: return
 	player_chakra -= 22.0
 	clone_time = 8.0
+	clone_shot_cd = 0.0
 	clone_cd = 18.0
 	fx(player_p, 0.6, "smoke", 80.0)
 	sfx("clone_smoke")
 
 func attempt_transform() -> void:
-	if player_chakra < 90.0 or buff_time > 0.0: return
+	if player_chakra < 90.0 or transform_stage >= 2 or buff_time > 0.0: return
 	player_chakra = 0.0
-	buff_time = 14.0
+	transform_stage += 1
+	buff_time = 8.0
 	player_invuln = maxf(player_invuln, 1.4)
 	phase_shock = maxf(phase_shock, 0.7)
 	bullets.clear()
@@ -570,9 +603,12 @@ func draw_battle() -> void:
 	if clone_time > 0.0:
 		for side in [-1.0,1.0]:
 			draw_hero(player_p+Vector2(side*55.0,28.0),Color(0.57,0.8,0.9,0.54),0.75)
+	if transform_stage > 0:
+		var aura_rad := 43.0 + float(transform_stage) * 12.0 + sin(time_s * 9.0) * 4.0
+		draw_circle(player_p, aura_rad + 15.0, Color(1.0, 0.29, 0.10, 0.08 if transform_stage == 1 else 0.16))
+		draw_arc(player_p, aura_rad, 0.0, TAU, 32, Color("fd7651") if transform_stage == 1 else Color("f34341"), 2.8 + float(transform_stage), true)
 	if buff_time > 0.0:
-		draw_circle(player_p,61.0 + sin(time_s*11.0)*4.0,Color(1.0,0.31,0.12,0.13))
-		draw_arc(player_p,42.0,0.0,TAU,32,Color("fd7651"),3.5,true)
+		draw_arc(player_p, 72.0, -PI*0.4, PI*1.4, 35, GOLD, 3.0, true)
 	if player_invuln <= 0.0 or int(player_invuln*12.0)%2 == 0:
 		draw_hero(player_p,Color.WHITE,1.0)
 	# The precise hitbox is visualized during focus.
@@ -593,7 +629,8 @@ func draw_battle() -> void:
 
 func draw_hero(pos: Vector2, mod: Color = Color.WHITE, mul: float = 1.0) -> void:
 	var name: String = FORM_IDS[selected_hero]
-	if buff_time > 0.0: name = "kyuubi" if selected_hero == 0 else ("kcm" if selected_hero >= 2 else "kyuubi")
+	if selected_hero == 0 and transform_stage >= 2: name = "kyuubi"
+	elif selected_hero == 2 and transform_stage >= 2: name = "kcm"
 	var a: Array = hero_frames.get(name,[])
 	if a.is_empty():return
 	var idx := 0
@@ -639,21 +676,24 @@ func draw_battle_ui() -> void:
 	draw_line(Vector2(405.0+551.0*0.74,39.0),Vector2(405.0+551.0*0.74,57.0),PALE,1.0)
 	draw_rect(Rect2(0.0,620.0,W,100.0),Color("09131e"))
 	label("NARUTO",Vector2(80.0,647.0),16,GOLD)
-	for i in range(8):
+	for i in range(maxi(8, 7 + selected_hero)):
 		var filled := i < player_hp
 		draw_rect(Rect2(80.0+float(i)*27.0,659.0,21.0,19.0),RED if filled else Color("2c3948"))
 	label("CHAKRA",Vector2(335.0,648.0),14,CYAN)
 	draw_rect(Rect2(334.0,661.0,225.0,13.0),Color("2c3948"))
 	draw_rect(Rect2(336.0,663.0,221.0*player_chakra/100.0,9.0),CYAN)
-	label("Q // TRANSFORM" if player_chakra>=90.0 else "Q // 90 CHAKRA",Vector2(335.0,690.0),14,GOLD if player_chakra>=90.0 else Color("8598a3"))
+	var transform_label := "Q // MAX FORM" if transform_stage >= 2 else ("Q // AWAKEN %d" % (transform_stage + 1) if player_chakra >= 90.0 else "Q // 90 CHAKRA")
+	label(transform_label,Vector2(335.0,690.0),14,GOLD if player_chakra>=90.0 and transform_stage < 2 else Color("8598a3"))
 	label("Z  RASENGAN",Vector2(624.0,648.0),15,PALE)
 	label("X  DASH  %s" % ("READY" if dash_cd<=0 else "%.1f"%dash_cd),Vector2(624.0,676.0),14,GOLD if dash_cd <= 0.0 else Color("8598a3"))
 	label("C  CLONES  %s" % ("READY" if clone_cd<=0 else "%.1f"%clone_cd),Vector2(852.0,648.0),15,CYAN if clone_cd<=0 else Color("8598a3"))
 	label("SPACE  ULTIMATE  %s" % ("READY" if special_cd<=0.0 else "%.1f"%special_cd),Vector2(852.0,676.0),14,GOLD if special_cd<=0 else Color("8598a3"))
 	label("GRAZE %03d   SCORE %06d" % [grazes,score],Vector2(80.0,706.0),13,Color("9aaeb6"))
 	label("SHIFT // FOCUS",Vector2(1066.0,703.0),13,CYAN)
+	if transform_stage > 0:
+		label("KYUUBI SIGN" if transform_stage == 1 else "ONE TAIL CLOAK",Vector2(465.0,116.0),20,GOLD)
 	if buff_time>0:
-		label("KYUUBI CHAKRA  %.0fs" % buff_time,Vector2(465.0,116.0),20,GOLD)
+		label("AWAKENING BURST %.0fs" % buff_time,Vector2(465.0,141.0),15,CYAN)
 
 func draw_result() -> void:
 	draw_rect(Rect2(0.0,0.0,W,H),Color(0.025,0.047,0.074,0.86))
