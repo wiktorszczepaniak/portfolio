@@ -49,7 +49,12 @@ func cast_slot(slot:int) -> bool:
  var id=build.offensive_slots[slot];return false if id==null else cast(str(id))
 func cast(id:String) -> bool:
  if id not in build.owned() or cooldown(id)>0 or (mode=="duel" and lock_time>0):return false
- var origin:Vector2=host.skill_origin();var target=nearest(origin)
+ var origin:Vector2=host.skill_origin()
+ var hero:String=_hero_id()
+ var reach:float=158.0 if hero=="rock_lee" else 166.0 if hero=="neji" else 900.0
+ # Neji's advanced Vacuum Palm reaches short-medium distance, not the whole screen.
+ if hero=="neji" and id=="rasengan" and int(build.levels.get(id,0))>=2:reach=265.0
+ var target=nearest(origin,reach)
  if target.is_empty():return false
  if mode=="duel" and not host.skill_spend(id):return false
  var d:Dictionary=Registry.DATA[id];var point:Vector2=target.pos
@@ -323,6 +328,21 @@ func _class_cast(c:Dictionary,hero:String)->bool:
    area(target,68.0*render_scale+level*8.0,power*1.15,id,0.25,dir*32.0)
    if level>=2:trap(target+dir*35.0,0.19,70.0*render_scale,power*0.31,id,art)
   "naruto_rendan":
+   if hero=="neji":
+    # Group sixteen waves into 64 close chakra-point contacts, not a missile.
+    var at:Vector2=origin+dir*61.0
+    effect("gentle_palm",at,98.0,0.48,dir.angle())
+    for n in range(16):
+     trap(at,0.04+float(n)*0.048,51.0*render_scale,power*0.083,id,"gentle_palm")
+    host.skill_sound("impact.wav")
+    return true
+   if hero=="rock_lee":
+    var at:Vector2=origin+dir*67.0
+    for n in range(3+extra_hits):
+     trap(at+dir*float(n%2)*9.0,0.08+float(n)*0.11,62.0*render_scale,power*0.35,id,"lee_air")
+    effect("lee_air",at,113.0,0.56,dir.angle())
+    host.skill_sound("swing.wav")
+    return true
    # Personal multi-hit kata, not the Naruto clone Rendan.
    host.skill_sound("impact.wav")
    for n in range(3+extra_hits):
@@ -344,7 +364,24 @@ func _class_cast(c:Dictionary,hero:String)->bool:
     area(target,140.0*render_scale,power*0.86,id,0.38)
     trap(target,0.24,123.0*render_scale,power*0.47,id,art)
   "gama_teppo":
-   # Katon / lightning / lotus rush / vacuum palms / desert rain.
+   if hero=="rock_lee":
+    # Ura Renge has close taijutsu impacts, no green long-distance bullets.
+    var at:Vector2=origin+dir*75.0
+    for n in range(4+level):
+     var impact_at:Vector2=at+dir*float(n%3-1)*12.0
+     trap(impact_at,0.10+float(n)*0.075,66.0*render_scale,power*0.29,id,"lee_air")
+    effect("lee_air",at,125.0,0.44,dir.angle())
+    host.skill_sound("heavy_hit.wav")
+    return true
+   if hero=="neji":
+    # Hakke Kaiten, a radial contact defence, not a vacuum projectile.
+    var at:Vector2=origin
+    effect("gentle_palm",at,185.0,0.46)
+    for n in range(3+level):
+     trap(at,0.09+float(n)*0.10,88.0*render_scale,power*0.30,id,"gentle_palm")
+    host.skill_sound("parry.wav")
+    return true
+   # Katon / lightning / desert rain for ranged classes.
    host.skill_sound("water_cast.wav" if hero=="kakashi" else "throw.wav")
    var count:int=1+extra_hits+(1 if level>=3 else 0)
    for n in range(count):
