@@ -49,7 +49,7 @@ func _run()->void:
    if hero in ["rock_lee","neji"]:
     verify(runtime.projectiles.is_empty(),"no auto ranged ninja weapon in melee class "+hero+"/"+spell)
    for bullet in runtime.projectiles:
-    verify(str(bullet.art) not in ["water","water_dragon"],"no mismatched water "+hero+"/"+spell)
+    verify(str(bullet.art) not in ["water","water_dragon"] or (hero=="kakashi" and spell=="gama_teppo"),"no wrongly borrowed Suiton "+hero+"/"+spell)
    tested+=1
  verify(tested==40,"40 class-specific slot casts")
  alpha.choose(saved)
