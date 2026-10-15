@@ -94,8 +94,10 @@ var rng := RandomNumberGenerator.new()
 var clock := 0.0
 var speed_index := 0
 # Former 2x is now NORMAL, with two optional acceleration settings.
-var speeds := [1.0,1.5,2.0]
-var speed_labels := ["NORMAL","FAST 1.5x","TURBO 2x"]
+var speeds := [1.0,1.5,2.0,3.0,4.0,5.0]
+const SIMULATION_DT := 1.0/60.0
+var simulation_accumulator := 0.0
+var speed_labels := ["1x","1.5x","2x","3x","4x","5x"]
 var playing := false
 var paused := false
 var finished := false
@@ -454,6 +456,7 @@ func _start(seed_value:int=0) -> void:
     _log("run started")
     clock=0.0
     speed_index=0
+    simulation_accumulator=0.0
     playing=true
     paused=false
     picking=false
@@ -569,8 +572,11 @@ func _input(event:InputEvent) -> void:
         elif event.keycode==KEY_ESCAPE and playing and not picking and not finished and not gacha_active:
             paused=not paused
             _flash("PAUZA" if paused else "WALKA")
+        elif event.keycode==KEY_BACKSPACE and playing and paused:
+            return_to_menu()
+            return
         elif event.keycode==KEY_SPACE and playing and not finished:
-            speed_index=(speed_index+1)%3
+            speed_index=(speed_index+1)%speeds.size()
             _flash("TEMPO: %s" % speed_labels[speed_index])
         elif event.keycode==KEY_X and playing and not picking and not paused and not finished:
             if not gacha_active and transition_time<0:skill_adapter.utility()
@@ -590,6 +596,18 @@ func _input(event:InputEvent) -> void:
             _choose_chest_reward(event.keycode-KEY_1)
         elif picking and event.keycode in [KEY_1,KEY_2,KEY_3,KEY_4]:
             _choose_card(event.keycode-KEY_1)
+
+func return_to_menu() -> void:
+    # Full scene restart clears actors, audio players and projectile pools safely.
+    var active_hero:String=str(alpha.selected)
+    paused=false
+    alpha.tree_open=false
+    alpha.reset_run()
+    alpha.choose(active_hero)
+    build.reset()
+    var director=get_node_or_null("/root/AudioDirector")
+    if director!=null:director.silence()
+    get_tree().reload_current_scene()
 
 func _toggle_fx() -> void:
     low_fx=not low_fx
@@ -631,7 +649,20 @@ func _process(delta:float) -> void:
     if paused or picking:
         queue_redraw()
         return
-    var dt:float=minf(delta,0.06)*speeds[speed_index]
+    # Test-speed is simulated in fixed 60 Hz steps; 5x cannot skip projectile collision.
+    simulation_accumulator=minf(simulation_accumulator+minf(delta,0.06)*speeds[speed_index],0.36)
+    var count:int=0
+    while simulation_accumulator>=SIMULATION_DT and count<24:
+        simulation_accumulator-=SIMULATION_DT
+        visual_delta=SIMULATION_DT
+        _simulation_step(SIMULATION_DT)
+        count+=1
+        if paused or picking or gacha_active or form_choice or transition_time>=0 or finished:
+            simulation_accumulator=0.0
+            break
+    queue_redraw()
+
+func _simulation_step(dt:float) -> void:
     clock+=dt
     _update_player(dt)
     build.elapsed=clock
