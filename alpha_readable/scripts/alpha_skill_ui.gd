@@ -1,0 +1,118 @@
+extends Control
+## Full-screen branching skill constellation, not a static mockup.
+## Every node is clickable and validates parent/points in AlphaProgress.
+const NinjaTheme=preload("res://scripts/ninja_theme.gd")
+const INK=Color("15232c")
+const DARK=Color("09151e")
+const GOLD=Color("dfb36e")
+const PAPER=Color("f0dfb7")
+const TEAL=Color("70d3de")
+const RED=Color("ce694e")
+var g:Node
+var alpha:Node
+var title_font:FontFile
+var body_font:FontFile
+var mono_font:FontFile
+var cursor:Vector2=Vector2.ZERO
+var inspected:int=-1
+var time:=0.0
+const NODES=[Vector2(640,210),Vector2(412,320),Vector2(868,320),Vector2(412,440),Vector2(868,440),Vector2(640,544),Vector2(640,649)]
+const PARENTS=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,5],[5,6]]
+
+func _ready()->void:
+ size=Vector2(1280,720)
+ mouse_filter=Control.MOUSE_FILTER_STOP
+ title_font=_font("ninja");body_font=_font("body");mono_font=_font("mono")
+ alpha=get_node("/root/AlphaProgress")
+ visible=false
+
+func _font(name:String)->FontFile:
+ var f=FontFile.new();f.data=FileAccess.get_file_as_bytes("res://assets/fonts/%s.ttf"%name);return f
+
+func _process(dt:float)->void:
+ time+=dt
+ var should_show:bool=alpha!=null and alpha.tree_open
+ if visible!=should_show:visible=should_show
+ if visible:
+  cursor=get_local_mouse_position();queue_redraw()
+
+func _card(i:int)->Rect2:
+ return Rect2(NODES[i]-Vector2(136,29),Vector2(272,58))
+
+func _gui_input(event:InputEvent)->void:
+ if not visible:return
+ if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed:
+  var p:Vector2=event.position
+  if Rect2(1163,19,90,43).has_point(p):
+   alpha.tree_open=false;accept_event();return
+  for i in range(6):
+   if Rect2(28+i*204,96,194,53).has_point(p):
+    alpha.tree_tab=i;accept_event();return
+  for n in range(7):
+   if _card(n).has_point(p):
+    if alpha.buy(alpha.tree_tab,n):
+     g._sfx("upgrade.wav")
+     g._flash("NOWA TECHNIKA: "+alpha.node_name(alpha.tree_tab,n),1.5)
+     # Explicitly persist progression between survival and duel.
+     var file=FileAccess.open("user://last_alpha.json",FileAccess.WRITE)
+     if file!=null:file.store_string(JSON.stringify(alpha.snapshot(),"  "))
+    accept_event();return
+  accept_event()
+
+func _text(value:String,at:Vector2,px:int=16,color:Color=PAPER,font:Font=null)->void:
+ draw_string(body_font if font==null else font,at,value,HORIZONTAL_ALIGNMENT_LEFT,-1,px,color)
+
+func _center(value:String,at:Vector2,px:int=16,color:Color=PAPER,font:Font=null)->void:
+ var f:Font=body_font if font==null else font
+ _text(value,at-Vector2(f.get_string_size(value,HORIZONTAL_ALIGNMENT_LEFT,-1,px).x*.5,0),px,color,f)
+
+func _panel(rect:Rect2,color:Color,edge:Color)->void:
+ NinjaTheme.panel(self,rect,color,edge)
+
+func _draw()->void:
+ if not visible or alpha==null:return
+ draw_rect(Rect2(0,0,1280,720),Color("081018"))
+ for i in range(24):
+  var y:float=float(i)*39.0+fmod(time*.5,39.0)
+  draw_line(Vector2(0,y),Vector2(1280,y-125),Color(0.73,0.62,0.43,0.04),1)
+ draw_circle(Vector2(640,395),280,Color(.27,.3,.32,.06))
+ draw_arc(Vector2(640,410),296,0,TAU,90,Color(GOLD,0.12),2,true)
+ _panel(Rect2(21,16,1238,63),INK,GOLD)
+ _text("DRZEWKA SHINOBI",Vector2(42,58),27,PAPER,title_font)
+ _text("%s  •  %d PUNKTÓW TALENTU" % [str(alpha.hero()["name"]),alpha.points],Vector2(480,52),17,TEAL,mono_font)
+ _panel(Rect2(1163,19,90,43),RED,GOLD)
+ _center("[T] X",Vector2(1208,46),15,PAPER,mono_font)
+ for t in range(6):
+  var r=Rect2(28+t*204,96,194,53)
+  var active:bool=t==alpha.tree_tab
+  var count:int=alpha.count_focus(t)
+  _panel(r,Color("3a3a37") if active else INK,GOLD if active else Color("607075"))
+  _center(alpha.tree_name(t),Vector2(r.get_center().x,121),13,PAPER if active else Color("b7c6c5"),title_font)
+  _center("%d / 7"%count,Vector2(r.get_center().x,142),11,GOLD if active else Color("8c9da1"),mono_font)
+ var active_tree:int=alpha.tree_tab
+ var root_color:Color=Color("5e7b9b")
+ for edge in PARENTS:
+  var a:int=edge[0];var b:int=edge[1]
+  var linked:bool=alpha.invested(active_tree,a) and alpha.invested(active_tree,b)
+  var open_edge:bool=alpha.invested(active_tree,a) and alpha.can_buy(active_tree,b)
+  var color:Color=GOLD if linked else TEAL if open_edge else Color(.4,.45,.45,.42)
+  draw_line(NODES[a]+Vector2(0,20),NODES[b]-Vector2(0,24),color,4 if linked else 2.0,true)
+ for n in range(7):
+  var rect:Rect2=_card(n)
+  var owned:bool=alpha.invested(active_tree,n)
+  var available:bool=alpha.can_buy(active_tree,n)
+  var hot:bool=rect.has_point(cursor)
+  var locked:bool=not owned and not available
+  var edge:Color=GOLD if owned else TEAL if available else Color("525963")
+  var fill:Color=Color("42382d") if owned else Color("254451") if available else INK
+  if hot:fill=fill.lightened(.17)
+  _panel(rect,fill,edge)
+  var skill:String=alpha.node_name(active_tree,n)
+  var font_size:int=11 if skill.length()>23 else 13
+  _center(skill,Vector2(rect.get_center().x,rect.position.y+25),font_size,PAPER if not locked else Color("98a3a6"),title_font)
+  _center("ODKRYTO ✓" if owned else ("%d PKT  •  KLIKNIJ"%alpha.node_cost(n)) if available else "WYMAGANA POPRZEDNIA TECHNIKA",Vector2(rect.get_center().x,rect.position.y+46),10,GOLD if owned else TEAL if available else Color("64717c"),mono_font)
+  var ring_pos:Vector2=Vector2(rect.position.x+18,rect.position.y+16)
+  draw_circle(ring_pos,12,edge)
+  _center(str(n+1),ring_pos+Vector2(0,5),10,DARK,mono_font)
+ _center("ODNOGI: 2 WYBORY  /  2 ROZWINIĘCIA  /  FUZJA  /  TECHNIKA LEGENDARNA",Vector2(640,693),12,Color("a3aea9"),mono_font)
+ _text("1–6 ZMIEŃ DRZEWKO    •    T / ESC ZAMKNIJ",Vector2(28,706),10,Color("849797"),mono_font)

@@ -1,0 +1,533 @@
+{
+  "source": "BillsLasa/2D-Naruto-Hokage-Fighter---M.U.G.E.N. @ 0ec89010d7e1a02205418070d9cc4be5710d7344 / dedicated group 2 KCM",
+  "display_scale": 0.79,
+  "sprites": {
+    "2_12": {
+      "file": "2_12.png",
+      "axis": [
+        17,
+        77
+      ],
+      "size": [
+        33,
+        83
+      ]
+    },
+    "2_13": {
+      "file": "2_13.png",
+      "axis": [
+        21,
+        77
+      ],
+      "size": [
+        37,
+        83
+      ]
+    },
+    "2_14": {
+      "file": "2_14.png",
+      "axis": [
+        26,
+        77
+      ],
+      "size": [
+        42,
+        83
+      ]
+    },
+    "2_16": {
+      "file": "2_16.png",
+      "axis": [
+        19,
+        39
+      ],
+      "size": [
+        50,
+        45
+      ]
+    },
+    "2_17": {
+      "file": "2_17.png",
+      "axis": [
+        33,
+        42
+      ],
+      "size": [
+        71,
+        53
+      ]
+    },
+    "2_18": {
+      "file": "2_18.png",
+      "axis": [
+        35,
+        48
+      ],
+      "size": [
+        70,
+        55
+      ]
+    },
+    "2_19": {
+      "file": "2_19.png",
+      "axis": [
+        19,
+        39
+      ],
+      "size": [
+        50,
+        45
+      ]
+    },
+    "2_20": {
+      "file": "2_20.png",
+      "axis": [
+        33,
+        42
+      ],
+      "size": [
+        71,
+        53
+      ]
+    },
+    "2_21": {
+      "file": "2_21.png",
+      "axis": [
+        35,
+        48
+      ],
+      "size": [
+        70,
+        55
+      ]
+    },
+    "2_25": {
+      "file": "2_25.png",
+      "axis": [
+        20,
+        67
+      ],
+      "size": [
+        52,
+        77
+      ]
+    },
+    "2_31": {
+      "file": "2_31.png",
+      "axis": [
+        26,
+        64
+      ],
+      "size": [
+        57,
+        73
+      ]
+    },
+    "2_34": {
+      "file": "2_34.png",
+      "axis": [
+        27,
+        59
+      ],
+      "size": [
+        55,
+        69
+      ]
+    },
+    "2_200": {
+      "file": "2_200.png",
+      "axis": [
+        27,
+        64
+      ],
+      "size": [
+        60,
+        70
+      ]
+    },
+    "2_201": {
+      "file": "2_201.png",
+      "axis": [
+        31,
+        58
+      ],
+      "size": [
+        86,
+        64
+      ]
+    },
+    "2_202": {
+      "file": "2_202.png",
+      "axis": [
+        31,
+        58
+      ],
+      "size": [
+        82,
+        64
+      ]
+    },
+    "2_204": {
+      "file": "2_204.png",
+      "axis": [
+        24,
+        63
+      ],
+      "size": [
+        50,
+        69
+      ]
+    },
+    "2_210": {
+      "file": "2_210.png",
+      "axis": [
+        27,
+        56
+      ],
+      "size": [
+        86,
+        62
+      ]
+    },
+    "2_211": {
+      "file": "2_211.png",
+      "axis": [
+        27,
+        56
+      ],
+      "size": [
+        81,
+        62
+      ]
+    },
+    "2_285": {
+      "file": "2_285.png",
+      "axis": [
+        46,
+        61
+      ],
+      "size": [
+        75,
+        68
+      ]
+    },
+    "2_286": {
+      "file": "2_286.png",
+      "axis": [
+        37,
+        60
+      ],
+      "size": [
+        79,
+        68
+      ]
+    }
+  },
+  "actions": {
+    "0": [
+      {
+        "key": "2_12",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_13",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_14",
+        "x": 0,
+        "y": 0,
+        "ticks": 10,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_13",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "20": [
+      {
+        "key": "2_19",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_20",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_21",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "21": [
+      {
+        "key": "2_16",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": true,
+        "flip_v": false
+      },
+      {
+        "key": "2_17",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": true,
+        "flip_v": false
+      },
+      {
+        "key": "2_18",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": true,
+        "flip_v": false
+      }
+    ],
+    "41": [
+      {
+        "key": "2_25",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_25",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "42": [
+      {
+        "key": "2_25",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_25",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "43": [
+      {
+        "key": "2_25",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_25",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "100": [
+      {
+        "key": "2_19",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_20",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_21",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "130": [
+      {
+        "key": "2_31",
+        "x": 0,
+        "y": 0,
+        "ticks": 1,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "200": [
+      {
+        "key": "2_204",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_210",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_211",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_204",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "210": [
+      {
+        "key": "2_200",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_201",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_202",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_200",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_204",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "220": [
+      {
+        "key": "2_285",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_204",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_286",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_200",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "5000": [
+      {
+        "key": "2_34",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_34",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ]
+  },
+  "adaptation": "Original source pixels, palette, pivots, AIR timing and flips; mapped locomotion and combat actions."
+}

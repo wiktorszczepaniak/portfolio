@@ -1,0 +1,582 @@
+{
+  "source": "user-supplied Naruto Mugen 2.50 archive / Kakashi / Kakashi(Deidara-Rap).sff; redistribution rights unverified",
+  "display_scale": 0.88,
+  "sprites": {
+    "73_13": {
+      "file": "73_13.png",
+      "axis": [
+        19,
+        65
+      ],
+      "size": [
+        42,
+        72
+      ]
+    },
+    "73_14": {
+      "file": "73_14.png",
+      "axis": [
+        20,
+        65
+      ],
+      "size": [
+        42,
+        72
+      ]
+    },
+    "73_15": {
+      "file": "73_15.png",
+      "axis": [
+        19,
+        66
+      ],
+      "size": [
+        42,
+        72
+      ]
+    },
+    "2_1": {
+      "file": "2_1.png",
+      "axis": [
+        20,
+        64
+      ],
+      "size": [
+        34,
+        71
+      ]
+    },
+    "2_2": {
+      "file": "2_2.png",
+      "axis": [
+        21,
+        66
+      ],
+      "size": [
+        34,
+        71
+      ]
+    },
+    "2_3": {
+      "file": "2_3.png",
+      "axis": [
+        25,
+        65
+      ],
+      "size": [
+        40,
+        74
+      ]
+    },
+    "2_4": {
+      "file": "2_4.png",
+      "axis": [
+        20,
+        64
+      ],
+      "size": [
+        31,
+        74
+      ]
+    },
+    "2_5": {
+      "file": "2_5.png",
+      "axis": [
+        20,
+        66
+      ],
+      "size": [
+        31,
+        74
+      ]
+    },
+    "2_0": {
+      "file": "2_0.png",
+      "axis": [
+        39,
+        65
+      ],
+      "size": [
+        54,
+        71
+      ]
+    },
+    "8_0": {
+      "file": "8_0.png",
+      "axis": [
+        31,
+        58
+      ],
+      "size": [
+        48,
+        62
+      ]
+    },
+    "4_0": {
+      "file": "4_0.png",
+      "axis": [
+        18,
+        71
+      ],
+      "size": [
+        44,
+        72
+      ]
+    },
+    "4_1": {
+      "file": "4_1.png",
+      "axis": [
+        16,
+        71
+      ],
+      "size": [
+        44,
+        72
+      ]
+    },
+    "3_0": {
+      "file": "3_0.png",
+      "axis": [
+        33,
+        64
+      ],
+      "size": [
+        72,
+        71
+      ]
+    },
+    "3_1": {
+      "file": "3_1.png",
+      "axis": [
+        14,
+        64
+      ],
+      "size": [
+        52,
+        71
+      ]
+    },
+    "3_2": {
+      "file": "3_2.png",
+      "axis": [
+        19,
+        65
+      ],
+      "size": [
+        56,
+        72
+      ]
+    },
+    "3_3": {
+      "file": "3_3.png",
+      "axis": [
+        27,
+        69
+      ],
+      "size": [
+        63,
+        72
+      ]
+    },
+    "3_4": {
+      "file": "3_4.png",
+      "axis": [
+        17,
+        67
+      ],
+      "size": [
+        59,
+        72
+      ]
+    },
+    "3_5": {
+      "file": "3_5.png",
+      "axis": [
+        20,
+        61
+      ],
+      "size": [
+        59,
+        72
+      ]
+    },
+    "13_0": {
+      "file": "13_0.png",
+      "axis": [
+        19,
+        54
+      ],
+      "size": [
+        50,
+        61
+      ]
+    },
+    "13_1": {
+      "file": "13_1.png",
+      "axis": [
+        19,
+        53
+      ],
+      "size": [
+        56,
+        61
+      ]
+    },
+    "13_2": {
+      "file": "13_2.png",
+      "axis": [
+        19,
+        53
+      ],
+      "size": [
+        56,
+        61
+      ]
+    },
+    "13_3": {
+      "file": "13_3.png",
+      "axis": [
+        19,
+        52
+      ],
+      "size": [
+        56,
+        61
+      ]
+    },
+    "25_0": {
+      "file": "25_0.png",
+      "axis": [
+        30,
+        83
+      ],
+      "size": [
+        56,
+        85
+      ]
+    },
+    "25_1": {
+      "file": "25_1.png",
+      "axis": [
+        19,
+        68
+      ],
+      "size": [
+        43,
+        74
+      ]
+    },
+    "25_2": {
+      "file": "25_2.png",
+      "axis": [
+        19,
+        63
+      ],
+      "size": [
+        54,
+        68
+      ]
+    },
+    "25_3": {
+      "file": "25_3.png",
+      "axis": [
+        19,
+        65
+      ],
+      "size": [
+        56,
+        71
+      ]
+    },
+    "25_4": {
+      "file": "25_4.png",
+      "axis": [
+        22,
+        70
+      ],
+      "size": [
+        61,
+        84
+      ]
+    },
+    "6_0": {
+      "file": "6_0.png",
+      "axis": [
+        29,
+        51
+      ],
+      "size": [
+        65,
+        57
+      ]
+    }
+  },
+  "actions": {
+    "0": [
+      {
+        "key": "73_13",
+        "x": 0,
+        "y": 0,
+        "ticks": 7,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "73_14",
+        "x": 0,
+        "y": 0,
+        "ticks": 7,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "73_15",
+        "x": 0,
+        "y": 0,
+        "ticks": 7,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "20": [
+      {
+        "key": "2_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_5",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "2_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 6,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "40": [
+      {
+        "key": "8_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 7,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "41": [
+      {
+        "key": "4_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "4_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "100": [
+      {
+        "key": "3_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3_5",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "200": [
+      {
+        "key": "13_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "13_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "13_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "13_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "210": [
+      {
+        "key": "13_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "13_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "13_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 12,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "220": [
+      {
+        "key": "25_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "25_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "25_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "25_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "25_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "5000": [
+      {
+        "key": "6_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 10,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ]
+  }
+}

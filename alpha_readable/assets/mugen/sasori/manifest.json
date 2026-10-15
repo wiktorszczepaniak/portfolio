@@ -1,0 +1,883 @@
+{
+  "format": "ShinobiSurvivors MugenImport v1",
+  "name": "sasori",
+  "source": "User-supplied SasoriNP.rar; SasoriNP Update 1.05 MUGEN character",
+  "sprite_count": 39,
+  "sprites": {
+    "0_0": {
+      "file": "0_0.png",
+      "axis": [
+        23,
+        69
+      ],
+      "size": [
+        46,
+        71
+      ]
+    },
+    "0_1": {
+      "file": "0_1.png",
+      "axis": [
+        23,
+        68
+      ],
+      "size": [
+        46,
+        70
+      ]
+    },
+    "0_2": {
+      "file": "0_2.png",
+      "axis": [
+        23,
+        67
+      ],
+      "size": [
+        46,
+        69
+      ]
+    },
+    "20_0": {
+      "file": "20_0.png",
+      "axis": [
+        33,
+        58
+      ],
+      "size": [
+        66,
+        60
+      ]
+    },
+    "20_1": {
+      "file": "20_1.png",
+      "axis": [
+        37,
+        58
+      ],
+      "size": [
+        70,
+        60
+      ]
+    },
+    "20_2": {
+      "file": "20_2.png",
+      "axis": [
+        20,
+        61
+      ],
+      "size": [
+        53,
+        63
+      ]
+    },
+    "20_3": {
+      "file": "20_3.png",
+      "axis": [
+        33,
+        58
+      ],
+      "size": [
+        66,
+        60
+      ]
+    },
+    "20_4": {
+      "file": "20_4.png",
+      "axis": [
+        37,
+        59
+      ],
+      "size": [
+        70,
+        61
+      ]
+    },
+    "20_5": {
+      "file": "20_5.png",
+      "axis": [
+        20,
+        61
+      ],
+      "size": [
+        53,
+        63
+      ]
+    },
+    "200_0": {
+      "file": "200_0.png",
+      "axis": [
+        14,
+        74
+      ],
+      "size": [
+        42,
+        76
+      ]
+    },
+    "200_1": {
+      "file": "200_1.png",
+      "axis": [
+        25,
+        73
+      ],
+      "size": [
+        53,
+        75
+      ]
+    },
+    "200_2": {
+      "file": "200_2.png",
+      "axis": [
+        12,
+        72
+      ],
+      "size": [
+        85,
+        74
+      ]
+    },
+    "200_3": {
+      "file": "200_3.png",
+      "axis": [
+        12,
+        72
+      ],
+      "size": [
+        76,
+        74
+      ]
+    },
+    "200_4": {
+      "file": "200_4.png",
+      "axis": [
+        45,
+        70
+      ],
+      "size": [
+        58,
+        73
+      ]
+    },
+    "200_5": {
+      "file": "200_5.png",
+      "axis": [
+        23,
+        66
+      ],
+      "size": [
+        94,
+        68
+      ]
+    },
+    "200_6": {
+      "file": "200_6.png",
+      "axis": [
+        23,
+        66
+      ],
+      "size": [
+        83,
+        68
+      ]
+    },
+    "200_7": {
+      "file": "200_7.png",
+      "axis": [
+        20,
+        70
+      ],
+      "size": [
+        50,
+        73
+      ]
+    },
+    "200_8": {
+      "file": "200_8.png",
+      "axis": [
+        19,
+        74
+      ],
+      "size": [
+        36,
+        76
+      ]
+    },
+    "200_9": {
+      "file": "200_9.png",
+      "axis": [
+        11,
+        74
+      ],
+      "size": [
+        42,
+        76
+      ]
+    },
+    "200_10": {
+      "file": "200_10.png",
+      "axis": [
+        12,
+        64
+      ],
+      "size": [
+        66,
+        66
+      ]
+    },
+    "200_11": {
+      "file": "200_11.png",
+      "axis": [
+        12,
+        64
+      ],
+      "size": [
+        66,
+        66
+      ]
+    },
+    "200_12": {
+      "file": "200_12.png",
+      "axis": [
+        17,
+        64
+      ],
+      "size": [
+        71,
+        66
+      ]
+    },
+    "200_15": {
+      "file": "200_15.png",
+      "axis": [
+        13,
+        64
+      ],
+      "size": [
+        48,
+        66
+      ]
+    },
+    "200_16": {
+      "file": "200_16.png",
+      "axis": [
+        14,
+        62
+      ],
+      "size": [
+        50,
+        64
+      ]
+    },
+    "200_17": {
+      "file": "200_17.png",
+      "axis": [
+        16,
+        63
+      ],
+      "size": [
+        52,
+        65
+      ]
+    },
+    "200_18": {
+      "file": "200_18.png",
+      "axis": [
+        15,
+        62
+      ],
+      "size": [
+        51,
+        64
+      ]
+    },
+    "200_19": {
+      "file": "200_19.png",
+      "axis": [
+        14,
+        63
+      ],
+      "size": [
+        50,
+        65
+      ]
+    },
+    "203_0": {
+      "file": "203_0.png",
+      "axis": [
+        23,
+        71
+      ],
+      "size": [
+        49,
+        73
+      ]
+    },
+    "203_1": {
+      "file": "203_1.png",
+      "axis": [
+        23,
+        67
+      ],
+      "size": [
+        53,
+        69
+      ]
+    },
+    "203_2": {
+      "file": "203_2.png",
+      "axis": [
+        23,
+        67
+      ],
+      "size": [
+        56,
+        69
+      ]
+    },
+    "203_3": {
+      "file": "203_3.png",
+      "axis": [
+        23,
+        73
+      ],
+      "size": [
+        46,
+        75
+      ]
+    },
+    "203_4": {
+      "file": "203_4.png",
+      "axis": [
+        23,
+        70
+      ],
+      "size": [
+        70,
+        72
+      ]
+    },
+    "203_5": {
+      "file": "203_5.png",
+      "axis": [
+        23,
+        70
+      ],
+      "size": [
+        66,
+        72
+      ]
+    },
+    "203_8": {
+      "file": "203_8.png",
+      "axis": [
+        23,
+        64
+      ],
+      "size": [
+        61,
+        66
+      ]
+    },
+    "3000_0": {
+      "file": "3000_0.png",
+      "axis": [
+        25,
+        69
+      ],
+      "size": [
+        59,
+        76
+      ]
+    },
+    "3000_1": {
+      "file": "3000_1.png",
+      "axis": [
+        42,
+        78
+      ],
+      "size": [
+        74,
+        89
+      ]
+    },
+    "3000_2": {
+      "file": "3000_2.png",
+      "axis": [
+        44,
+        84
+      ],
+      "size": [
+        83,
+        95
+      ]
+    },
+    "3000_3": {
+      "file": "3000_3.png",
+      "axis": [
+        25,
+        69
+      ],
+      "size": [
+        48,
+        79
+      ]
+    },
+    "3000_4": {
+      "file": "3000_4.png",
+      "axis": [
+        35,
+        86
+      ],
+      "size": [
+        73,
+        94
+      ]
+    }
+  },
+  "actions": {
+    "0": [
+      {
+        "key": "0_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 10,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "0_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 10,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "0_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 10,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "0_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 10,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "20": [
+      {
+        "key": "20_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "20_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "20_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "20_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "20_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "20_5",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "200": [
+      {
+        "key": "200_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "210": [
+      {
+        "key": "200_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_5",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_6",
+        "x": 0,
+        "y": 0,
+        "ticks": 4,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_7",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_8",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "220": [
+      {
+        "key": "200_15",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_16",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_17",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_18",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_19",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_18",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_19",
+        "x": 0,
+        "y": 0,
+        "ticks": 2,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "230": [
+      {
+        "key": "200_8",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_9",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_10",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_11",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "200_12",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "300": [
+      {
+        "key": "203_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_5",
+        "x": 0,
+        "y": 0,
+        "ticks": 25,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "310": [
+      {
+        "key": "203_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 25,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "320": [
+      {
+        "key": "203_8",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "3000": [
+      {
+        "key": "3000_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 30,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3000_1",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3000_2",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3000_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "3000_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "4000": [
+      {
+        "key": "203_8",
+        "x": 0,
+        "y": 0,
+        "ticks": 25,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 5,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "4100": [
+      {
+        "key": "203_3",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_4",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_5",
+        "x": 0,
+        "y": 0,
+        "ticks": 30,
+        "flip_h": false,
+        "flip_v": false
+      },
+      {
+        "key": "203_0",
+        "x": 0,
+        "y": 0,
+        "ticks": 3,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ],
+    "4500": [
+      {
+        "key": "203_8",
+        "x": 0,
+        "y": 0,
+        "ticks": 25,
+        "flip_h": false,
+        "flip_v": false
+      }
+    ]
+  },
+  "notice": "MUGEN artwork belonging to its respective creators; private prototype.",
+  "display_scale": 1.62
+}
