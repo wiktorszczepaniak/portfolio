@@ -32,7 +32,7 @@ func test_all()->void:
   check(hero["trees"].size()==6,"tree count "+id)
   for t in range(6):
    check(hero["trees"][t][1].size()==7,"7 talents "+id+"/"+str(t))
-   alpha.reset_run();alpha.points=30
+   alpha.reset_run();alpha.level_awarded=20;alpha.points=30
    for n in [0,1,3,5,6]:
     check(alpha.can_buy(t,n),"branch unlock %s %d %d"%[id,t,n])
     check(alpha.buy(t,n),"branch purchase %s %d %d"%[id,t,n])
@@ -42,7 +42,7 @@ func test_all()->void:
    alpha.reset_run()
    check(alpha.restore(save),"restore %s/%d"%[id,t])
    check(alpha.apex_unlocked(t),"restore apex %s/%d"%[id,t])
-  alpha.reset_run();alpha.points=30
+  alpha.reset_run();alpha.level_awarded=20;alpha.points=30
   check(alpha.buy(0,0),"select root "+id)
   check(not alpha.buy(0,3),"require left fork "+id)
   check(alpha.buy(0,2) and alpha.buy(0,4) and alpha.buy(0,5),"alternative right fork "+id)
