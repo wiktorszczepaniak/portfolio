@@ -15,7 +15,7 @@ STATUS LEGEND: [x] committed & verified, [~] implemented but waiting for native 
 
 ## Milestones; complete in order and persist GitHub SHA, QA, and visible screenshots each time
 - [x] P0: inspect source + 6 MUGEN manifests, confirm defects, gather lore with provenance.
-- [ ] P1: usability + obvious art defects: 1/1.5/2/3/4/5x simulation with fixed substeps, return to menu in survivals and Sasori, Sasuke idle mirror, Gaara real sand render, deterministic tests + Windows zip.
+- [x] P1: usability + obvious art defects: 1/1.5/2/3/4/5x simulation with fixed substeps, return to menu in survivals and Sasori, Sasuke idle mirror, Gaara real sand render, deterministic tests + Windows zip.
 - [ ] P2: **combat engine**: physical melee Lee / Neji (hitboxes, combo & true recovery), 64 Palms timed burst based on anime + counter/tenketsu debuff, Lee green air trails from real strikes, no full-screen thrown shapes at level 1; impact SFX attached to actual active frames.
 - [ ] P3: class IDs: split 8 Naruto-centric engine abilities into 6-class catalog, canonical jutsu naming, data-driven cooldown/mana/range/hitframe/hitbox/targeting/special statuses. Guarantee non-Naruto never receives Naruto icons, form names or frog abilities by accident.
 - [ ] P4: create/retrieve/extract **class-specific MUGEN art** including .sff/.air/.act palettes; every active skill gets explicit art_ref and owner; reject placeholder icon entries at packaging; new sand, lightning, fire, Byakugan, Lee green air trails, wind variants. Contact sheets & 1280x720 previews mandatory.
@@ -45,3 +45,10 @@ STATUS LEGEND: [x] committed & verified, [~] implemented but waiting for native 
 
 ## References
 See ALPHA_V02_CANONICAL_JUTSU_CATALOG.md and inline provenance. Fan game implementation: source art rights and attribution should be checked before distributing outside private prototype.
+
+## P1 VERIFIED CHECKPOINT | 2026-10-15
+- GitHub Actions Windows Godot 4.5.2 run: https://github.com/wiktorszczepaniak/portfolio/actions/runs/38678803753 (completed SUCCESS)
+- Tested executable, alpha class suite, alpha abilities, class jutsu, dedicated P1 QA, native Windows render and source archive.
+- Code SHA under test: 15bbb720a423ebfec7dbc640b4ce46a8acb84705; later commits on this branch are planning and asset-audit docs only.
+- Artifact ID 11947062248, GitHub Actions artifact 'shinobi-windows-and-QA', expiring 2026-10-25. Source/game.zip/QA kept in artifact.
+- Follow-up: P2 is NOT complete, nor is the 90-jutsu catalog implemented. Existing Gaara attacks have ochre particulate VFX but the full sand art pack remains P4. Five non-Naruto transformed sprite packs remain P5.
