@@ -26,6 +26,7 @@ jobs:
           Expand-Archive source.zip -DestinationPath . -Force
           if (Test-Path overlay) { Copy-Item overlay/* project/ -Recurse -Force }
           if (Test-Path alpha_overlay.zip) { Expand-Archive alpha_overlay.zip -DestinationPath . -Force }
+          if (Test-Path hotfix) { Copy-Item hotfix/* project/ -Recurse -Force }
       - uses: lihop/setup-godot@v3
         with:
           version: 4.5.2-stable
@@ -68,6 +69,8 @@ jobs:
         run: |
           & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_v12_visual.gd -- "$pwd/logs/windows_visual" *> logs/windows_visual.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/windows_visual.txt; throw 'Windows GUI render failed' }
+          & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_alpha_visual.gd -- "$pwd/logs/windows_visual" *> logs/alpha_visual.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/alpha_visual.txt; throw 'ALPHA GUI render failed' }
       - name: Pack ALL raw assets as Godot PCK
         shell: pwsh
         run: |
