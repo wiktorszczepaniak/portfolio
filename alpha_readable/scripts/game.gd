@@ -1984,7 +1984,7 @@ func _draw() -> void:
             if str(s.get("kind","")).begins_with("kunai"):
                 # Preserve collisions but give each class a visible, coherent projectile identity.
                 if alpha.selected!="naruto":
-                    var art_id:String="blast" if alpha.selected=="sasuke" else "chakra" if alpha.selected=="kakashi" else "hit" if alpha.selected=="rock_lee" else "wind" if alpha.selected=="neji" else "sand"
+                    var art_id:String="fire" if alpha.selected=="sasuke" else "lightning" if alpha.selected=="kakashi" else "lee_air" if alpha.selected=="rock_lee" else "gentle_palm" if alpha.selected=="neji" else "sand"
                     var diameter:float=41.0 if alpha.selected=="rock_lee" else 56.0
                     CleanFX.paint(self,art_id,s["pos"],diameter,clock,Vector2(s["dir"]).angle())
                     continue
