@@ -1,6 +1,7 @@
 extends Node2D
 const CleanFX=preload("res://scripts/combat/ninja_fx.gd")
 const AlphaSystem=preload("res://scripts/core/alpha_progress.gd")
+const AlphaAbilities=preload("res://scripts/combat/alpha_abilities.gd")
 const Pickups=preload("res://scripts/core/pickup_manager.gd")
 const SpawnDirector=preload("res://scripts/core/enemy_spawn_director.gd")
 ## NEW Godot gameplay architecture, not a port of the abandoned Go/Win32 code.
@@ -966,42 +967,8 @@ func _closest_target(at:Vector2,max_distance:float)->Dictionary:
 func _alpha_proc() -> void:
     var tree:int=alpha.current_signature()
     if tree<0:return
-    var bonus:float=(1.55 if alpha.apex_unlocked(tree) else 1.0)
-    var target:Dictionary=_closest_target(player_pos,530.0)
-    var at:Vector2=target["pos"] if not target.is_empty() else player_pos+Vector2(100*player_facing,0)
-    var radius:float=(68.0+float(tree%3)*20.0)*bonus
-    var damage:float=(52.0+float(tree)*12.0)*alpha.damage_multiplier()*bonus
-    var element:String=str(alpha.hero().get("element","wind"))
-    match alpha.selected:
-        "sasuke":
-            _aoe_damage(at,radius+20.0,damage*1.16)
-            _add_blast(at,radius+24.0,"chakra_blast")
-            _sfx("explosion_v8.wav")
-        "kakashi":
-            _aoe_damage(at,radius,damage*1.20)
-            _add_blast(at,radius,"futon_blast")
-            dash_cooldown=maxf(0.0,dash_cooldown-0.45)
-            _sfx("heavy_hit.wav")
-        "rock_lee":
-            _aoe_damage(player_pos,radius+44,damage*0.90)
-            _add_blast(player_pos,radius+44,"smoke_blast")
-            invulnerable=maxf(invulnerable,0.24)
-            _sfx("impact.wav")
-        "neji":
-            _aoe_damage(player_pos,radius+40,damage)
-            _add_blast(player_pos,radius+40,"chakra_blast")
-            invulnerable=maxf(invulnerable,0.42)
-            _sfx("rasengan.wav")
-        "gaara":
-            _aoe_damage(at,radius+30,damage)
-            _add_blast(at,radius+35,"smoke_blast")
-            player_hp=minf(build.max_hp(),player_hp+4.0*bonus)
-            _sfx("heavy_hit.wav")
-        _:
-            _aoe_damage(at,radius+22.0,damage)
-            _add_blast(at,radius+22.0,"chakra_blast")
-            _sfx("rasengan.wav")
-    _flash("%s · %s" % [alpha.hero()["name"],alpha.tree_name(tree)],0.9)
+    if AlphaAbilities.activate(self,alpha.selected,tree,alpha.apex_unlocked(tree),alpha.damage_multiplier()):
+        _flash("%s  /  %s" % [alpha.hero()["name"],alpha.tree_name(tree)],1.05)
 
 func _fire_kunai() -> void:
     if shots.size()>MAX_SHOTS-12: return
