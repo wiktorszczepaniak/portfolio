@@ -34,7 +34,7 @@ static func activate(g,hero:String,tree:int,apex:bool,power:float,route:int=0)->
  elif route>0:
   damage*=0.89
   area*=1.35
-  if "invulnerable" in g:g.invulnerable=maxf(g.invulnerable,0.12)
+  g.invulnerable=maxf(g.invulnerable,0.12)
  var player_at:Vector2=g.player_pos
  var target:Dictionary=g._closest_target(player_at,560.0)
  var at:Vector2=target["pos"] if not target.is_empty() else player_at+Vector2(g.player_facing*90.0,0)
