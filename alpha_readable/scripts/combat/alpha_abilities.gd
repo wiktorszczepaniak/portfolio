@@ -2,12 +2,12 @@ extends RefCounted
 ## Six genuinely different playstyles and 36 triggered tree signatures.
 ## All attack forms use the existing capped FX, AoE and collision machinery.
 const PATTERNS={
- "naruto":["nova","summon","fan","ring","chain","guard"],
- "sasuke":["pierce","fan","suppress","chain","guard","nova"],
- "kakashi":["pierce","suppress","summon","fan","guard","chain"],
- "rock_lee":["chain","pierce","nova","fan","guard","ring"],
- "neji":["suppress","chain","ring","pierce","fan","guard"],
- "gaara":["nova","guard","chain","suppress","fan","ring"]
+ "naruto":["nova","summon","fan","ring","chain","guard","ring","fan","pierce","guard"],
+ "sasuke":["pierce","fan","suppress","chain","guard","nova","fan","suppress","guard","pierce"],
+ "kakashi":["pierce","suppress","summon","fan","guard","chain","summon","guard","suppress","pierce"],
+ "rock_lee":["chain","pierce","nova","fan","guard","ring","chain","guard","ring","pierce"],
+ "neji":["suppress","chain","ring","pierce","fan","guard","suppress","pierce","guard","chain"],
+ "gaara":["nova","guard","chain","suppress","fan","ring","suppress","nova","guard","summon"]
 }
 const FX_COLORS={
  "naruto":"chakra_blast","sasuke":"chakra_blast","kakashi":"futon_blast",
