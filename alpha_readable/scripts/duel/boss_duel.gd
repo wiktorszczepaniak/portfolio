@@ -1,5 +1,6 @@
 extends Node2D
 const FX=preload("res://scripts/combat/ninja_fx.gd")
+const AlphaAbilities=preload("res://scripts/combat/alpha_abilities.gd")
 const Actor=preload("res://scripts/mugen_actor.gd")
 const Adapter=preload("res://scripts/combat/duel_skill_adapter.gd")
 const AI=preload("res://scripts/duel/sasori_ai.gd")
@@ -61,10 +62,13 @@ var background:Texture2D
 var music:AudioStreamPlayer
 var sound:AudioStreamPlayer
 var before_duel:Dictionary={}
+var alpha:Node
+var talent_effect_counter:int=0
 var phase_damage:Array=[0.0,0.0]
 var damage_received:=0.0
 var parries:=0
 func _ready() -> void:
+ alpha=get_node_or_null("/root/AlphaProgress");talent_effect_counter=0
  build=get_node("/root/RunBuild");before_duel=build.snapshot();texture_filter=CanvasItem.TEXTURE_FILTER_NEAREST;background=Art.texture("res://assets/v12/akatsuki_cave.png")
  player=Actor.new();player.pack_name=build.actor_pack();player.scale=Vector2.ONE*2.1;add_child(player)
  var enemy=Actor.new();enemy.pack_name="sasori_hiruko";enemy.scale=Vector2.ONE*2.1;add_child(enemy)
@@ -74,6 +78,7 @@ func _ready() -> void:
  music=AudioStreamPlayer.new();add_child(music);sound=AudioStreamPlayer.new();add_child(sound)
  music.stream=AudioStreamMP3.load_from_buffer(FileAccess.get_file_as_bytes("res://assets/audio/sasori_battle.mp3"));music.stream.loop=true;music.volume_db=-80 if build.muted else -16;music.play();reset_fight()
 func reset_fight() -> void:
+ talent_effect_counter=0
  controls.queued.clear();melee.reset();action_log.clear();combo_chain=0;last_contact=-10;shake_time=0
  player_pos=Vector2(285,FLOOR);velocity=Vector2.ZERO;jumps_remaining=2;auto_guard_time=0.0;retreat_window=0.0;retreat_direction=0.0;landing_time=0.0;sfx_last.clear();player_hp=build.max_hp();chakra=100;invulnerable=1;hurt_time=0;dash_cd=0;dash_time=0;attack_time=0;combo_stage=0;combo_age=0;combo_buffer=0;hitstop=0;block=false;block_age=0
  player.set_pack(build.actor_pack());boss.actor.set_pack("sasori_hiruko");boss.pos=Vector2(970,FLOOR);boss.hp=5200.0;boss.max_hp=5200.0;boss.marked_until=0
@@ -198,6 +203,13 @@ func skill_hit(target:Dictionary,damage:float,id:String,stagger:float,push:Vecto
  if target!=boss or ai.phase_pause>0 or boss.hp<=0 or finished:return
  var break_guard=id in ["rasengan","kuchiyose"] or (build.form_branch=="sage" and build.form_stage>0 and id in ["basic","naruto_rendan","henge_feint"])
  if ai.state=="telegraph" and ai.pattern=="tail" and not break_guard:damage*=minf(0.84,0.48+float(build.passives.get("kunai_pierce",0))*0.12) if id=="basic" else 0.48
+ # Keep class talents active in the boss fight; protect boss phases with the existing hit cap.
+ if alpha!=null:
+  damage*=alpha.damage_multiplier()
+  talent_effect_counter+=1
+  if alpha.proc_ready():
+   var talent_tree:int=alpha.current_signature()
+   if talent_tree>=0:_duel_talent_effect(talent_tree)
  if id=="basic":
   combo_chain=combo_chain+1 if elapsed-last_contact<1.0 else 1
   last_contact=elapsed;damage*=maxf(0.75,1.0-0.035*(combo_chain-1))
@@ -217,6 +229,43 @@ func skill_hit(target:Dictionary,damage:float,id:String,stagger:float,push:Vecto
   if ai.phase==1:
    ai.phase_two();boss.hp=6300.0;boss.max_hp=6300.0;boss.actor.set_pack("sasori_puppet");projectiles.clear();zones.clear();skills.projectiles.clear();skills.traps.clear();skills.casts.clear();announce("HIRUKO ZNISZCZONY  /  FAZA II",2.2);skill_sound("transform.wav")
   else:finish(true)
+func _duel_talent_effect(tree_index:int)->void:
+ if alpha==null or tree_index<0:return
+ var style:String=AlphaAbilities.ability_type(alpha.selected,tree_index)
+ var apex:bool=alpha.apex_unlocked(tree_index)
+ var at:Vector2=boss.pos+Vector2(0,-70)
+ var visual:String="blast" if style in ["nova","fan","summon","chain"] else "wind" if style in ["pierce","ring"] else "hit"
+ var radius:float=170.0 if apex else 118.0
+ skills.effect(visual,at,radius,0.45)
+ match style:
+  "pierce":
+   chakra=minf(100.0,chakra+(8.0 if apex else 5.0))
+   dash_cd=maxf(0.0,dash_cd-0.5)
+  "fan":
+   boss.marked_until=maxf(float(boss.get("marked_until",0.0)),elapsed+1.2)
+  "nova":
+   shake_time=maxf(shake_time,0.20)
+  "ring":
+   invulnerable=maxf(invulnerable,0.36 if apex else 0.22)
+  "chain":
+   combo_chain=maxi(0,combo_chain-2)
+  "guard":
+   invulnerable=maxf(invulnerable,0.42 if apex else 0.26)
+   player_hp=minf(build.max_hp(),player_hp+(12.0 if apex else 7.0))
+  "summon":
+   chakra=minf(100.0,chakra+(15.0 if apex else 9.0))
+   auto_guard_time=maxf(auto_guard_time,0.15)
+  "suppress":
+   if ai.state=="recover" and ai.cc_immunity<=0:
+    ai.stagger=maxf(ai.stagger,0.18 if apex else 0.09)
+    ai.cc_immunity=0.72
+ if alpha.selected=="rock_lee":dash_cd=maxf(0.0,dash_cd-0.3)
+ if alpha.selected=="neji":invulnerable=maxf(invulnerable,0.16)
+ if alpha.selected=="gaara":player_hp=minf(build.max_hp(),player_hp+5.0)
+ skill_sound("rasengan.wav" if alpha.selected=="naruto" else "heavy_hit.wav")
+ record_action("alpha_signature",{"hero":alpha.selected,"tree":tree_index,"pattern":style,"apex":apex})
+ announce(str(alpha.tree_name(tree_index))+"  /  "+("APEX" if apex else "SYGNATURA"),0.7)
+
 func hurt(damage:float,unblockable:bool=false,poison:bool=false,source_x:float=NAN) -> void:
  if build.godmode or invulnerable>0 or finished:return
  var attacker_x=float(boss.pos.x) if is_nan(source_x) else source_x
