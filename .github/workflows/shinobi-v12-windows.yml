@@ -58,7 +58,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'QA V10.5 failed' }
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_v12.gd *> logs/qa_v12.txt
           if ($LASTEXITCODE -ne 0) { throw 'QA V12 failed' }
-      - name: ALPHA character and 252-talent QA
+      - name: ALPHA character and 480-talent QA
         shell: pwsh
         run: |
           & $env:GODOT_CLI --headless --path project --script res://tests/qa_alpha.gd *> logs/qa_alpha.txt
