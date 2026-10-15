@@ -727,7 +727,12 @@ func _complete_transform(form:int) -> void:
     player.attack = false
     invulnerable=2.1
     player_hp=minf(PLAYER_MAX_HP+float(upgrades["max_hp"])*18.0,player_hp+34.0+8.0*form)
-    player.form_tint=Color.WHITE if alpha.selected=="naruto" else Color(1.17,1.09,1.28) if form==1 else Color(1.38,1.24,1.36)
+    var class_tints={
+        "sasuke":Color(1.10,0.81,1.25),"kakashi":Color(0.88,1.13,1.28),
+        "rock_lee":Color(0.94,1.24,0.86),"neji":Color(0.95,1.12,1.22),
+        "gaara":Color(1.24,1.09,0.84)
+    }
+    player.form_tint=Color.WHITE if alpha.selected=="naruto" else Color(class_tints.get(alpha.selected,Color.WHITE)).lerp(Color.WHITE,0.22 if form==1 else 0.0)
     _flash(build.form_name(),2.5)
     if fx.size()<MAX_FX:
         fx.append({"pos":player_pos,"life":0.72,"max":0.72,"radius":150.0 + 20.0*form,"kind":"pulse"})
@@ -1988,7 +1993,20 @@ func _draw() -> void:
         var radius=float(v.get("radius",110.0))*(1.0-life) if v["kind"]!="pulse" else 110.0*(1.0-life)
         if v["kind"]=="aoe": radius=float(v.get("radius",120.0))*(1.0-life*0.9)
         draw_arc(v["pos"],maxf(1.0,radius),0,TAU,56,tint,5.0)
-    if not aura_frames.is_empty() and build.form_branch=="kyubi" and player_form==1:
+    if alpha.selected!="naruto" and player_form>0:
+        # Character-class chakra silhouette behind real MUGEN frames, no fake sprite replacements.
+        var aura_color:Color=Color(str(alpha.hero()["color"]))
+        var aura_origin:Vector2=player_pos+Vector2(0,-43)
+        var pulse:float=sin(hostile_orb_clock*5.0)*0.5+0.5
+        var aura_radius:float=44.0+float(player_form)*9.0+pulse*6.0
+        draw_circle(aura_origin,aura_radius,Color(aura_color,0.045+0.025*pulse))
+        for band in range(2+player_form):
+            var radius:float=aura_radius+float(band)*7.0
+            var start:float=hostile_orb_clock*(0.8+float(band)*0.16)+float(band)
+            draw_arc(aura_origin,radius,start,start+PI*0.65,23,Color(aura_color,0.55-float(band)*0.09),2.0,true)
+        if build.form_branch=="sage":
+            draw_arc(aura_origin,aura_radius+8.0,0.0,TAU,58,Color(aura_color,0.22),1.5,true)
+    if alpha.selected=="naruto" and not aura_frames.is_empty() and build.form_branch=="kyubi" and player_form==1:
         var frame_a:Texture2D=aura_frames[int(hostile_orb_clock*15.0)%aura_frames.size()]
         var width_a=97.0 if player_form==1 else 131.0
         var strength=0.96 if transform_pause>0.0 else 0.53+sin(hostile_orb_clock*7.5)*0.07
