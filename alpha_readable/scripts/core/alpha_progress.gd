@@ -1,4 +1,5 @@
 extends Node
+const ExtraTrees=preload("res://scripts/core/alpha_extra_trees.gd")
 ## 6 playable MUGEN heroes, 36 branching trees, 252 unique named nodes.
 ## Each tree splits after its root, reconverges at signature and apex.
 const HEROES = {
@@ -498,8 +499,9 @@ const AWAKENINGS={
 }
 const IDS = ["naruto", "sasuke", "kakashi", "rock_lee", "neji", "gaara"]
 const FOCI = ["damage", "tempo", "projectile", "mobility", "defense", "ultimate"]
-const NODE_EFFECTS = ["damage", "tempo", "guard", "projectile", "mobility", "signature", "apex"]
+const NODE_EFFECTS = ["damage", "tempo", "guard", "projectile", "mobility", "signature", "apex", "mastery"]
 var selected: String = "naruto"
+var roster_cache:Dictionary={}
 var owned: Dictionary = {}
 var points: int = 4
 var tree_open: bool = false
@@ -508,7 +510,16 @@ var level_awarded: int = 1
 var proc_sequence: int = 0
 
 func hero() -> Dictionary:
- return HEROES.get(selected, HEROES["naruto"])
+ if not roster_cache.has(selected):
+  var base:Dictionary=HEROES.get(selected,HEROES["naruto"]).duplicate(true)
+  var extended:Array=base["trees"]
+  for tree in extended:
+   if tree[1].size()==7:tree[1].append(str(tree[0])+" · MISTRZOSTWO")
+  for route in ExtraTrees.TREES.get(selected,[]):
+   extended.append(route.duplicate(true))
+  base["trees"]=extended
+  roster_cache[selected]=base
+ return roster_cache[selected]
 
 func choose(id: String) -> bool:
  if not HEROES.has(id): return false
@@ -542,7 +553,7 @@ func invested(tree_index: int, node_index: int) -> bool:
  return owned.has(key(tree_index, node_index))
 
 func node_cost(index: int) -> int:
- return 3 if index == 6 else 2 if index == 5 else 1
+ return 4 if index == 7 else 3 if index == 6 else 2 if index == 5 else 1
 
 func prerequisite(tree_index: int, node_index: int) -> bool:
  match node_index:
@@ -552,10 +563,11 @@ func prerequisite(tree_index: int, node_index: int) -> bool:
   4:return invested(tree_index,2)
   5:return invested(tree_index,3) or invested(tree_index,4)
   6:return invested(tree_index,5)
+  7:return invested(tree_index,6)
  return false
 
 func can_buy(tree_index: int, node_index: int) -> bool:
- if tree_index < 0 or tree_index >= 6 or node_index < 0 or node_index >= 7:return false
+ if tree_index < 0 or tree_index >= 10 or node_index < 0 or node_index >= 8:return false
  if invested(tree_index,node_index) or points < node_cost(node_index):return false
  # The left and right evolution routes are true choices, not cosmetic forks.
  if node_index==1 and invested(tree_index,2):return false
@@ -570,20 +582,20 @@ func buy(tree_index: int, node_index: int) -> bool:
 
 func count_effect(effect: String) -> int:
  var count := 0
- for t in range(6):
-  for n in range(7):
+ for t in range(10):
+  for n in range(8):
    if invested(t,n) and (NODE_EFFECTS[n] == effect or n == 6 and effect == "damage"):
     count += 1
  return count
 
 func count_focus(tree_index: int) -> int:
  var amount := 0
- for n in range(7):
+ for n in range(8):
   if invested(tree_index,n):amount+=1
  return amount
 
 func damage_multiplier() -> float:
- return 1.0 + 0.065 * count_effect("damage") + 0.10 * count_effect("signature") + 0.15 * count_effect("apex")
+ return 1.0 + 0.065 * count_effect("damage") + 0.10 * count_effect("signature") + 0.15 * count_effect("apex") + 0.07 * count_effect("mastery")
 
 func attack_interval_multiplier() -> float:
  return maxf(0.50, 1.0 - 0.035 * count_effect("tempo") - 0.025 * count_effect("mobility"))
@@ -606,13 +618,13 @@ func apex_unlocked(tree_index: int) -> bool:
 func proc_ready() -> bool:
  proc_sequence += 1
  var total := 0
- for i in range(6):
+ for i in range(10):
   if special_unlocked(i):total+=1
  return total > 0 and proc_sequence % maxi(3,8-total) == 0
 
 func current_signature() -> int:
  var active: Array[int] = []
- for i in range(6):
+ for i in range(10):
   if special_unlocked(i):active.append(i)
  if active.is_empty():return -1
  return active[posmod(proc_sequence, active.size())]
@@ -629,7 +641,7 @@ func restore(data: Dictionary) -> bool:
   var parts = str(key_saved).split(".")
   if parts.size()!=3 or parts[0]!=id or not str(parts[1]).is_valid_int() or not str(parts[2]).is_valid_int():return false
   var t=int(parts[1]);var n=int(parts[2])
-  if t<0 or t>=6 or n<0 or n>=7 or not bool(saved[key_saved]):return false
+  if t<0 or t>=10 or n<0 or n>=8 or not bool(saved[key_saved]):return false
   # Reject impossible talent graphs and mutually exclusive branches on load.
   if n==1 and saved.has("%s.%d.2"%[id,t]):return false
   if n==2 and saved.has("%s.%d.1"%[id,t]):return false
@@ -641,6 +653,7 @@ func restore(data: Dictionary) -> bool:
     4:requires=[2]
     5:requires=[3,4]
     6:requires=[5]
+    7:requires=[6]
    var path_unlocked:=false
    for parent in requires:
     if saved.has("%s.%d.%d"%[id,t,parent]):path_unlocked=true
