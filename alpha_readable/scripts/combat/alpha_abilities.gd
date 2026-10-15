@@ -105,6 +105,8 @@ static func activate(g,hero:String,tree:int,apex:bool,power:float,route:int=0)->
    if hero=="naruto":
     g.clone_cooldown=0.0
     g._spawn_clones()
+    g._aoe_damage(at,area*0.64,damage*0.44)
+    g._add_blast(at,area*0.66,"chakra_blast")
    else:
     for i in range(4):
      var near:Vector2=at+Vector2.from_angle(float(i)*TAU/4.0)*area*.82
