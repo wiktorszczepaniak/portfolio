@@ -784,7 +784,7 @@ func _update_player(dt:float) -> void:
     attack_timer-=dt
     if attack_timer<=0:
         if AlphaMelee.uses_melee(alpha.selected):
-            AlphaMelee.begin(self)
+            if AlphaMelee.begin(self) and alpha.proc_ready():_alpha_proc()
         else:
             _fire_kunai()
         attack_timer=maxf(0.12,0.54-float(upgrades["kunai_rapid"])*0.07)*TRANSFORM_RATE_BOOST[player_form]*alpha.attack_interval_multiplier()*AlphaAbilities.attack_rate(alpha.selected)
