@@ -75,6 +75,12 @@ jobs:
         run: |
           & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_v12_visual.gd -- "$pwd/logs/windows_visual" *> logs/windows_visual.txt
           if ($LASTEXITCODE -ne 0) { Get-Content logs/windows_visual.txt; throw 'Windows GUI render failed' }
+      - name: ALPHA visual evidence (all six MUGEN characters and talent page)
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          & $env:GODOT_CLI --path project --audio-driver Dummy --rendering-method gl_compatibility --script res://tests/qa_alpha_visual.gd -- "$pwd/logs/alpha_visual" *> logs/qa_alpha_visual.txt
+          if ($LASTEXITCODE -ne 0) { Get-Content logs/qa_alpha_visual.txt; throw 'Alpha screenshots failed' }
       - name: Pack ALL raw assets as Godot PCK
         shell: pwsh
         run: |
