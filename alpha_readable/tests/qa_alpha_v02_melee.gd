@@ -32,6 +32,11 @@ func run()->void:
   for frame in range(40):Combat.tick(g,1.0/120.0)
   check(float(near["hp"])<1000.0,hero+" melee made direct hit")
   check(float(far["hp"])==1000.0,hero+" distant target untouched")
+  # Progression proc should advance on real hand-to-hand strikes, not only kunai.
+  var procs_before:int=g.alpha.proc_sequence
+  g.attack_timer=0.0
+  g._update_player(1.0/60.0)
+  check(g.alpha.proc_sequence>procs_before,hero+" melee advances class talent signature cycle")
   g.enemies.clear()
   g.melee_cast.clear()
   check(not Combat.begin(g),hero+" cannot swing at far-only target")
