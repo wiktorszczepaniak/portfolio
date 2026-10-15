@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Static packed-asset sanity
+        run: python3 QA_GITHUB.py
       - name: Download Godot 4.5.2 Linux
         shell: bash
         run: |
