@@ -2059,9 +2059,9 @@ func _draw() -> void:
             var fade:float=clampf(float(v["life"])/maxf(0.01,float(v["max"])),0.0,1.0)
             CleanFX.paint(self,str(v["kind"]),Vector2(v["pos"]),float(v.get("radius",70.0))*2.0,clock,float(v.get("direction",1.0))*0.08,fade)
             continue
-        if v.kind in ["impact","rasen_blast","smoke_blast","chakra_blast","futon_blast","melee_rasengan","sand_blast"]:
+        if v.kind in ["impact","rasen_blast","smoke_blast","chakra_blast","futon_blast","melee_rasengan","sand_blast","lightning_blast","fire_blast"]:
             var progress=1.0-float(v.life)/maxf(.01,float(v.max))
-            var clean_art="hit" if v.kind=="impact" else "wind" if v.kind=="futon_blast" else "sand" if v.kind=="sand_blast" else "blast"
+            var clean_art="hit" if v.kind=="impact" else "wind" if v.kind=="futon_blast" else "sand" if v.kind=="sand_blast" else "lightning" if v.kind=="lightning_blast" else "fire" if v.kind=="fire_blast" else "blast"
             CleanFX.paint(self,clean_art,v.pos+Vector2(0,-20),36 if v.kind=="impact" else float(v.get("radius",70))*1.8,progress*.35,0,1-progress)
             continue
         if v["kind"]=="rendan" and not barrage_frames.is_empty():
