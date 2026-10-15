@@ -17,6 +17,7 @@ const FORM_IDS := ["base", "kyuubi", "sage", "kcm"]
 const BOSS_NAMES := ["ZABUZA MOMOCHI", "KISAME HOSHIGAKI", "ITACHI UCHIHA", "PAIN"]
 
 var ui_font: Font
+var packed_sprite_frames: Dictionary = {}
 var hero_frames: Dictionary = {}
 var zabuza_frames: Array[Texture2D] = []
 var audio_players: Dictionary = {}
@@ -71,6 +72,9 @@ func _ready() -> void:
 	queue_redraw()
 
 func load_frames() -> void:
+	# Native PNG files are used from the local ZIP; a text-packed PNG atlas supports
+	# the isolated GitHub branch without committing third-party binary files.
+	packed_sprite_frames = read_sprite_pack()
 	for key in FORM_IDS:
 		var arr: Array[Texture2D] = []
 		for i in range(12):
@@ -79,6 +83,8 @@ func load_frames() -> void:
 				var tex := load(path) as Texture2D
 				if tex != null:
 					arr.append(tex)
+			elif packed_sprite_frames.has(path.trim_prefix("res://")):
+				arr.append(packed_sprite_frames[path.trim_prefix("res://")])
 		hero_frames[key] = arr
 	for i in range(22):
 		var path := "res://assets/characters/zabuza/z_%02d.png" % i
@@ -86,6 +92,30 @@ func load_frames() -> void:
 			var tex := load(path) as Texture2D
 			if tex != null:
 				zabuza_frames.append(tex)
+		elif packed_sprite_frames.has(path.trim_prefix("res://")):
+			zabuza_frames.append(packed_sprite_frames[path.trim_prefix("res://")])
+
+func read_sprite_pack() -> Dictionary:
+	var result: Dictionary = {}
+	var packed_text_path := "res://assets/packed_sprites.b64"
+	if not FileAccess.file_exists(packed_text_path):
+		return result
+	var txt := FileAccess.get_file_as_string(packed_text_path).strip_edges()
+	if txt.is_empty(): return result
+	var raw: PackedByteArray = Marshalls.base64_to_raw(txt)
+	var temp_path := "user://boss_rush_sprite_pack.zip"
+	var writer := FileAccess.open(temp_path, FileAccess.WRITE)
+	if writer == null: return result
+	writer.store_buffer(raw)
+	writer.close()
+	var zipper := ZIPReader.new()
+	if zipper.open(temp_path) != OK: return result
+	for path in zipper.get_files():
+		var img := Image.new()
+		if img.load_png_from_buffer(zipper.read_file(path)) == OK:
+			result[path] = ImageTexture.create_from_image(img)
+	zipper.close()
+	return result
 
 func load_audio() -> void:
 	for name in ["rasengan", "dash", "transform", "water_cast", "water_hit", "boss_tell", "impact", "parry", "clone_smoke", "swing", "chakra_charge", "boss", "pickup"]:
@@ -323,7 +353,7 @@ func boss_attack() -> void:
 	if volley % 3 == 0:
 		sfx("water_cast", 0.8 + randf() * 0.28)
 
-func spawn_bullets(group: Array[Dictionary]) -> void:
+func spawn_bullets(group: Array) -> void:
 	for b in group:
 		if bullets.size() >= 430: return
 		bullets.append(b)
