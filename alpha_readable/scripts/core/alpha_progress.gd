@@ -489,6 +489,13 @@ const HEROES = {
   ]
  }
 }
+const AWAKENINGS={
+ "sasuke":{"kyubi":["CHIDORI DRIVE","PRZEKLĘTA PIECZĘĆ"],"sage":["SHARINGAN","MANGEKYŌ SHARINGAN"]},
+ "kakashi":{"kyubi":["RAIKIRI CHARGE","RAIDEN STORM"],"sage":["SHARINGAN FOCUS","KAMUI MASTERY"]},
+ "rock_lee":{"kyubi":["TRZECIA BRAMA","SZÓSTA BRAMA"],"sage":["DRUNKEN FIST","LOTUS DEFENSE"]},
+ "neji":{"kyubi":["HAKKE KOMBO","128 DŁONI"],"sage":["BYAKUGAN","KAITEN MASTERY"]},
+ "gaara":{"kyubi":["AURA SHUKAKU","RAMIĘ SHUKAKU"],"sage":["ZBROJA PIASKU","STRAŻNIK KAZEKAGE"]}
+}
 const IDS = ["naruto", "sasuke", "kakashi", "rock_lee", "neji", "gaara"]
 const FOCI = ["damage", "tempo", "projectile", "mobility", "defense", "ultimate"]
 const NODE_EFFECTS = ["damage", "tempo", "guard", "projectile", "mobility", "signature", "apex"]
@@ -644,3 +651,13 @@ func restore(data: Dictionary) -> bool:
  if spent>earned or int(data.get("points",0))<0 or spent+int(data.get("points",0))>earned:return false
  selected=id;owned=saved.duplicate(true);points=int(data.get("points",0));level_awarded=level
  return true
+
+func awakening_title(branch:String,stage:int)->String:
+ if selected=="naruto":
+  if stage==0:return "NARUTO"
+  if branch=="kyubi":return "KYŪBI CLOAK" if stage==1 else "KURAMA CHAKRA MODE"
+  return "SAGE MODE" if stage==1 else "SENNIN MASTERY"
+ var awaken:Dictionary=AWAKENINGS.get(selected,{})
+ var levels:Array=awaken.get(branch,[])
+ if stage==0 or levels.is_empty():return str(hero()["name"])
+ return str(levels[clampi(stage-1,0,levels.size()-1)])
