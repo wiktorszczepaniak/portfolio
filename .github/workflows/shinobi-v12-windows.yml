@@ -26,6 +26,7 @@ jobs:
           Expand-Archive source.zip -DestinationPath . -Force
           if (Test-Path overlay) { Copy-Item overlay/* project/ -Recurse -Force }
           if (Test-Path alpha_overlay.zip) { Expand-Archive alpha_overlay.zip -DestinationPath . -Force }
+          if (Test-Path alpha_readable) { Copy-Item alpha_readable/* project/ -Recurse -Force }
       - name: Preserve readable ALPHA code and roster metadata on this branch
         shell: pwsh
         run: |
