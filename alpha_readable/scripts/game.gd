@@ -2017,20 +2017,6 @@ func _draw() -> void:
         var width_a=97.0 if player_form==1 else 131.0
         var strength=0.96 if transform_pause>0.0 else 0.53+sin(hostile_orb_clock*7.5)*0.07
         draw_texture_rect(frame_a,Rect2(player_pos+Vector2(-width_a/2.0,-131.0),Vector2(width_a,136.0)),false,Color(1,1,1,strength))
-    if alpha.selected!="naruto" and player_form>0:
-        # Class-color chakra aura. Animated geometry, no color-key or cropped MUGEN background.
-        var hue:Color=Color(str(alpha.hero().get("color","dfb36e")))
-        var pulse:float=0.5+0.5*sin(clock*7.0)
-        var center:Vector2=player_pos+Vector2(0,-39)
-        var rings:int=3 if player_form==2 else 2
-        for layer in range(rings):
-            var radius:float=31.0+float(layer)*11.0+pulse*5.0+float(player_form)*4.0
-            var opacity:float=0.39 if layer==0 else 0.19
-            draw_arc(center,radius,0,TAU,44,Color(hue.r,hue.g,hue.b,opacity),2.5,true)
-        for part in range(10 if player_form==2 else 6):
-            var a:float=float(part)*TAU/10.0+clock*(1.8 if player_form==2 else 0.8)
-            var p:Vector2=center+Vector2(cos(a)*39.0,sin(a)*26.0)
-            draw_circle(p,2.4 if player_form==2 else 1.7,Color(hue.r,hue.g,hue.b,0.30+pulse*0.35))
     if transform_pause > 0.0:
         var t := transform_pause / maxf(0.001, transform_total)
         draw_circle(player_pos+Vector2(0,-36), 145.0, Color(1,0.92,0.65,0.09))
