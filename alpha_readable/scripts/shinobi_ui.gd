@@ -260,7 +260,7 @@ func _title() -> void:
     _button(Rect2(82,551,220,36),"EFEKTY: " + ("NISKIE" if g.low_fx else "PEŁNE"),false)
     _button(Rect2(320,551,230,36),"NIEŚMIERTELNOŚĆ: " + ("TAK" if g.godmode else "NIE"),false)
     _button(Rect2(82,601,220,36),"DŹWIĘK: " + ("WYŁ." if g.muted else "WŁ."),false)
-    _text("WASD  RUCH     SHIFT  KAWARIMI     X  WSPARCIE (OIROKE AUTO)",Vector2(83,682),12,MUTED,mono)
+    _text("WASD  RUCH    SHIFT  KAWARIMI    X  WSPARCIE    T  DRZEWKA",Vector2(83,682),11,MUTED,mono)
     _center(str(g.alpha.hero()["name"]),967,443,22,INK,title)
     _center("6 POSTACI   •   36 DRZEWEK   •   252 TALENTY",967,470,12,Color("695b47"),mono)
     for i in range(6):
@@ -282,7 +282,7 @@ func _hud() -> void:
     var tex:Texture2D=icons.get(g.build.actor_pack(),icons["naruto_base"])
     var dims=tex.get_size()*minf(1.15,76.0/tex.get_height())
     draw_texture_rect(tex,Rect2(Vector2(65-dims.x/2,107-dims.y),dims),false)
-    _text("UZUMAKI NARUTO",Vector2(111,43),15,CREAM,title)
+    _text(str(g.alpha.hero()["name"]),Vector2(111,43),14,CREAM,title)
     _text("%02d"%g.level,Vector2(337,43),17,GOLD,mono)
     var hp_max:float=g.PLAYER_MAX_HP+float(g.upgrades.get("max_hp",0))*18
     _bar(Rect2(111,54,251,17),g.player_hp/hp_max,Color("df7855"))
