@@ -550,6 +550,9 @@ func prerequisite(tree_index: int, node_index: int) -> bool:
 func can_buy(tree_index: int, node_index: int) -> bool:
  if tree_index < 0 or tree_index >= 6 or node_index < 0 or node_index >= 7:return false
  if invested(tree_index,node_index) or points < node_cost(node_index):return false
+ # The left and right evolution routes are true choices, not cosmetic forks.
+ if node_index==1 and invested(tree_index,2):return false
+ if node_index==2 and invested(tree_index,1):return false
  return prerequisite(tree_index,node_index)
 
 func buy(tree_index: int, node_index: int) -> bool:
@@ -620,6 +623,21 @@ func restore(data: Dictionary) -> bool:
   if parts.size()!=3 or parts[0]!=id or not str(parts[1]).is_valid_int() or not str(parts[2]).is_valid_int():return false
   var t=int(parts[1]);var n=int(parts[2])
   if t<0 or t>=6 or n<0 or n>=7 or not bool(saved[key_saved]):return false
+  # Reject impossible talent graphs and mutually exclusive branches on load.
+  if n==1 and saved.has("%s.%d.2"%[id,t]):return false
+  if n==2 and saved.has("%s.%d.1"%[id,t]):return false
+  if n>0:
+   var requires:Array=[]
+   match n:
+    1,2:requires=[0]
+    3:requires=[1]
+    4:requires=[2]
+    5:requires=[3,4]
+    6:requires=[5]
+   var path_unlocked:=false
+   for parent in requires:
+    if saved.has("%s.%d.%d"%[id,t,parent]):path_unlocked=true
+   if not path_unlocked:return false
   spent+=node_cost(n)
  var level=maxi(1,int(data.get("level_awarded",1)))
  var earned=4+2*(level-1)
