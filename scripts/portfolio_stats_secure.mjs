@@ -69,11 +69,20 @@ async function makePeriod(days,now){
   const prev = new Date(first.getTime()-days*86400000);
   const q={start:first.toISOString(),end:now.toISOString()};
   const old={start:prev.toISOString(),end:first.toISOString()};
-  const a=await get("/stats/total",q),b=await get("/stats/total",old);
   const pageResponse=await get("/stats/hits",{...q,limit:100});
-  const pages=(Array.isArray(pageResponse.hits)?pageResponse.hits:[])
-    .filter(p=>!p?.event)
-    .map(p=>({path:String(p?.path||"/").slice(0,150),title:String(p?.title||"").slice(0,150),count:number(p?.count)}));
+  const previousResponse=await get("/stats/hits",{...old,limit:100});
+  if(pageResponse.more||previousResponse.more)throw Error("Too many paths/events for a complete report");
+  const records=Array.isArray(pageResponse.hits)?pageResponse.hits:[];
+  const nonEvents=records.filter(p=>!p?.event);
+  const pages=nonEvents.map(p=>({
+    path:String(p?.path||"/").slice(0,150),
+    title:String(p?.title||"").slice(0,150),
+    count:number(p?.count)
+  }));
+  const events=records.filter(p=>p?.event && /^portfolio-(?:end|lang|video)-/.test(String(p?.path||"")))
+    .map(p=>({path:String(p.path).slice(0,150),title:String(p.title||"").slice(0,130),count:number(p.count)}));
+  const previousPages=(Array.isArray(previousResponse.hits)?previousResponse.hits:[])
+    .filter(p=>!p?.event);
   const toprefs=await optionalStats("toprefs",q);
   const browsers=await optionalStats("browsers",q);
   const locationResponse=await get("/stats/locations",{...q,limit:100});
@@ -97,10 +106,10 @@ async function makePeriod(days,now){
   const sizes=await optionalStats("sizes",q);
   const campaigns=await optionalStats("campaigns",q);
   return {
-    total:Math.max(0,number(a.total)-number(a.total_events)),
-    previous:Math.max(0,number(b.total)-number(b.total_events)),
-    daily:daySeries(a.stats,first,utcDay),
-    pages,toprefs,browsers,locations,regions,systems,sizes,campaigns
+    total:pages.reduce((n,p)=>n+p.count,0),
+    previous:previousPages.reduce((n,p)=>n+number(p.count),0),
+    daily:daySeries(nonEvents.flatMap(p=>Array.isArray(p.stats)?p.stats:[]),first,utcDay),
+    pages,events,toprefs,browsers,locations,regions,systems,sizes,campaigns
   };
 }
 const now=new Date();
