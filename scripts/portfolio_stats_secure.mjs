@@ -118,9 +118,9 @@ try{
     .find(item=>item?.code==="wiktor-portfolio");
   // GoatCounter serializes this field as "setttings" in current releases.
   const settings=site?.settings ?? site?.setttings;
-  const regions=settings?.collect_regions;
+  const rawRegions=settings?.collect_regions;
+  const regions=Array.isArray(rawRegions)?rawRegions:typeof rawRegions==="string"?rawRegions.split(",").map(code=>code.trim()):null;
   const flags=settings?.collect;
-  console.log("::notice title=PL configuration shape::"+JSON.stringify({siteFound:!!site,settingsFound:!!settings,collect:flags,collectRegions:regions}));
   if(Array.isArray(regions) && Number.isInteger(flags))
     plRegionCollection=(flags & 16)!==0 && (flags & 32)!==0 && regions.some(code=>String(code).toUpperCase()==="PL");
 }catch(error){
