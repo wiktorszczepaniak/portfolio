@@ -83,6 +83,33 @@ function showRegions(rows){
  ranked.push(...other);
  rank("region-list",ranked,x=>String(x),6);
 }
+function engagement(rows){
+ const items=Array.isArray(rows)?rows:[];
+ let completedPL=0,completedEN=0,plToEn=0,enToPl=0;
+ const videos=new Map();
+ for(const item of items){
+  const name=String(item.path||"");
+  const count=integer(item.count);
+  if(name==="portfolio-end-pl")completedPL+=count;
+  else if(name==="portfolio-end-en")completedEN+=count;
+  else if(name==="portfolio-lang-pl-en")plToEn+=count;
+  else if(name==="portfolio-lang-en-pl")enToPl+=count;
+  else if(/^portfolio-video-(pl|en)-[a-z0-9_-]{1,45}$/i.test(name)){
+   const id=name.replace(/^portfolio-video-(pl|en)-/i,"");
+   const existing=videos.get(id)||{name:String(item.title||id),count:0};
+   existing.count+=count;
+   // Prefer a readable, provider-supplied aria label to the media filename.
+   if(existing.name===id && item.title)existing.name=String(item.title);
+   videos.set(id,existing);
+  }
+ }
+ $("engagement-end").textContent=fmt(completedPL+completedEN);
+ $("engagement-video").textContent=fmt([...videos.values()].reduce((sum,item)=>sum+item.count,0));
+ $("engagement-switch").textContent=fmt(plToEn+enToPl);
+ $("end-pl").textContent=fmt(completedPL);$("end-en").textContent=fmt(completedEN);
+ $("switch-pl-en").textContent=fmt(plToEn);$("switch-en-pl").textContent=fmt(enToPl);
+ rank("video-rankings",Array.from(videos.values()),x=>x,7);
+}
 function pages(rows,total){
  const body=$("page-rows");body.replaceChildren();const items=(rows||[]).filter(x=>integer(x.count)>0).sort((a,b)=>b.count-a.count).slice(0,8);
  $("page-count").textContent=items.length+" STRON";
@@ -163,7 +190,7 @@ function draw(){
  showRegions(r.regions);rank("systems",r.systems,x=>String(x));
  rank("sizes",r.sizes,x=>{const name=String(x);return /^\d+$/.test(name)?name+" px":name;},6);
  rank("campaigns",r.campaigns,x=>String(x),6);
- language(r.pages);pages(r.pages,total);
+ engagement(r.events);language(r.pages);pages(r.pages,total);
 }
 async function refresh(){
  const btn=$("refresh");btn.disabled=true;
