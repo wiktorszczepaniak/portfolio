@@ -13,6 +13,16 @@
   let current = 1, zoom = 1, scheduled = false;
   const language = document.documentElement.lang === 'en' ? 'en' : 'pl';
   const languageLinks = [...document.querySelectorAll('[data-language]')];
+  // One dropdown entry per case-study category; slides still navigate individually.
+  const sections = [{from:5,to:11},{from:12,to:14},{from:15,to:17},{from:18,to:23},{from:24,to:25}];
+  const slideCounter = document.querySelector('#slide-count');
+  function updateSectionSelection() {
+    const section = sections.find(item => current >= item.from && current <= item.to);
+    select.value = String(section?.from || 0);
+    if (slideCounter) {
+      slideCounter.textContent = String(current).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+    }
+  }
   function updateLanguageLinks() {
     languageLinks.forEach(link => {
       let number = current;
@@ -27,6 +37,7 @@
   function go(number, updateHash = true) {
     number = Math.max(1, Math.min(slides.length, Number(number)));
     current = number;
+    updateSectionSelection();
     updateLanguageLinks();
     slides[number - 1].scrollIntoView({behavior: reduceMotion.matches ? 'instant' : 'smooth', block:'start'});
     if (updateHash) history.replaceState(null, '', '#slajd-' + number);
@@ -40,7 +51,7 @@
       const distance = position >= rect.top && position <= rect.bottom ? 0 : Math.min(Math.abs(rect.top-position), Math.abs(rect.bottom-position));
       if (distance < closest) { closest = distance; current = i + 1; }
     });
-    select.value = String(current);
+    updateSectionSelection();
     updateLanguageLinks();
     prev.disabled = current === 1; next.disabled = current === slides.length;
     progress.style.transform = `scaleX(${current / slides.length})`;
@@ -49,8 +60,14 @@
   addEventListener('resize', update);
   prev.addEventListener('click', () => go(current - 1));
   next.addEventListener('click', () => go(current + 1));
-  select.addEventListener('change', () => go(select.value));
-  document.querySelector('.contact').addEventListener('click', event => {event.preventDefault();go(slides.length);});
+  select.addEventListener('change', () => {
+    const destination = Number(select.value);
+    if (destination >= 1 && destination <= slides.length) go(destination);
+  });
+  document.querySelector('.contact-shortcut')?.addEventListener('click', event => {
+    event.preventDefault();
+    go(slides.length);
+  });
   addEventListener('keydown', event => {
     if (viewer.open || /INPUT|SELECT|TEXTAREA|VIDEO|BUTTON|A/.test(event.target.tagName) || event.ctrlKey || event.metaKey || event.altKey) return;
     const destination = {ArrowRight:current+1,ArrowLeft:current-1,PageDown:current+1,PageUp:current-1,Home:1,End:slides.length}[event.key];
