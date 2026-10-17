@@ -4,7 +4,7 @@ const number = new Intl.NumberFormat("pl-PL");
 const dateFormat = new Intl.DateTimeFormat("pl-PL",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
 const stampFormat = new Intl.DateTimeFormat("pl-PL",{dateStyle:"medium",timeStyle:"short",timeZone:"Europe/Warsaw"});
 const regions = new Intl.DisplayNames(["pl"],{type:"region"});
-let data = null, period = "7";
+let data = null, period = "30";
 const SVG_NS = "http://www.w3.org/2000/svg";
 const fmt = n => number.format(Math.max(0,Math.round(Number(n)||0)));
 const integer = n => Math.max(0,Number(n)||0);
@@ -48,7 +48,13 @@ function regionCode(name){
  const normalized=normalizeRegion(raw);
  const alias={"lodz":"10","lodzkie":"10","mazovia":"14","masovia":"14","mazowieckie":"14",
  "silesia":"24","slaskie":"24","lesserpoland":"12","malopolskie":"12",
- "greaterpoland":"30","wielkopolskie":"30","lowersilesian":"02"};
+ "greaterpoland":"30","wielkopolskie":"30","lowersilesian":"02",
+ "lowersilesia":"02","kuyavianpomeranian":"04","kuyaviapomerania":"04",
+ "lublin":"06","lubusz":"08","lesserpolandvoivodeship":"12",
+ "masovian":"14","opole":"16","subcarpathian":"18","subcarpathia":"18",
+ "podlasie":"20","podlaskie":"20","pomerania":"22","pomeranian":"22",
+ "silesian":"24","swietokrzyskie":"26","holy cross":"26","holycross":"26",
+ "warmianmasurian":"28","warmiamasuria":"28","westpomeranian":"32","westpomerania":"32"};
  if(alias[normalized])return alias[normalized];
  const hit=VOIVODESHIPS.find(item=>normalizeRegion(item[1])===normalized);
  return hit?hit[0]:null;
@@ -63,14 +69,16 @@ function showRegions(rows){
  }
  const total=Array.from(matched.values()).reduce((a,b)=>a+b,0);
  const max=Math.max(1,...matched.values());
+ const health=current()?.regionHealth;
  const summary=$("region-summary");
  summary.classList.toggle("empty",list.length===0);
- summary.textContent=list.length?
-   "Dane regionalne w Polsce · "+fmt(list.reduce((n,r)=>n+integer(r.count),0))+" odsłon z przypisanym regionem.":
+ summary.textContent=health?.api==="error"?
+   "Nie udało się pobrać województw z GoatCounter. To błąd połączenia/API, nie zero odwiedzin. Kolejna synchronizacja ponowi próbę.":list.length?
+   "API regionów działa · "+fmt(total)+" zliczeń przypisanych do województw"+(other.length?" · część lokalizacji jest nieznana lub nierozpoznana.":". Lokalizacja jest przybliżona."):
    data?.plRegionCollection===false?
    "Zbieranie województw jest wyłączone. W GoatCounter przejdź do ustawień zbierania regionów i dodaj kraj PL. Nowe dane pojawią się po kolejnych odwiedzinach.":
    data?.plRegionCollection===true?
-   "Zbieranie regionów PL jest włączone, ale na razie brak danych o województwach. Nie oznacza to zera odwiedzin.":
+   "Zbieranie regionów PL jest potwierdzone jako włączone. "+(health?.api==="ok"?"API odpowiada prawidłowo, ale nie zwróciło województw w tym okresie.":"Brak danych o województwach w tym okresie."):
    "Brak danych wojewódzkich. Sprawdź zbieranie regionów dla Polski (PL) w ustawieniach GoatCounter.";
  const tiles=$("region-tiles");tiles.replaceChildren();
  for(const [code,name] of VOIVODESHIPS){
@@ -263,4 +271,5 @@ document.querySelectorAll(".nav-item").forEach(link=>link.addEventListener("clic
  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===link));
 }));
 refresh();
+
 

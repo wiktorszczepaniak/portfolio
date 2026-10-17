@@ -10,8 +10,8 @@
   <link rel="stylesheet" href="./style.css?v=sharingan-1">
 
   <script src="./connect.js?v=studio-2" defer></script>
-  <script src="./shinobi-score.js" defer></script>
-  <script src="./app.js?v=sharingan-1" defer></script>
+  <script src="./shinobi-score.js?v=small-traffic-1" defer></script>
+  <script src="./app.js?v=small-traffic-1" defer></script>
   <script src="./appearance.js" defer></script>
 </head>
 <body>
@@ -39,7 +39,7 @@
         <div class="hero-caption"><span></span> CREATIVE WORK. REAL NUMBERS.</div>
       </div>
       <div class="shinobi-card">
-        <div class="rank-card-top"><span>SHINOBI SCORE</span><span id="score-period">7 DNI</span></div>
+        <div class="rank-card-top"><span>SHINOBI SCORE</span><span id="score-period">30 DNI</span></div>
         <div class="rank-card-main">
           <div class="sharingan-emblem" aria-hidden="true"><svg viewBox="0 0 160 160"><circle class="eye-disc" cx="80" cy="80" r="69"/><circle class="eye-orbit" cx="80" cy="80" r="43"/><circle cx="80" cy="80" r="13" fill="#140b0e"/><g fill="#140b0e"><path d="M80 26c-11 0-16 12-9 20 6 7 17 4 18-4 8 1 14-2 18-9-9 4-17-7-27-7z"/><path d="M80 26c-11 0-16 12-9 20 6 7 17 4 18-4 8 1 14-2 18-9-9 4-17-7-27-7z" transform="rotate(120 80 80)"/><path d="M80 26c-11 0-16 12-9 20 6 7 17 4 18-4 8 1 14-2 18-9-9 4-17-7-27-7z" transform="rotate(240 80 80)"/></g></svg></div>
           <div class="score-reading"><span>TWÓJ WYNIK</span><strong id="shinobi-score">—</strong><small>PKT / WYBRANY OKRES</small></div>
@@ -49,9 +49,9 @@
         <p class="rank-hint" id="rank-hint">Sharingan obserwuje. Wynik czeka na dane.</p>
       </div>
     </section>
-    <div class="controls"><div class="controls-left"><span class="period-label">WYBRANY OKRES</span><div class="period-pills" role="group" aria-label="Wybór okresu"><button data-period="7" class="active" aria-pressed="true">7 dni</button><button data-period="30" aria-pressed="false">30 dni</button><button data-period="90" aria-pressed="false">90 dni</button><button data-period="365" aria-pressed="false">12 miesięcy</button></div></div><div class="control-actions"><label class="focus-toggle"><input type="checkbox" id="focus-mode"><span class="switch-track" aria-hidden="true"></span><span>Tryb skupienia</span></label><button class="refresh" id="refresh" type="button"><span>↻</span> Odśwież</button></div></div>
+    <div class="controls"><div class="controls-left"><span class="period-label">WYBRANY OKRES</span><div class="period-pills" role="group" aria-label="Wybór okresu"><button data-period="7" aria-pressed="false">7 dni</button><button data-period="30" class="active" aria-pressed="true">30 dni</button><button data-period="90" aria-pressed="false">90 dni</button><button data-period="365" aria-pressed="false">12 miesięcy</button></div></div><div class="control-actions"><label class="focus-toggle"><input type="checkbox" id="focus-mode"><span class="switch-track" aria-hidden="true"></span><span>Tryb skupienia</span></label><button class="refresh" id="refresh" type="button"><span>↻</span> Odśwież</button></div></div>
     <div class="status-row"><span id="status">Oczekiwanie na raport...</span><span id="timestamp">Źródło: GoatCounter</span></div>
-    <details class="score-rules"><summary>Jak działa Shinobi Score i rangi? <span>＋</span></summary><div class="score-rules-content"><p>Własny system punktowy tego dashboardu, liczony osobno dla wybranego okresu. To zabawa z wynikami — nie liczba osób ani ocena jakości portfolio.</p><div class="score-weights"><span><b>+1</b> odsłona</span><span><b>+3</b> uruchomienie filmu</span><span><b>+5</b> dotarcie do końca</span><span><b>+10</b> kliknięcie Kontakt</span></div><div class="rank-ladder"><span>Uczeń <b>0</b></span><span>Genin <b>100</b></span><span>Chūnin <b>500</b></span><span>Jōnin <b>1 500</b></span><span>Kage <b>5 000</b></span></div><p>Punkty sumują zdarzenia, także powtórzone przez tę samą osobę. Dłuższy okres daje więcej okazji do zdobywania punktów. Rangi są umownymi progami tego panelu, nie rankingiem względem innych stron.</p></div></details>
+    <details class="score-rules"><summary>Jak działa Shinobi Score i rangi? <span>＋</span></summary><div class="score-rules-content"><p>Własny system punktowy tego dashboardu, liczony osobno dla wybranego okresu. To zabawa z wynikami — nie liczba osób ani ocena jakości portfolio.</p><div class="score-weights"><span><b>+1</b> odsłona</span><span><b>+3</b> uruchomienie filmu</span><span><b>+5</b> dotarcie do końca</span><span><b>+10</b> kliknięcie Kontakt</span></div><div class="rank-ladder"><span>Uczeń <b>0</b></span><span>Genin <b>5</b></span><span>Chūnin <b>15</b></span><span>Jōnin <b>30</b></span><span>Kage <b>60</b></span></div><p>Progi dopasowane do małego portfolio: 20 zliczonych wejść + 2 dotarcia do końca + 1 kliknięcie Kontakt = 40 pkt (Jōnin). Punkty sumują zdarzenia, także powtórzone przez tę samą osobę. Dłuższy okres daje więcej okazji do zdobywania punktów. Rangi są umownymi progami tego panelu, nie rankingiem względem innych stron.</p></div></details>
     <section class="metrics" aria-label="Najważniejsze statystyki">
       <article class="metric primary"><div class="metric-top"><span>ODSŁONY PORTFOLIO</span><span class="metric-icon">↗</span></div><div class="metric-value" id="kpi-views">—</div><div class="metric-bottom"><span id="kpi-change" class="delta">—</span><span>względem poprzedniego okresu</span></div><div class="metric-glow"></div></article>
       <article class="metric"><div class="metric-top"><span>ŚREDNIO DZIENNIE</span><span class="metric-icon">◷</span></div><div class="metric-value" id="kpi-average">—</div><div class="metric-bottom"><span class="tiny-mark"></span> Średnia odsłon w tym okresie</div></article>
@@ -108,7 +108,7 @@
 
     <section class="panel region-panel" id="regions">
       <div class="section-heading"><div><div class="eyebrow">07 / POLAND BREAKDOWN</div><h2>Polska pod lupą <span class="heading-accent">↗</span></h2>
-      <p>Województwa odwiedzających. Przybliżona lokalizacja na podstawie połączenia.</p></div>
+      <p>Województwa odwiedzających. Przybliżona lokalizacja sieci — nie potwierdzone miejsce pobytu osoby.</p></div>
       <span class="panel-asterisk">🇵🇱</span></div>
       <div class="region-summary" id="region-summary">Sprawdzam, czy GoatCounter udostępnia dane wojewódzkie...</div>
       <div class="region-layout"><div id="region-tiles" class="region-tiles" aria-label="Województwa Polski"></div><div class="region-ranking"><div class="eyebrow">TOP WOJEWÓDZTWA</div><div class="rankings" id="region-list"></div></div></div>
@@ -141,4 +141,5 @@
   </section>
 </div></body>
 </html>
+
 

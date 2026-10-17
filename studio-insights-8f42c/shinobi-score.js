@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  const tiers = [{name:"Uczeń",min:0},{name:"Genin",min:100},{name:"Chūnin",min:500},{name:"Jōnin",min:1500},{name:"Kage",min:5000}];
+  const tiers = [{name:"Uczeń",min:0},{name:"Genin",min:5},{name:"Chūnin",min:15},{name:"Jōnin",min:30},{name:"Kage",min:60}];
   const count = value => Number.isFinite(Number(value)) ? Math.max(0,Math.floor(Number(value))) : 0;
   function calculate(report) {
     let score = count(report.total);
@@ -22,10 +22,11 @@
     set("side-rank-name",result.tier.name);
     set("score-period",period === "365" ? "12 MIESIĘCY" : period + " DNI");
     set("rank-next",result.next ? "Następna: " + result.next.name : "Najwyższa ranga");
-    set("rank-hint",result.next ? "Jeszcze " + format.format(result.next.min-result.score) + " pkt do kolejnej rangi." : "Próg 5 000 pkt osiągnięty. Wynik rośnie dalej.");
+    set("rank-hint",result.next ? "Jeszcze " + format.format(result.next.min-result.score) + " pkt do kolejnej rangi." : "Próg 60 pkt osiągnięty. Wynik rośnie dalej.");
     document.getElementById("rank-fill").style.width = result.progress + "%";
     document.getElementById("rank-progress").setAttribute("aria-valuenow",String(result.progress));
     document.getElementById("rank-progress").setAttribute("aria-valuetext",result.next ? result.progress + "% do rangi " + result.next.name : "Najwyższa ranga osiągnięta");
   }
   window.ShinobiScore = {calculate,render};
 })();
+

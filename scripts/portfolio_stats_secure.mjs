@@ -87,21 +87,18 @@ async function makePeriod(days,now){
   const browsers=await optionalStats("browsers",q);
   const locationResponse=await get("/stats/locations",{...q,limit:100});
   const locations=toList(locationResponse);
-  const regions=await (async()=>{
-    // A country must first appear in the summary for its region breakdown to exist.
-    const poland=(Array.isArray(locationResponse.stats)?locationResponse.stats:[])
-      .find(item=>String(item?.id||"").toUpperCase()==="PL" || /^(Poland|Polska)$/i.test(String(item?.name||"")));
-    if(!poland)return [];
-    const countryId=String(poland.id||"PL");
-    if(!/^[a-zA-Z0-9_-]{1,24}$/.test(countryId))return [];
-    try{
-      const subregions=await get("/stats/locations/"+encodeURIComponent(countryId),{...q,limit:100});
-      return toList(subregions).filter(item=>item.count>0 && !/^(Poland|Polska|PL)$/i.test(item.name));
-    }catch(error){
-      console.log("Region breakdown unavailable for PL:",String(error.message));
-      return [];
-    }
-  })();
+  // Query PL directly: an empty country summary must not hide API failures.
+  let regions=[],regionHealth={api:"unknown"};
+  try{
+    const response=await get("/stats/locations/PL",{...q,limit:100});
+    if(!Array.isArray(response.stats))throw Error("Invalid region response");
+    regions=toList(response).filter(item=>item.count>0 && !/^(Poland|Polska|PL|\(unknown\)|unknown|nieznane)?$/i.test(item.name));
+    regionHealth={api:"ok",hasNamedRegions:regions.length>0,complete:!response.more};
+  }catch(error){
+    regionHealth={api:"error"};
+    console.log("Region API request failed:",String(error.message));
+  }
+  console.log("::notice title=PL region health::period="+days+"; api="+regionHealth.api+"; named_regions="+(regionHealth.hasNamedRegions??"unknown"));
   const systems=await optionalStats("systems",q);
   const sizes=await optionalStats("sizes",q);
   const campaigns=await optionalStats("campaigns",q);
@@ -109,7 +106,7 @@ async function makePeriod(days,now){
     total:pages.reduce((n,p)=>n+p.count,0),
     previous:previousPages.reduce((n,p)=>n+number(p.count),0),
     daily:daySeries(nonEvents.flatMap(p=>Array.isArray(p.stats)?p.stats:[]),first,utcDay),
-    pages,events,toprefs,browsers,locations,regions,systems,sizes,campaigns
+    pages,events,toprefs,browsers,locations,regions,regionHealth,systems,sizes,campaigns
   };
 }
 const now=new Date();
@@ -120,11 +117,13 @@ try{
   const site=(Array.isArray(response.sites)?response.sites:[])
     .find(item=>item?.code==="wiktor-portfolio");
   const regions=site?.settings?.collect_regions;
-  if(Array.isArray(regions))plRegionCollection=regions.some(code=>String(code).toUpperCase()==="PL");
+  const flags=site?.settings?.collect;
+  if(Array.isArray(regions) && Number.isInteger(flags))
+    plRegionCollection=(flags & 16)!==0 && (flags & 32)!==0 && regions.some(code=>String(code).toUpperCase()==="PL");
 }catch(error){
   console.log("Region collection configuration could not be verified:",String(error.message));
 }
-console.log("Regional data collection for PL:",plRegionCollection===null?"unknown":plRegionCollection?"enabled":"disabled");
+console.log("::notice title=PL region configuration::"+(plRegionCollection===null?"unknown":plRegionCollection?"enabled":"disabled"));
 const snapshot={schema:2,status:"ready",updated_at:now.toISOString(),
   note:"Aggregates only; values are GoatCounter counts, not verified unique individuals.",
   plRegionCollection,
@@ -146,3 +145,4 @@ await mkdir(dirname(OUTPUT),{recursive:true});
 await writeFile(OUTPUT+".tmp",output+"\n",{mode:0o600});
 await rename(OUTPUT+".tmp",OUTPUT);
 console.log("Encrypted analytics snapshot ready. No plaintext persisted.");
+
