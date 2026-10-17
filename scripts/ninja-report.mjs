@@ -86,7 +86,7 @@ export function buildReport(raw,market,now,lastHour=null){
     windowStart:new Date(now.getTime()-86400000).toISOString(),windowEnd:now.toISOString(),
     text:'Zwiadowca nie dostał pełnych danych za ostatnią dobę. Nie podaje zmyślonych wyników. Spróbuje ponownie za godzinę.',
     interpretation:'Brak podstaw do wskazania firmy lub ogłoszenia na podstawie samych danych o odwiedzinach.',
-    market:{...market,jobs:jobs.slice(0,2)}
+    market:{...market,jobs:jobs.slice(0,3)}
   };
   const zero=daily.views+daily.contact+daily.video+daily.end+daily.cases===0;
   let text='';
@@ -108,7 +108,7 @@ export function buildReport(raw,market,now,lastHour=null){
   const top=daily.categories[0],hasSignal=top.count>0;
   const rankedJobs=jobs.map(job=>({
     ...job,match:hasSignal&&Array.isArray(job.tags)&&job.tags.includes(top.tag)
-  })).sort((a,b)=>Number(b.match)-Number(a.match)).slice(0,2);
+  })).sort((a,b)=>Number(b.match)-Number(a.match)).slice(0,3);
   const matchingJob=rankedJobs.some(job=>job.match);
   let interpretation;
   if(!daily.views&&!hourly?.views){
