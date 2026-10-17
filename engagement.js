@@ -16,7 +16,7 @@
   function send(path, title, everyClick = false) {
     if (excluded() || (!everyClick && delivered.has(path))) return;
     if (!everyClick) delivered.add(path); // Video/completion: once per page load. Navigation: every click.
-    const payload = {path, title, event: true};
+    const payload = {path, title, event: true, ...(everyClick ? {no_session: true} : {})};
     if (typeof window.goatcounter?.count === 'function') {
       try {window.goatcounter.count(payload);}
       catch {/* Telemetry must never interfere with portfolio navigation. */}
