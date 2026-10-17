@@ -52,6 +52,10 @@ export async function collectMarket(now=new Date()){
   console.log('::notice title=Ninja market check::candidates='+candidates.size+'; verified_offers='+jobs.length+'; fetch_errors='+errors.length+(errors.length?'; first_error='+errors[0]:''));
   return {checkedAt:now.toISOString(),status:jobs.length?'ready':errors.length?'unavailable':'no_matches',sources:marketSources,jobs};
 }
+function plural(n,singular,paucal,pluralForm){
+  const d=Math.abs(n)%10,teens=Math.abs(n)%100;
+  return n===1?singular:(d>=2&&d<=4&&!(teens>=12&&teens<=14))?paucal:pluralForm;
+}
 function summarizeHits(raw) {
   if (!raw || !Array.isArray(raw.hits) || raw.more) return null;
   const hits=raw.hits;
@@ -90,16 +94,16 @@ export function buildReport(raw,market,now,lastHour=null){
     const hourAction=hourly.contact+hourly.video+hourly.cases+hourly.end;
     text=hourly.views===0&&hourAction===0
       ? 'Ostatnia pełna godzina była spokojna: nie odnotowano odsłon ani śledzonych akcji.'
-      : 'Ostatnia pełna godzina: '+hourly.views+' odsłon, '+hourly.video+' odtworzeń filmów, '+hourly.cases+' wyborów Case Studies i '+hourly.contact+' kliknięć Kontakt.';
-    if(hourly.end>0)text+=' Do końca portfolio dotarto '+hourly.end+' razy.';
+      : 'Ostatnia pełna godzina: '+hourly.views+' '+plural(hourly.views,'odsłona','odsłony','odsłon')+', '+hourly.video+' '+plural(hourly.video,'odtworzenie','odtworzenia','odtworzeń')+' filmów, '+hourly.cases+' '+plural(hourly.cases,'wybór','wybory','wyborów')+' Case Studies i '+hourly.contact+' '+plural(hourly.contact,'kliknięcie','kliknięcia','kliknięć')+' Kontakt.';
+    if(hourly.end>0)text+=' Do końca portfolio dotarto '+hourly.end+' '+plural(hourly.end,'raz','razy','razy')+'.';
   }else{
     text='Ostatnia godzina: brak pełnych danych, nie oznacza to braku odwiedzin.';
   }
   if(zero){
     text+=' W całej ostatniej dobie także nie odnotowano odsłon ani śledzonych akcji.';
   }else{
-    text+=' W ostatnich 24h: '+daily.views+' odsłon, '+daily.end+' dotarć do końca, '+daily.video+' uruchomień filmów i '+daily.contact+' kliknięć Kontakt.';
-    if(daily.categories[0].count>0)text+=' Najchętniej wybierano '+daily.categories[0].label+' ('+daily.categories[0].count+' kliknięć).';
+    text+=' W ostatnich 24h: '+daily.views+' '+plural(daily.views,'odsłona','odsłony','odsłon')+', '+daily.end+' '+plural(daily.end,'dotarcie','dotarcia','dotarć')+' do końca, '+daily.video+' '+plural(daily.video,'uruchomienie','uruchomienia','uruchomień')+' filmów i '+daily.contact+' '+plural(daily.contact,'kliknięcie','kliknięcia','kliknięć')+' Kontakt.';
+    if(daily.categories[0].count>0)text+=' Najchętniej wybierano '+daily.categories[0].label+' ('+daily.categories[0].count+' '+plural(daily.categories[0].count,'kliknięcie','kliknięcia','kliknięć')+').';
   }
   const top=daily.categories[0],hasSignal=top.count>0;
   const rankedJobs=jobs.map(job=>({
