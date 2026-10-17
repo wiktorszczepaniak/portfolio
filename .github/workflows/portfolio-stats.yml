@@ -45,5 +45,7 @@ jobs:
           git add studio-insights-8f42c/data.enc.json
           if ! git diff --cached --quiet; then
             git commit -m 'Refresh encrypted analytics snapshot'
+            git fetch origin main
+            git rebase origin/main
             git push
           fi
