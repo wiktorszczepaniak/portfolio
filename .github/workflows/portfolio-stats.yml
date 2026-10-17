@@ -1,0 +1,44 @@
+name: Update encrypted portfolio dashboard
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */3 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: encrypted-portfolio-dashboard
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: github.repository == 'wiktorszczepaniak/portfolio'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build encrypted data without publishing API credentials
+        env:
+          GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
+        shell: bash
+        run: |
+          if [ -z "$GOATCOUNTER_TOKEN" ]; then
+            echo "::notice::Add GOATCOUNTER_TOKEN in repository Actions secrets to activate the dashboard."
+            exit 0
+          fi
+          node scripts/portfolio_stats_secure.mjs
+      - name: Publish encrypted file to GitHub Pages source
+        shell: bash
+        run: |
+          if [ ! -f studio-insights-8f42c/data.enc.json ]; then
+            echo "No encrypted report generated; keeping the previous report unchanged."
+            exit 0
+          fi
+          git config user.name 'portfolio-analytics[bot]'
+          git config user.email 'portfolio-analytics@users.noreply.github.com'
+          git add studio-insights-8f42c/data.enc.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Refresh encrypted analytics snapshot [skip ci]'
+            git push
+          fi
