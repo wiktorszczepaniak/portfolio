@@ -79,7 +79,7 @@ async function makePeriod(days,now){
     title:String(p?.title||"").slice(0,150),
     count:number(p?.count)
   }));
-  const events=records.filter(p=>p?.event && /^portfolio-(?:end|lang|video)-/.test(String(p?.path||"")))
+  const events=records.filter(p=>p?.event && /^portfolio-(?:end|lang|video|case|contact)-/.test(String(p?.path||"")))
     .map(p=>({path:String(p.path).slice(0,150),title:String(p.title||"").slice(0,130),count:number(p.count)}));
   const previousPages=(Array.isArray(previousResponse.hits)?previousResponse.hits:[])
     .filter(p=>!p?.event);
