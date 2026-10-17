@@ -97,7 +97,6 @@
      }
      snapshot=data;
      closeModal();
-     $("refresh").click();
    } catch(error) {
      $("connect-error").hidden=false;
      $("connect-error").textContent=String(error?.message||"Nie udało się odszyfrować raportu. Sprawdź token.");
@@ -105,7 +104,7 @@
  });
  $("manage-key").addEventListener("click",async()=>{
    localStorage.removeItem(STORAGE_KEY);sessionStorage.removeItem(STORAGE_KEY);snapshot=null;
-   try{await fetchEnvelope();await showModal()}catch(err){
+   try{await fetchEnvelope();await showModal();$("refresh").click()}catch(err){
      const status=$("status");status.textContent=String(err.message||err);status.closest(".status-row").classList.add("error")
    }
  });
