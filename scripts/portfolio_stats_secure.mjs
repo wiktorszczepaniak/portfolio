@@ -139,10 +139,18 @@ for(const days of PERIODS){
 // Build a short report from the last completed 24-hour window. It is encrypted
 // with the analytics snapshot; job boards receive no visitor information.
 const market=await collectMarket(new Date());
-let recent=null;
-try{recent=await get("/stats/hits",{start:new Date(now.getTime()-86400000).toISOString(),end:now.toISOString(),limit:100});}
-catch{console.log("::notice title=Ninja activity check::unavailable; previous analytics remain independent");}
-snapshot.ninjaReport=buildReport(recent,market,now);
+let recent=null,lastHour=null;
+try {
+  recent=await get("/stats/hits",{start:new Date(now.getTime()-86400000).toISOString(),end:now.toISOString(),limit:100});
+} catch {
+  console.log("::notice title=Ninja 24h activity::unavailable; previous analytics remain independent");
+}
+try {
+  lastHour=await get("/stats/hits",{start:new Date(now.getTime()-3600000).toISOString(),end:now.toISOString(),limit:100});
+} catch {
+  console.log("::notice title=Ninja 1h activity::unavailable; 24h report still available");
+}
+snapshot.ninjaReport=buildReport(recent,market,now,lastHour);
 console.log("::notice title=Ninja report::status="+snapshot.ninjaReport.status+"; encrypted=true");
 const master=pbkdf2Sync(TOKEN,MASTER_SALT,ITERATIONS,32,"sha256");
 const salt=randomBytes(16),iv=randomBytes(12);
