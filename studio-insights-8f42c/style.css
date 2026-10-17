@@ -149,3 +149,5 @@ body{background:radial-gradient(ellipse at 80% 0%,#26302433,transparent 42%),var
 @media(prefers-reduced-motion:reduce){.switch-track:after{transition:none}}
 
 .preview-layout{width:100%;margin-top:12px;padding:12px;background:transparent;color:#b6c6ae;border:1px solid #3f503c;border-radius:8px;font-size:11px}.preview-layout:hover{background:#c6f66a0a;color:var(--green)}
+
+html{color-scheme:dark;scrollbar-color:#465247 #101619}.sidebar{scrollbar-width:thin;scrollbar-color:#465247 #111619}
