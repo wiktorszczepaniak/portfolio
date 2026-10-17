@@ -52,19 +52,76 @@ export async function collectMarket(now=new Date()){
   console.log('::notice title=Ninja market check::candidates='+candidates.size+'; verified_offers='+jobs.length+'; fetch_errors='+errors.length+(errors.length?'; first_error='+errors[0]:''));
   return {checkedAt:now.toISOString(),status:jobs.length?'ready':errors.length?'unavailable':'no_matches',sources:marketSources,jobs};
 }
-export function buildReport(raw,market,now){
-  if(!raw||!Array.isArray(raw.hits)||raw.more)return {status:'unavailable',generatedAt:new Date().toISOString(),text:'Zwiadowca nie dostał pełnego raportu aktywności. Spróbuje ponownie przy kolejnej synchronizacji.',market};
-  const hits=raw.hits,views=hits.filter(x=>!x.event).reduce((n,x)=>n+num(x.count),0);
-  const events=hits.filter(x=>x.event),sum=re=>events.filter(x=>re.test(String(x.path))).reduce((n,x)=>n+num(x.count),0);
-  const contact=sum(/^portfolio-contact-(pl|en)$/),end=sum(/^portfolio-end-(pl|en)$/),video=sum(/^portfolio-video-(pl|en)-/);
-  const categories=[['social-media','Social Media','social'],['content-video','Content Video','video'],['brand-hero','Brand Hero','creative'],['big-idea-kampanie','Big Idea i Kampanie','creative'],['moderacja','Moderacja','social']].map(([slug,label,tag])=>({label,tag,count:sum(new RegExp('^portfolio-case-'+slug+'-(pl|en)$'))})).sort((a,b)=>b.count-a.count);
-  const top=categories[0];const evidence=top.count>0;
-  let text=views===0&&contact+end+video+top.count===0?'Spokojny patrol: w ostatnich 24 godzinach nie zarejestrowano wejść ani śledzonych akcji.':`Zwiadowca melduje za ostatnie 24h: zliczone wejścia — ${views}, dotarcia do końca — ${end}, uruchomienia filmów — ${video}, kliknięcia Kontakt — ${contact}.`;
-  if(evidence)text+=` Najczęściej wybierana sekcja: ${top.label} (${top.count} kliknięć).`;
-  else if(views>0)text+=' Brakuje kliknięć kategorii, żeby wskazać kierunek zainteresowania.';
-  if(contact>0)text+=' Kontakt przyciągnął uwagę; samo kliknięcie nie potwierdza wysłania wiadomości.';
-  const matches=(market.jobs||[]).map(j=>({...j,match:evidence&&j.tags.includes(top.tag)})).sort((a,b)=>Number(b.match)-Number(a.match)).slice(0,2);
-  const matched=matches.some(j=>j.match);
-  const interpretation=matched?`Trop tematyczny: ${top.label} pasuje do poniższych rekrutacji. To porównanie zakresu pracy, nie rozpoznanie firmy odwiedzającej portfolio.`:'Brak podstaw do przypisania wizyty do konkretnej oferty. Poniżej propozycje z rynku pasujące do Twojego profilu social / content / kreacja.';
-  return {status:'ready',generatedAt:new Date().toISOString(),windowStart:new Date(now.getTime()-86400000).toISOString(),windowEnd:now.toISOString(),text,interpretation,market:{...market,jobs:matches}};
+function summarizeHits(raw) {
+  if (!raw || !Array.isArray(raw.hits) || raw.more) return null;
+  const hits=raw.hits;
+  const events=hits.filter(x=>x.event);
+  const sum=re=>events.filter(x=>re.test(String(x.path))).reduce((n,x)=>n+num(x.count),0);
+  return {
+    views:hits.filter(x=>!x.event).reduce((n,x)=>n+num(x.count),0),
+    contact:sum(/^portfolio-contact-(pl|en)$/),
+    end:sum(/^portfolio-end-(pl|en)$/),
+    video:sum(/^portfolio-video-(pl|en)-/),
+    cases:sum(/^portfolio-case-/),
+    categories:[['social-media','Social Media','social'],
+      ['content-video','Content Video','video'],
+      ['brand-hero','Brand Hero','creative'],
+      ['big-idea-kampanie','Big Idea i Kampanie','creative'],
+      ['moderacja','Moderacja','social']
+    ].map(([slug,label,tag])=>({
+      label,tag,count:sum(new RegExp('^portfolio-case-'+slug+'-(pl|en)$'))
+    })).sort((a,b)=>b.count-a.count)
+  };
+}
+export function buildReport(raw,market,now,lastHour=null){
+  const daily=summarizeHits(raw);
+  const hourly=summarizeHits(lastHour);
+  const jobs=Array.isArray(market?.jobs)?market.jobs:[];
+  if (!daily) return {
+    status:'unavailable',generatedAt:new Date().toISOString(),
+    windowStart:new Date(now.getTime()-86400000).toISOString(),windowEnd:now.toISOString(),
+    text:'Zwiadowca nie dostał pełnych danych za ostatnią dobę. Nie podaje zmyślonych wyników. Spróbuje ponownie za godzinę.',
+    interpretation:'Brak podstaw do wskazania firmy lub ogłoszenia na podstawie samych danych o odwiedzinach.',
+    market:{...market,jobs:jobs.slice(0,2)}
+  };
+  const zero=daily.views+daily.contact+daily.video+daily.end+daily.cases===0;
+  let text='';
+  if(hourly){
+    const hourAction=hourly.contact+hourly.video+hourly.cases+hourly.end;
+    text=hourly.views===0&&hourAction===0
+      ? 'Ostatnia pełna godzina była spokojna: nie odnotowano odsłon ani śledzonych akcji.'
+      : 'Ostatnia pełna godzina: '+hourly.views+' odsłon, '+hourly.video+' odtworzeń filmów, '+hourly.cases+' wyborów Case Studies i '+hourly.contact+' kliknięć Kontakt.';
+    if(hourly.end>0)text+=' Do końca portfolio dotarto '+hourly.end+' razy.';
+  }else{
+    text='Ostatnia godzina: brak pełnych danych, nie oznacza to braku odwiedzin.';
+  }
+  if(zero){
+    text+=' W całej ostatniej dobie także nie odnotowano odsłon ani śledzonych akcji.';
+  }else{
+    text+=' W ostatnich 24h: '+daily.views+' odsłon, '+daily.end+' dotarć do końca, '+daily.video+' uruchomień filmów i '+daily.contact+' kliknięć Kontakt.';
+    if(daily.categories[0].count>0)text+=' Najchętniej wybierano '+daily.categories[0].label+' ('+daily.categories[0].count+' kliknięć).';
+  }
+  const top=daily.categories[0],hasSignal=top.count>0;
+  const rankedJobs=jobs.map(job=>({
+    ...job,match:hasSignal&&Array.isArray(job.tags)&&job.tags.includes(top.tag)
+  })).sort((a,b)=>Number(b.match)-Number(a.match)).slice(0,2);
+  const matchingJob=rankedJobs.some(job=>job.match);
+  let interpretation;
+  if(!daily.views&&!hourly?.views){
+    interpretation='Brak nowych sygnałów rekrutacyjnych. Powiązanie jakiejkolwiek oferty z osobą odwiedzającą portfolio byłoby zgadywaniem.';
+  }else if(matchingJob){
+    interpretation='Hipoteza zwiadowcy: zainteresowanie sekcją '+top.label+' tematycznie pasuje do zweryfikowanych ofert poniżej. Nie wiadomo, czy odwiedzał Cię rekruter ani z jakiej firmy.';
+  }else if(jobs.length){
+    interpretation='Trop z rynku: poniższe dostępne w chwili sprawdzania ogłoszenia pasują do profilu social media / copywriting / kreacja. Brak dowodu, że którakolwiek firma odwiedziła portfolio.';
+  }else{
+    interpretation='Nie znalazłem teraz ofert, które udało się potwierdzić w źródle. Same wejścia nie pozwalają określić pracodawcy ani rekrutacji.';
+  }
+  return {
+    status:'ready',generatedAt:new Date().toISOString(),
+    windowStart:new Date(now.getTime()-86400000).toISOString(),windowEnd:now.toISOString(),
+    hourStart:new Date(now.getTime()-3600000).toISOString(),
+    hourEnd:now.toISOString(),
+    hourlyAvailable:!!hourly,text,interpretation,
+    market:{...market,jobs:rankedJobs}
+  };
 }
