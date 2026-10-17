@@ -76,12 +76,31 @@ async function makePeriod(days,now){
     .map(p=>({path:String(p?.path||"/").slice(0,150),title:String(p?.title||"").slice(0,150),count:number(p?.count)}));
   const toprefs=await optionalStats("toprefs",q);
   const browsers=await optionalStats("browsers",q);
-  const locations=await optionalStats("locations",q);
+  const locationResponse=await get("/stats/locations",{...q,limit:100});
+  const locations=toList(locationResponse);
+  const regions=await (async()=>{
+    // A country must first appear in the summary for its region breakdown to exist.
+    const poland=(Array.isArray(locationResponse.stats)?locationResponse.stats:[])
+      .find(item=>String(item?.id||"").toUpperCase()==="PL" || /^(Poland|Polska)$/i.test(String(item?.name||"")));
+    if(!poland)return [];
+    const countryId=String(poland.id||"PL");
+    if(!/^[a-zA-Z0-9_-]{1,24}$/.test(countryId))return [];
+    try{
+      const subregions=await get("/stats/locations/"+encodeURIComponent(countryId),{...q,limit:100});
+      return toList(subregions).filter(item=>item.count>0 && !/^(Poland|Polska|PL)$/i.test(item.name));
+    }catch(error){
+      console.log("Region breakdown unavailable for PL:",String(error.message));
+      return [];
+    }
+  })();
+  const systems=await optionalStats("systems",q);
+  const sizes=await optionalStats("sizes",q);
+  const campaigns=await optionalStats("campaigns",q);
   return {
     total:Math.max(0,number(a.total)-number(a.total_events)),
     previous:Math.max(0,number(b.total)-number(b.total_events)),
     daily:daySeries(a.stats,first,utcDay),
-    pages,toprefs,browsers,locations
+    pages,toprefs,browsers,locations,regions,systems,sizes,campaigns
   };
 }
 const now=new Date();
