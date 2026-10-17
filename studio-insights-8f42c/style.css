@@ -33,3 +33,20 @@
 .connect-error{color:#ffc0aa;font-size:12px;line-height:1.6;margin-bottom:15px}
 .connect-card>small{display:block;color:#858e8b;font-size:10px;line-height:1.7;margin-top:22px}
 @media(max-width:570px){.manage-key{font-size:10px}.connect-card{padding:24px}.connect-card h2{font-size:28px}}
+
+/* Private, aggregated Poland location breakdown. No raw location data in HTML. */
+.region-panel{margin-top:19px}
+.region-summary{font-size:11px;color:#b4c4b4;margin:21px 0 18px;padding:12px 15px;border:1px solid #35483b;border-radius:9px;background:#1e2821}
+.region-summary.empty{color:#b6aaa0;border-color:#564a35;background:#2d281e}
+.region-layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(230px,1fr);gap:32px;align-items:start}
+.region-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.region-tile{min-height:70px;padding:12px 9px;border:1px solid #3a453e;border-radius:9px;background:#1c2721;display:flex;flex-direction:column;justify-content:space-between;gap:9px;overflow:hidden}
+.region-tile .region-label{font-size:10px;color:#d8e1d8;line-height:1.3;overflow-wrap:anywhere}
+.region-tile .region-value{font-variant-numeric:tabular-nums;font-size:17px;font-weight:680;color:#d0f599}
+.region-tile.unknown{background:#1a1e23;border-color:#2e343b}
+.region-tile.unknown .region-value{color:#59636b}
+.region-ranking .eyebrow{color:#8b949d}
+.region-ranking .rankings{margin-top:19px}
+.region-ranking .rank-name{max-width:69%}
+@media(max-width:1100px){.region-layout{grid-template-columns:1fr;gap:25px}}
+@media(max-width:570px){.region-panel{margin-top:12px}.region-tiles{gap:7px;grid-template-columns:repeat(2,minmax(0,1fr))}.region-tile{min-height:63px}.region-summary{line-height:1.6}.region-panel .panel-asterisk{font-size:21px}}
