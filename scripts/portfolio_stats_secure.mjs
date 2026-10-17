@@ -120,6 +120,7 @@ try{
   const settings=site?.settings ?? site?.setttings;
   const regions=settings?.collect_regions;
   const flags=settings?.collect;
+  console.log("::notice title=PL configuration shape::"+JSON.stringify({siteFound:!!site,settingsFound:!!settings,collect:flags,collectRegions:regions}));
   if(Array.isArray(regions) && Number.isInteger(flags))
     plRegionCollection=(flags & 16)!==0 && (flags & 32)!==0 && regions.some(code=>String(code).toUpperCase()==="PL");
 }catch(error){
