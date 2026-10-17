@@ -62,6 +62,15 @@
     state.days[date]=record;save();
     return {date,record};
   }
+  function earnedXp() {
+    let total=0;
+    for(const record of Object.values(state.days)){
+      if(!Array.isArray(record?.jobs)||!Array.isArray(record?.done))continue;
+      const urls=new Set(record.jobs.map(job=>job.url));
+      total+=new Set(record.done.filter(url=>urls.has(url))).size*XP_PER_APPLICATION;
+    }
+    return total;
+  }
   function getXp(period) {
     const days=Number(period);
     if(![7,30,90,365].includes(days))return 0;
@@ -88,7 +97,7 @@
     const hint=document.getElementById("daily-quests-hint");
     title.textContent=format.format(new Date())+" · +"+XP_PER_APPLICATION+" EXP za aplikację";
     hint.textContent=persistence
-      ?"Odhaczenie oznacza, że naprawdę wysłałeś aplikację. Postęp zostaje w tej przeglądarce."
+      ?"Zebrane EXP z aplikacji: "+earnedXp()+". Do rankingu w wybranym okresie liczy się maks. "+MAX_MISSION_XP_PER_PERIOD+" EXP z misji. Postęp zapisany tylko tutaj."
       :"Przeglądarka blokuje zapis. Zaznaczenia mogą zniknąć po odświeżeniu.";
     if(!record){
       progress.textContent="0 / 3";
@@ -131,5 +140,5 @@
     }
   }
   read();
-  window.DailyQuests={render:draw,getXp,dayKey};
+  window.DailyQuests={render:draw,getXp,earnedXp,dayKey};
 })();
