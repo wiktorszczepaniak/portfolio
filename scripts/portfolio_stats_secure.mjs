@@ -85,6 +85,7 @@ async function makePeriod(days,now){
   };
 }
 const now=new Date();
+now.setUTCMinutes(0,0,0); // GoatCounter recommends hour-aligned query windows.
 const snapshot={schema:2,status:"ready",updated_at:now.toISOString(),
   note:"Aggregates only; values are GoatCounter counts, not verified unique individuals.",
   periods:{}};
