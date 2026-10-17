@@ -13,9 +13,9 @@
     try { return !!localStorage.getItem('skipgc'); }
     catch { return true; }
   }
-  function send(path, title) {
-    if (excluded() || delivered.has(path)) return;
-    delivered.add(path); // Once per event and page load, including zoomed/cloned videos.
+  function send(path, title, everyClick = false) {
+    if (excluded() || (!everyClick && delivered.has(path))) return;
+    if (!everyClick) delivered.add(path); // Video/completion: once per page load. Navigation: every click.
     const payload = {path, title, event: true};
     if (typeof window.goatcounter?.count === 'function') {
       try {window.goatcounter.count(payload);}
@@ -77,6 +77,37 @@
       send('portfolio-lang-' + language + '-' + target,
         'Language switch ' + language.toUpperCase() + ' -> ' + target.toUpperCase());
     });
+  });
+
+  // Category dropdown counts intentional selections, not scrolling through slides.
+  // Record every selection (including repeat visits to the same category).
+  const caseNames = new Map([
+    ['5', 'social-media'],
+    ['12', 'content-video'],
+    ['15', 'brand-hero'],
+    ['18', 'big-idea-kampanie'],
+    ['24', 'moderacja']
+  ]);
+  const caseTitles = new Map([
+    ['5', 'Social Media'],
+    ['12', 'Content Video'],
+    ['15', 'Brand Hero'],
+    ['18', 'Big Idea i Kampanie'],
+    ['24', 'Moderacja']
+  ]);
+  const categorySelect = document.querySelector('#slide-select');
+  categorySelect?.addEventListener('change', () => {
+    const id = categorySelect.value;
+    const slug = caseNames.get(id);
+    if (!slug) return;
+    send('portfolio-case-' + slug + '-' + language,
+      'Case Studies: ' + caseTitles.get(id) + ' (' + language.toUpperCase() + ')', true);
+  });
+
+  // Contact is a fixed top shortcut; no hit for merely reaching the contact slide.
+  document.querySelector('.language-switch .contact-shortcut')?.addEventListener('click', () => {
+    send('portfolio-contact-' + language,
+      'Top navigation: Contact (' + language.toUpperCase() + ')', true);
   });
 
   // A playable clip is identified by its static filename, not by a visitor or device.
