@@ -30,6 +30,54 @@ function country(code){
  try{const flag=String.fromCodePoint(...[...raw].map(c=>127397+c.charCodeAt(0)));return flag+"  "+regions.of(raw)}catch{return raw}
 }
 function source(name){const raw=String(name||"").trim();return !raw?"Bezpośrednie / nieznane":raw.slice(0,95)}
+const VOIVODESHIPS=[
+ ["02","Dolnośląskie"],["04","Kujawsko-pomorskie"],["06","Lubelskie"],["08","Lubuskie"],
+ ["10","Łódzkie"],["12","Małopolskie"],["14","Mazowieckie"],["16","Opolskie"],
+ ["18","Podkarpackie"],["20","Podlaskie"],["22","Pomorskie"],["24","Śląskie"],
+ ["26","Świętokrzyskie"],["28","Warmińsko-mazurskie"],["30","Wielkopolskie"],["32","Zachodniopomorskie"]
+];
+function normalizeRegion(text){
+ return String(text||"").toLocaleLowerCase("pl-PL").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")
+   .replace(/^wojewodztwo\\s+/,"").replace(/[^a-z0-9]/g,"");
+}
+function regionCode(name){
+ const raw=String(name||"").trim();
+ const m=raw.match(/^(?:PL[-_ ])?([0-9]{2})$/i);
+ if(m && VOIVODESHIPS.some(r=>r[0]===m[1]))return m[1];
+ const normalized=normalizeRegion(raw);
+ const alias={"lodz":"10","lodzkie":"10","mazovia":"14","masovia":"14","mazowieckie":"14",
+ "silesia":"24","slaskie":"24","lesserpoland":"12","malopolskie":"12",
+ "greaterpoland":"30","wielkopolskie":"30","lower silesian":"02"};
+ if(alias[normalized])return alias[normalized];
+ const hit=VOIVODESHIPS.find(item=>normalizeRegion(item[1])===normalized);
+ return hit?hit[0]:null;
+}
+function showRegions(rows){
+ const list=Array.isArray(rows)?rows.filter(x=>integer(x.count)>0):[];
+ const matched=new Map(),other=[];
+ for(const item of list){
+  const code=regionCode(item.name);
+  if(code)matched.set(code,(matched.get(code)||0)+integer(item.count));
+  else other.push(item);
+ }
+ const total=Array.from(matched.values()).reduce((a,b)=>a+b,0);
+ const max=Math.max(1,...matched.values());
+ const summary=$("region-summary");
+ summary.classList.toggle("empty",list.length===0);
+ summary.textContent=list.length?
+   "Dane regionalne w Polsce · "+fmt(list.reduce((n,r)=>n+integer(r.count),0))+" zarejestrowanych odsłon z przypisanym regionem.":
+   "Brak podziału na województwa. W ustawieniach GoatCounter sprawdź zbieranie regionów dla kraju PL. Wcześniejszych lokalizacji nie da się odtworzyć.";
+ const tiles=$("region-tiles");tiles.replaceChildren();
+ for(const [code,name] of VOIVODESHIPS){
+  const n=matched.get(code)||0,card=txt("div","region-tile"+(matched.has(code)?"":" unknown"),"");
+  if(matched.has(code))card.style.backgroundColor="rgba(198,246,106,"+(0.07+0.24*n/max).toFixed(3)+")";
+  card.append(txt("span","region-label",name),txt("strong","region-value",matched.has(code)?fmt(n):"—"));
+  card.title=matched.has(code)?name+" · "+fmt(n)+" odsłon":name+" · brak danych";tiles.append(card);
+ }
+ const ranked=Array.from(matched,([code,count])=>({name:VOIVODESHIPS.find(x=>x[0]===code)?.[1]||code,count}));
+ ranked.push(...other);
+ rank("region-list",ranked,x=>String(x),6);
+}
 function pages(rows,total){
  const body=$("page-rows");body.replaceChildren();const items=(rows||[]).filter(x=>integer(x.count)>0).sort((a,b)=>b.count-a.count).slice(0,8);
  $("page-count").textContent=items.length+" STRON";
@@ -107,6 +155,8 @@ function draw(){
  else{const change=(total-old)/old*100;delta.textContent=(change>0?"+":"")+change.toFixed(1)+"%";if(change<0)delta.classList.add("negative")}
  chart(r.daily);rank("referrers",r.toprefs,source);
  rank("countries",r.locations,country);rank("browsers",r.browsers,x=>String(x));
+ showRegions(r.regions);rank("systems",r.systems,x=>String(x));
+ rank("campaigns",r.campaigns,x=>String(x),6);
  language(r.pages);pages(r.pages,total);
 }
 async function refresh(){
