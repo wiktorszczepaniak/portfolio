@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
   <title>Portfolio Intelligence | Wiktor Szczepaniak</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css">\n  <link rel="stylesheet" href="./mugen-assets.css">
   <script src="./connect.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
@@ -23,12 +23,12 @@
       <a class="nav-item" href="#audience"><span class="nav-icon">◎</span> Odbiorcy</a>
       <a class="nav-item" href="#regions"><span class="nav-icon">◈</span> Województwa</a><a class="nav-item" href="#devices"><span class="nav-icon">⌘</span> Technologia</a><a class="nav-item" href="#pages"><span class="nav-icon">▤</span> Popularne strony</a>
     </nav>
-    <div class="side-card"><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
+    <div class="side-card"><span class="mugen-pixel side-sasuke" aria-hidden="true"></span><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
     <div class="side-profile"><div class="profile-avatar">WS</div><div>Wiktor Szczepaniak<small>Creative Copywriter</small></div><span class="profile-more">···</span></div>
   </aside>
   <main class="main" id="overview">
     <header class="topbar"><div class="breadcrumbs">WORKSPACE <span>/</span> <b>ANALYTICS</b></div><div class="top-right"><span class="sync-mark" id="sync-mark"><i></i><span id="sync-text">Łączenie z danymi</span></span><span class="top-divider"></span><button id="manage-key" type="button" class="manage-key">Klucz API</button><span class="top-divider"></span><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Zobacz stronę <span>↗</span></a></div></header>
-    <section class="hero"><div class="hero-overline"><span class="hero-spark">✳</span> YOUR WORK, IN NUMBERS <span class="hero-rule"></span> 2026</div><div class="hero-content"><div><h1>Portfolio <em>intelligence.</em></h1><p>Twoja twórczość ma odbiorców. Zobacz, skąd przychodzą i co ich przyciąga.</p></div><div class="hero-tag"><span>WS.</span><small>CREATIVE DATA<br>OVERVIEW</small></div></div></section>
+    <section class="hero"><div class="mugen-hero-scene" aria-hidden="true"><span class="mugen-halo"></span><span class="mugen-pixel hero-naruto"></span><span class="mugen-pixel hero-chakra"></span><span class="mugen-chakra-label">SHINOBI MODE / ON</span></div><div class="hero-overline"><span class="hero-spark">✳</span> YOUR WORK, IN NUMBERS <span class="hero-rule"></span> 2026</div><div class="hero-content"><div><h1>Portfolio <em>intelligence.</em></h1><p>Twoja twórczość ma odbiorców. Zobacz, skąd przychodzą i co ich przyciąga.</p></div></div></section>
     <div class="controls"><div class="controls-left"><span class="period-label">WYBRANY OKRES</span><div class="period-pills" role="group" aria-label="Wybór okresu"><button data-period="7" class="active" aria-pressed="true">7 dni</button><button data-period="30" aria-pressed="false">30 dni</button><button data-period="90" aria-pressed="false">90 dni</button><button data-period="365" aria-pressed="false">12 miesięcy</button></div></div><button class="refresh" id="refresh" type="button"><span>↻</span> Odśwież</button></div>
     <div class="status-row"><span id="status">Oczekiwanie na raport...</span><span id="timestamp">Źródło: GoatCounter</span></div>
     <section class="metrics" aria-label="Najważniejsze statystyki">
@@ -37,12 +37,12 @@
       <article class="metric"><div class="metric-top"><span>NAJLEPSZY DZIEŃ</span><span class="metric-icon">✦</span></div><div class="metric-value" id="kpi-best">—</div><div class="metric-bottom" id="kpi-best-date">Najwyższy dzienny wynik</div></article>
       <article class="metric"><div class="metric-top"><span>UDZIAŁ WERSJI EN</span><span class="metric-icon">◎</span></div><div class="metric-value" id="kpi-en">—</div><div class="metric-bottom" id="kpi-en-description">Polska i angielska wersja strony</div></article>
     </section>
-    <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
+    <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span><span class="mugen-pixel mugen-kakashi" aria-hidden="true"></span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
     <section class="panel engagement-panel" id="engagement">
       <div class="section-heading"><div><div class="eyebrow">02 / ENGAGEMENT</div>
         <h2>Co przyciąga uwagę? <span class="heading-accent">✳</span></h2>
         <p>Rzeczywiste zdarzenia od momentu włączenia śledzenia. Bez rozpoznawania konkretnych osób.</p></div>
-        <span class="pill">NEW TRACKING</span></div>
+        <span class="mugen-ninja-chip"><span class="mugen-pixel mugen-lee" aria-hidden="true"></span><span>DOJO / ENGAGEMENT</span></span></div>
       <div class="engagement-stats">
         <div class="engagement-item"><span>DOTARCIA DO KOŃCA</span><strong id="engagement-end">—</strong><small>Wyświetlenie większości slajdów i dotarcie do ostatniego</small></div>
         <div class="engagement-item"><span>URUCHOMIONE FILMY</span><strong id="engagement-video">—</strong><small>Pierwsze uruchomienie danego filmu podczas otwarcia strony</small></div>
