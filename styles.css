@@ -26,3 +26,20 @@ main{max-width:1920px;margin:auto}.slide{position:relative;width:100%;scroll-mar
 .en-media:not(.playing) video{opacity:0}.en-media.playing video{opacity:1}
 @media(max-width:600px){.language-switch{top:8px;right:8px}.language-switch a{min-height:32px;padding:0 8px;gap:5px}}
 @media print{.language-switch{display:none}}
+
+/* Focused portfolio navigation: five sections + clear slide progress. */
+.toolbar select#slide-select{width:205px;min-width:140px;max-width:205px;padding:0 8px;letter-spacing:.01em}
+.toolbar .slide-count{font-size:10px;color:#c8c8c1;min-width:44px;text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.language-switch a.contact-shortcut{margin-left:6px;padding:0 15px;border:1px solid var(--accent);background:var(--accent);color:#1d1d1d;font-size:12px;letter-spacing:0;white-space:nowrap}
+.language-switch a.contact-shortcut:hover{background:#e5ff8d;color:#1d1d1d}
+.language-switch a.contact-shortcut:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media(max-width:600px){
+  .toolbar select#slide-select{width:165px;min-width:112px;max-width:165px;font-size:11px;padding:0 4px}
+  .toolbar .slide-count{display:none}
+  .language-switch a.contact-shortcut{margin-left:2px;padding:0 9px;min-height:32px;font-size:11px}
+}
+@media(max-width:370px){
+  .toolbar select#slide-select{width:140px;min-width:100px}
+  .language-switch a.contact-shortcut{padding:0 8px;font-size:10px}
+}
+@media print{.language-switch,.toolbar{display:none!important}}
