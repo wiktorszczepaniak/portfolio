@@ -156,6 +156,7 @@ function draw(){
  chart(r.daily);rank("referrers",r.toprefs,source);
  rank("countries",r.locations,country);rank("browsers",r.browsers,x=>String(x));
  showRegions(r.regions);rank("systems",r.systems,x=>String(x));
+ rank("sizes",r.sizes,x=>{const name=String(x);return /^\\d+$/.test(name)?name+" px":name;},6);
  rank("campaigns",r.campaigns,x=>String(x),6);
  language(r.pages);pages(r.pages,total);
 }
