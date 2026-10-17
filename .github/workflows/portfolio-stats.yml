@@ -38,16 +38,40 @@ jobs:
         shell: bash
         run: |
           if [ ! -f studio-insights-8f42c/data.enc.json ]; then
-            echo "No encrypted report generated; keeping the previous report unchanged."
+            echo "No encrypted report generated; previous report remains unchanged."
             exit 0
           fi
+          set -euo pipefail
+          report_path="studio-insights-8f42c/data.enc.json"
+          snapshot_path="$RUNNER_TEMP/ninja-snapshot.enc.json"
+          cp "$report_path" "$snapshot_path"
+          new_time=$(node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).updated_at)' "$snapshot_path")
           git config user.name 'portfolio-analytics[bot]'
           git config user.email 'portfolio-analytics@users.noreply.github.com'
-          git add studio-insights-8f42c/data.enc.json
-          if ! git diff --cached --quiet; then
-            git commit -m 'Refresh encrypted analytics snapshot'
+          for attempt in 1 2 3 4; do
             git fetch origin main
-            git rebase origin/main
-            git push
-          fi
-
+            # Reset only this disposable CI checkout; keep its generated report in RUNNER_TEMP.
+            git reset --hard origin/main
+            if [ -f "$report_path" ]; then
+              current_time=$(node -e 'process.stdout.write(JSON.parse(require("fs").readFileSync(process.argv[1],"utf8")).updated_at)' "$report_path")
+              if [[ "$current_time" > "$new_time" ]]; then
+                echo "A newer encrypted report was published by another run. Keeping it."
+                exit 0
+              fi
+            fi
+            cp "$snapshot_path" "$report_path"
+            git add "$report_path"
+            if git diff --cached --quiet; then
+              echo "Encrypted snapshot already current."
+              exit 0
+            fi
+            git commit -m 'Refresh encrypted analytics snapshot'
+            if git push origin HEAD:main; then
+              echo "Updated encrypted report successfully."
+              exit 0
+            fi
+            echo "Concurrent update detected; retrying ($attempt/4)."
+            sleep 3
+          done
+          echo "::error::Could not safely publish the encrypted dashboard report after four attempts."
+          exit 1
