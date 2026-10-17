@@ -105,8 +105,20 @@ async function makePeriod(days,now){
 }
 const now=new Date();
 now.setUTCMinutes(0,0,0); // GoatCounter recommends hour-aligned query windows.
+let plRegionCollection=null;
+try{
+  const response=await get("/sites");
+  const site=(Array.isArray(response.sites)?response.sites:[])
+    .find(item=>item?.code==="wiktor-portfolio");
+  const regions=site?.settings?.collect_regions;
+  if(Array.isArray(regions))plRegionCollection=regions.some(code=>String(code).toUpperCase()==="PL");
+}catch(error){
+  console.log("Region collection configuration could not be verified:",String(error.message));
+}
+console.log("Regional data collection for PL:",plRegionCollection===null?"unknown":plRegionCollection?"enabled":"disabled");
 const snapshot={schema:2,status:"ready",updated_at:now.toISOString(),
   note:"Aggregates only; values are GoatCounter counts, not verified unique individuals.",
+  plRegionCollection,
   periods:{}};
 for(const days of PERIODS){
   snapshot.periods[String(days)]=await makePeriod(days,now);
