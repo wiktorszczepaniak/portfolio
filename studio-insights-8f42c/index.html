@@ -21,7 +21,7 @@
       <a class="nav-item" href="#traffic"><span class="nav-icon">⌁</span> Ruch na stronie</a>
       <a class="nav-item" href="#discovery"><span class="nav-icon">↗</span> Źródła ruchu</a>
       <a class="nav-item" href="#audience"><span class="nav-icon">◎</span> Odbiorcy</a>
-      <a class="nav-item" href="#pages"><span class="nav-icon">▤</span> Popularne strony</a>
+      <a class="nav-item" href="#regions"><span class="nav-icon">◈</span> Województwa</a><a class="nav-item" href="#devices"><span class="nav-icon">⌘</span> Technologia</a><a class="nav-item" href="#pages"><span class="nav-icon">▤</span> Popularne strony</a>
     </nav>
     <div class="side-card"><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
     <div class="side-profile"><div class="profile-avatar">WS</div><div>Wiktor Szczepaniak<small>Creative Copywriter</small></div><span class="profile-more">···</span></div>
@@ -46,7 +46,20 @@
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">04 / AUDIENCE</div><h2>Skąd oglądają?</h2><p>Kraje zarejestrowanych odsłon</p></div><span class="panel-asterisk">◎</span></div><div class="rankings" id="countries"></div></section>
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">05 / TECHNOLOGY</div><h2>Na czym oglądają?</h2><p>Przeglądarki odwiedzających</p></div><span class="panel-asterisk">⌘</span></div><div class="rankings" id="browsers"></div></section>
     </div>
-    <section class="panel pages-panel" id="pages"><div class="section-heading"><div><div class="eyebrow">06 / CONTENT</div><h2>Najczęściej oglądane strony</h2><p>Które adresy zbierają najwięcej odsłon?</p></div><span class="page-count" id="page-count">0 STRON</span></div><div class="table-scroll"><table><thead><tr><th>#</th><th>STRONA</th><th>ODWIEDZINY</th><th>UDZIAŁ</th></tr></thead><tbody id="page-rows"><tr><td colspan="4" class="table-empty">Czekamy na pierwsze dane.</td></tr></tbody></table></div></section>
+
+    <section class="panel region-panel" id="regions">
+      <div class="section-heading"><div><div class="eyebrow">06 / POLAND BREAKDOWN</div><h2>Polska pod lupą <span class="heading-accent">↗</span></h2>
+      <p>Województwa odwiedzających. Przybliżona lokalizacja na podstawie połączenia.</p></div>
+      <span class="panel-asterisk">🇵🇱</span></div>
+      <div class="region-summary" id="region-summary">Sprawdzam, czy GoatCounter udostępnia dane wojewódzkie...</div>
+      <div class="region-layout"><div id="region-tiles" class="region-tiles" aria-label="Województwa Polski"></div><div class="region-ranking"><div class="eyebrow">TOP WOJEWÓDZTWA</div><div class="rankings" id="region-list"></div></div></div>
+      <div class="panel-note">Województwa są dostępne tylko, jeśli GoatCounter zbiera regiony dla Polski. Puste dane nie oznaczają zera odwiedzin.</div>
+    </section>
+    <div class="two-cols" id="devices">
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">07 / SYSTEMS</div><h2>Systemy operacyjne</h2><p>Windows, Android, iOS, macOS i inne</p></div><span class="panel-asterisk">⌘</span></div><div class="rankings" id="systems"></div></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">08 / CAMPAIGNS</div><h2>Linki i kampanie</h2><p>Ruch z linków oznaczonych jako kampanie</p></div><span class="panel-asterisk">↗</span></div><div class="rankings" id="campaigns"></div><p class="panel-note">Jeśli linki do portfolio nie zawierają parametrów kampanii, ta sekcja może być pusta.</p></section>
+    </div>
+    <section class="panel pages-panel" id="pages"><div class="section-heading"><div><div class="eyebrow">09 / CONTENT</div><h2>Najczęściej oglądane strony</h2><p>Które adresy zbierają najwięcej odsłon?</p></div><span class="page-count" id="page-count">0 STRON</span></div><div class="table-scroll"><table><thead><tr><th>#</th><th>STRONA</th><th>ODWIEDZINY</th><th>UDZIAŁ</th></tr></thead><tbody id="page-rows"><tr><td colspan="4" class="table-empty">Czekamy na pierwsze dane.</td></tr></tbody></table></div></section>
     <footer class="footer"><div><span class="footer-symbol">✳</span> PORTFOLIO INTELLIGENCE <small>© 2026 WS</small></div><div>Designed for curiosity. Powered by real data.</div><a href="#overview">Wróć na górę ↑</a></footer>
   </main>
   <div class="tooltip" id="tooltip" hidden></div>
