@@ -58,8 +58,8 @@
    envelope=raw;return raw;
  }
  function showModal(message="") {
-   if(pending)return pending;
    $("connect-overlay").hidden=false;
+   if(pending)return pending;
    $("connect-error").hidden=!message;
    $("connect-error").textContent=message;
    $("goat-token").value="";
@@ -133,3 +133,4 @@
    }
  };
 })();
+

@@ -7,9 +7,11 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
   <title>Portfolio Intelligence | Wiktor Szczepaniak</title>
-  <link rel="stylesheet" href="./style.css">\n  <link rel="stylesheet" href="./mugen-assets.css">
-  <script src="./connect.js" defer></script>
+  <link rel="stylesheet" href="./style.css?v=studio-2">
+  <link rel="stylesheet" href="./mugen-assets.css">
+  <script src="./connect.js?v=studio-2" defer></script>
   <script src="./app.js" defer></script>
+  <script src="./appearance.js" defer></script>
 </head>
 <body>
   <div class="orb orb-one" aria-hidden="true"></div><div class="orb orb-two" aria-hidden="true"></div>
@@ -23,13 +25,25 @@
       <a class="nav-item" href="#audience"><span class="nav-icon">◎</span> Odbiorcy</a>
       <a class="nav-item" href="#regions"><span class="nav-icon">◈</span> Województwa</a><a class="nav-item" href="#devices"><span class="nav-icon">⌘</span> Technologia</a><a class="nav-item" href="#pages"><span class="nav-icon">▤</span> Popularne strony</a>
     </nav>
-    <div class="side-card"><span class="mugen-pixel side-sasuke" aria-hidden="true"></span><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
+    <div class="side-card"><div class="side-mascot" aria-hidden="true"><span class="mugen-pixel side-sasuke"></span><span>THE STUDIO<br><b>IS WATCHING.</b></span></div><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
     <div class="side-profile"><div class="profile-avatar">WS</div><div>Wiktor Szczepaniak<small>Creative Copywriter</small></div><span class="profile-more">···</span></div>
   </aside>
   <main class="main" id="overview">
     <header class="topbar"><div class="breadcrumbs">WORKSPACE <span>/</span> <b>ANALYTICS</b></div><div class="top-right"><span class="sync-mark" id="sync-mark"><i></i><span id="sync-text">Łączenie z danymi</span></span><span class="top-divider"></span><button id="manage-key" type="button" class="manage-key">Klucz API</button><span class="top-divider"></span><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Zobacz stronę <span>↗</span></a></div></header>
-    <section class="hero"><div class="mugen-hero-scene" aria-hidden="true"><span class="mugen-halo"></span><span class="mugen-pixel hero-naruto"></span><span class="mugen-pixel hero-chakra"></span><span class="mugen-chakra-label">SHINOBI MODE / ON</span></div><div class="hero-overline"><span class="hero-spark">✳</span> YOUR WORK, IN NUMBERS <span class="hero-rule"></span> 2026</div><div class="hero-content"><div><h1>Portfolio <em>intelligence.</em></h1><p>Twoja twórczość ma odbiorców. Zobacz, skąd przychodzą i co ich przyciąga.</p></div></div></section>
-    <div class="controls"><div class="controls-left"><span class="period-label">WYBRANY OKRES</span><div class="period-pills" role="group" aria-label="Wybór okresu"><button data-period="7" class="active" aria-pressed="true">7 dni</button><button data-period="30" aria-pressed="false">30 dni</button><button data-period="90" aria-pressed="false">90 dni</button><button data-period="365" aria-pressed="false">12 miesięcy</button></div></div><button class="refresh" id="refresh" type="button"><span>↻</span> Odśwież</button></div>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="hero-overline"><span class="hero-spark">✳</span> WS / PORTFOLIO INTELLIGENCE</div>
+        <h1>Twoja praca.<br><em>Jej zasięg.</em></h1>
+        <p>Zobacz, kto trafia na Twoje portfolio<br class="desktop-break"> i co zatrzymuje go na dłużej.</p>
+        <div class="hero-caption"><span></span> CREATIVE WORK. REAL NUMBERS.</div>
+      </div>
+      <div class="mugen-hero-scene" aria-hidden="true">
+        <div class="scene-heading"><span>SHINOBI ARCHIVE</span><span>01 / WS</span></div>
+        <div class="scene-stage"><span class="mugen-halo"></span><span class="scene-kanji">忍</span><span class="mugen-pixel hero-naruto"></span><span class="mugen-pixel hero-chakra"></span></div>
+        <div class="scene-caption"><span>NARUTO UZUMAKI</span><span>SAGE / CHAKRA</span></div>
+      </div>
+    </section>
+    <div class="controls"><div class="controls-left"><span class="period-label">WYBRANY OKRES</span><div class="period-pills" role="group" aria-label="Wybór okresu"><button data-period="7" class="active" aria-pressed="true">7 dni</button><button data-period="30" aria-pressed="false">30 dni</button><button data-period="90" aria-pressed="false">90 dni</button><button data-period="365" aria-pressed="false">12 miesięcy</button></div></div><div class="control-actions"><label class="focus-toggle"><input type="checkbox" id="focus-mode"><span class="switch-track" aria-hidden="true"></span><span>Tryb skupienia</span></label><button class="refresh" id="refresh" type="button"><span>↻</span> Odśwież</button></div></div>
     <div class="status-row"><span id="status">Oczekiwanie na raport...</span><span id="timestamp">Źródło: GoatCounter</span></div>
     <section class="metrics" aria-label="Najważniejsze statystyki">
       <article class="metric primary"><div class="metric-top"><span>ODSŁONY PORTFOLIO</span><span class="metric-icon">↗</span></div><div class="metric-value" id="kpi-views">—</div><div class="metric-bottom"><span id="kpi-change" class="delta">—</span><span>względem poprzedniego okresu</span></div><div class="metric-glow"></div></article>
@@ -37,12 +51,12 @@
       <article class="metric"><div class="metric-top"><span>NAJLEPSZY DZIEŃ</span><span class="metric-icon">✦</span></div><div class="metric-value" id="kpi-best">—</div><div class="metric-bottom" id="kpi-best-date">Najwyższy dzienny wynik</div></article>
       <article class="metric"><div class="metric-top"><span>UDZIAŁ WERSJI EN</span><span class="metric-icon">◎</span></div><div class="metric-value" id="kpi-en">—</div><div class="metric-bottom" id="kpi-en-description">Polska i angielska wersja strony</div></article>
     </section>
-    <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span><span class="mugen-pixel mugen-kakashi" aria-hidden="true"></span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
+    <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span><span class="sprite-badge" aria-hidden="true"><span class="mugen-pixel mugen-kakashi"></span></span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
     <section class="panel engagement-panel" id="engagement">
       <div class="section-heading"><div><div class="eyebrow">02 / ENGAGEMENT</div>
         <h2>Co przyciąga uwagę? <span class="heading-accent">✳</span></h2>
         <p>Rzeczywiste zdarzenia od momentu włączenia śledzenia. Bez rozpoznawania konkretnych osób.</p></div>
-        <span class="mugen-ninja-chip"><span class="mugen-pixel mugen-lee" aria-hidden="true"></span><span>DOJO / ENGAGEMENT</span></span></div>
+        <span class="sprite-badge lee-badge" aria-hidden="true"><span class="mugen-pixel mugen-lee"></span></span></div>
       <div class="engagement-stats">
         <div class="engagement-item"><span>DOTARCIA DO KOŃCA</span><strong id="engagement-end">—</strong><small>Wyświetlenie większości slajdów i dotarcie do ostatniego</small></div>
         <div class="engagement-item"><span>URUCHOMIONE FILMY</span><strong id="engagement-video">—</strong><small>Pierwsze uruchomienie danego filmu podczas otwarcia strony</small></div>
@@ -77,16 +91,16 @@
       </div>
     </section>
     <div class="two-cols" id="discovery">
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">02 / DISCOVERY</div><h2>Skąd przychodzą?</h2><p>Najczęstsze źródła wejść na portfolio</p></div><span class="panel-asterisk">✳</span></div><div class="rankings" id="referrers"></div><div class="panel-note">Brak źródła nie zawsze oznacza wpisanie adresu ręcznie.</div></section>
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">03 / LANGUAGE</div><h2>PL vs EN</h2><p>Którą wersję portfolio przeglądają?</p></div><span class="panel-asterisk">◫</span></div><div class="split-layout"><div class="donut" id="donut"><div class="donut-hole"><span>LANGUAGE</span><strong id="donut-value">—</strong></div></div><div class="split-details"><div><span class="split-bullet pl"></span><div><strong>Polski</strong><small>Wersja PL</small></div><b id="pl-value">—</b></div><div><span class="split-bullet en"></span><div><strong>English</strong><small>Wersja EN</small></div><b id="en-value">—</b></div><p>Wynik oparty na ścieżkach stron, a nie na języku przeglądarki.</p></div></div></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">03 / DISCOVERY</div><h2>Skąd przychodzą?</h2><p>Najczęstsze źródła wejść na portfolio</p></div><span class="panel-asterisk">✳</span></div><div class="rankings" id="referrers"></div><div class="panel-note">Brak źródła nie zawsze oznacza wpisanie adresu ręcznie.</div></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">04 / LANGUAGE</div><h2>PL vs EN</h2><p>Którą wersję portfolio przeglądają?</p></div><span class="panel-asterisk">◫</span></div><div class="split-layout"><div class="donut" id="donut"><div class="donut-hole"><span>LANGUAGE</span><strong id="donut-value">—</strong></div></div><div class="split-details"><div><span class="split-bullet pl"></span><div><strong>Polski</strong><small>Wersja PL</small></div><b id="pl-value">—</b></div><div><span class="split-bullet en"></span><div><strong>English</strong><small>Wersja EN</small></div><b id="en-value">—</b></div><p>Wynik oparty na ścieżkach stron, a nie na języku przeglądarki.</p></div></div></section>
     </div>
     <div class="two-cols" id="audience">
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">04 / AUDIENCE</div><h2>Skąd oglądają?</h2><p>Kraje zarejestrowanych odsłon</p></div><span class="panel-asterisk">◎</span></div><div class="rankings" id="countries"></div></section>
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">05 / TECHNOLOGY</div><h2>Na czym oglądają?</h2><p>Przeglądarki odwiedzających</p></div><span class="panel-asterisk">⌘</span></div><div class="rankings" id="browsers"></div></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">05 / AUDIENCE</div><h2>Skąd oglądają?</h2><p>Kraje zarejestrowanych odsłon</p></div><span class="panel-asterisk">◎</span></div><div class="rankings" id="countries"></div></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">06 / TECHNOLOGY</div><h2>Na czym oglądają?</h2><p>Przeglądarki odwiedzających</p></div><span class="panel-asterisk">⌘</span></div><div class="rankings" id="browsers"></div></section>
     </div>
 
     <section class="panel region-panel" id="regions">
-      <div class="section-heading"><div><div class="eyebrow">06 / POLAND BREAKDOWN</div><h2>Polska pod lupą <span class="heading-accent">↗</span></h2>
+      <div class="section-heading"><div><div class="eyebrow">07 / POLAND BREAKDOWN</div><h2>Polska pod lupą <span class="heading-accent">↗</span></h2>
       <p>Województwa odwiedzających. Przybliżona lokalizacja na podstawie połączenia.</p></div>
       <span class="panel-asterisk">🇵🇱</span></div>
       <div class="region-summary" id="region-summary">Sprawdzam, czy GoatCounter udostępnia dane wojewódzkie...</div>
@@ -94,11 +108,11 @@
       <div class="panel-note">Województwa są dostępne tylko, jeśli GoatCounter zbiera regiony dla Polski. Puste dane nie oznaczają zera odwiedzin.</div>
     </section>
     <div class="three-cols" id="devices">
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">07 / SYSTEMS</div><h2>Systemy operacyjne</h2><p>Windows, Android, iOS, macOS</p></div><span class="panel-asterisk">⌘</span></div><div class="rankings" id="systems"></div></section>
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">08 / SCREENS</div><h2>Rozmiary ekranów</h2><p>Szerokości ekranów odwiedzających</p></div><span class="panel-asterisk">▤</span></div><div class="rankings" id="sizes"></div><p class="panel-note">To szerokość ekranu, nie model urządzenia.</p></section>
-      <section class="panel"><div class="section-heading"><div><div class="eyebrow">09 / CAMPAIGNS</div><h2>Linki i kampanie</h2><p>Źródła z oznaczonych linków</p></div><span class="panel-asterisk">↗</span></div><div class="rankings" id="campaigns"></div><p class="panel-note">Dostępne po dodaniu parametrów kampanii do udostępnianych linków.</p></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">08 / SYSTEMS</div><h2>Systemy operacyjne</h2><p>Windows, Android, iOS, macOS</p></div><span class="panel-asterisk">⌘</span></div><div class="rankings" id="systems"></div></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">09 / SCREENS</div><h2>Rozmiary ekranów</h2><p>Szerokości ekranów odwiedzających</p></div><span class="panel-asterisk">▤</span></div><div class="rankings" id="sizes"></div><p class="panel-note">To szerokość ekranu, nie model urządzenia.</p></section>
+      <section class="panel"><div class="section-heading"><div><div class="eyebrow">10 / CAMPAIGNS</div><h2>Linki i kampanie</h2><p>Źródła z oznaczonych linków</p></div><span class="panel-asterisk">↗</span></div><div class="rankings" id="campaigns"></div><p class="panel-note">Dostępne po dodaniu parametrów kampanii do udostępnianych linków.</p></section>
     </div>
-    <section class="panel pages-panel" id="pages"><div class="section-heading"><div><div class="eyebrow">10 / CONTENT</div><h2>Najczęściej oglądane strony</h2><p>Które adresy zbierają najwięcej odsłon?</p></div><span class="page-count" id="page-count">0 STRON</span></div><div class="table-scroll"><table><thead><tr><th>#</th><th>STRONA</th><th>ODWIEDZINY</th><th>UDZIAŁ</th></tr></thead><tbody id="page-rows"><tr><td colspan="4" class="table-empty">Czekamy na pierwsze dane.</td></tr></tbody></table></div></section>
+    <section class="panel pages-panel" id="pages"><div class="section-heading"><div><div class="eyebrow">11 / CONTENT</div><h2>Najczęściej oglądane strony</h2><p>Które adresy zbierają najwięcej odsłon?</p></div><span class="page-count" id="page-count">0 STRON</span></div><div class="table-scroll"><table><thead><tr><th>#</th><th>STRONA</th><th>ODWIEDZINY</th><th>UDZIAŁ</th></tr></thead><tbody id="page-rows"><tr><td colspan="4" class="table-empty">Czekamy na pierwsze dane.</td></tr></tbody></table></div></section>
     <footer class="footer"><div><span class="footer-symbol">✳</span> PORTFOLIO INTELLIGENCE <small>© 2026 WS</small></div><div>Designed for curiosity. Powered by real data.</div><a href="#overview">Wróć na górę ↑</a></footer>
   </main>
   <div class="tooltip" id="tooltip" hidden></div>
@@ -115,7 +129,9 @@
       <div id="connect-error" role="alert" class="connect-error" hidden></div>
       <button id="connect-button" type="submit">Połącz i pokaż dashboard ↗</button>
     </form>
+    <button class="preview-layout" id="preview-layout" type="button">Podejrzyj wygląd bez danych ↗</button>
     <small>Dostęp do danych zapewnia token. Sam adres strony nie jest zabezpieczeniem. Nie udostępniaj tokenu.</small>
   </section>
 </div></body>
 </html>
+
