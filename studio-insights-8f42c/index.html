@@ -18,7 +18,7 @@
     <div class="side-caption">WORKSPACE</div>
     <nav class="navigation" aria-label="Nawigacja">
       <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Overview <span class="nav-arrow">↗</span></a>
-      <a class="nav-item" href="#traffic"><span class="nav-icon">⌁</span> Ruch na stronie</a>
+      <a class="nav-item" href="#traffic"><span class="nav-icon">⌁</span> Ruch na stronie</a><a class="nav-item" href="#engagement"><span class="nav-icon">◉</span> Zaangażowanie</a>
       <a class="nav-item" href="#discovery"><span class="nav-icon">↗</span> Źródła ruchu</a>
       <a class="nav-item" href="#audience"><span class="nav-icon">◎</span> Odbiorcy</a>
       <a class="nav-item" href="#regions"><span class="nav-icon">◈</span> Województwa</a><a class="nav-item" href="#devices"><span class="nav-icon">⌘</span> Technologia</a><a class="nav-item" href="#pages"><span class="nav-icon">▤</span> Popularne strony</a>
@@ -38,6 +38,28 @@
       <article class="metric"><div class="metric-top"><span>UDZIAŁ WERSJI EN</span><span class="metric-icon">◎</span></div><div class="metric-value" id="kpi-en">—</div><div class="metric-bottom" id="kpi-en-description">Polska i angielska wersja strony</div></article>
     </section>
     <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
+    <section class="panel engagement-panel" id="engagement">
+      <div class="section-heading"><div><div class="eyebrow">02 / ENGAGEMENT</div>
+        <h2>Co przyciąga uwagę? <span class="heading-accent">✳</span></h2>
+        <p>Rzeczywiste zdarzenia od momentu włączenia śledzenia. Bez rozpoznawania konkretnych osób.</p></div>
+        <span class="pill">NEW TRACKING</span></div>
+      <div class="engagement-stats">
+        <div class="engagement-item"><span>DOTARCIA DO KOŃCA</span><strong id="engagement-end">—</strong><small>Wyświetlenie większości slajdów i dotarcie do ostatniego</small></div>
+        <div class="engagement-item"><span>URUCHOMIONE FILMY</span><strong id="engagement-video">—</strong><small>Pierwsze uruchomienie danego filmu podczas otwarcia strony</small></div>
+        <div class="engagement-item"><span>ZMIANY JĘZYKA</span><strong id="engagement-switch">—</strong><small>Kliknięcia w przełącznik, bez ponownego wyboru bieżącego języka</small></div>
+      </div>
+      <div class="engagement-details">
+        <div class="engagement-breakdown"><div class="eyebrow">DOTARCIA DO OSTATNIEGO SLAJDU</div>
+          <div class="two-language"><div><span>PL <small>Polski</small></span><strong id="end-pl">—</strong></div>
+          <div><span>EN <small>English</small></span><strong id="end-en">—</strong></div></div>
+          <div class="eyebrow">PRZEŁĄCZENIA JĘZYKA</div>
+          <div class="two-language"><div><span>PL → EN</span><strong id="switch-pl-en">—</strong></div>
+          <div><span>EN → PL</span><strong id="switch-en-pl">—</strong></div></div>
+          <p class="panel-note">Ukończenie oznacza dotarcie do ostatniego slajdu po zobaczeniu co najmniej 70% slajdów. Nie oznacza przeczytania całego portfolio.</p>
+        </div>
+        <div class="engagement-videos"><div class="eyebrow">NAJCHĘTNIEJ OGLĄDANE FILMY</div><div class="rankings" id="video-rankings"></div></div>
+      </div>
+    </section>
     <div class="two-cols" id="discovery">
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">02 / DISCOVERY</div><h2>Skąd przychodzą?</h2><p>Najczęstsze źródła wejść na portfolio</p></div><span class="panel-asterisk">✳</span></div><div class="rankings" id="referrers"></div><div class="panel-note">Brak źródła nie zawsze oznacza wpisanie adresu ręcznie.</div></section>
       <section class="panel"><div class="section-heading"><div><div class="eyebrow">03 / LANGUAGE</div><h2>PL vs EN</h2><p>Którą wersję portfolio przeglądają?</p></div><span class="panel-asterisk">◫</span></div><div class="split-layout"><div class="donut" id="donut"><div class="donut-hole"><span>LANGUAGE</span><strong id="donut-value">—</strong></div></div><div class="split-details"><div><span class="split-bullet pl"></span><div><strong>Polski</strong><small>Wersja PL</small></div><b id="pl-value">—</b></div><div><span class="split-bullet en"></span><div><strong>English</strong><small>Wersja EN</small></div><b id="en-value">—</b></div><p>Wynik oparty na ścieżkach stron, a nie na języku przeglądarki.</p></div></div></section>
