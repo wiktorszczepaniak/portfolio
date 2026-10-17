@@ -37,8 +37,9 @@ const VOIVODESHIPS=[
  ["26","Świętokrzyskie"],["28","Warmińsko-mazurskie"],["30","Wielkopolskie"],["32","Zachodniopomorskie"]
 ];
 function normalizeRegion(text){
- return String(text||"").toLocaleLowerCase("pl-PL").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")
-   .replace(/^wojewodztwo\\s+/,"").replace(/[^a-z0-9]/g,"");
+ return String(text||"").toLocaleLowerCase("pl-PL").normalize("NFD")
+   .replace(/[\u0300-\u036f]/g,"").replace(/ł/g,"l")
+   .replace(/^wojewodztwo\s+/,"").replace(/[^a-z0-9]/g,"");
 }
 function regionCode(name){
  const raw=String(name||"").trim();
@@ -47,7 +48,7 @@ function regionCode(name){
  const normalized=normalizeRegion(raw);
  const alias={"lodz":"10","lodzkie":"10","mazovia":"14","masovia":"14","mazowieckie":"14",
  "silesia":"24","slaskie":"24","lesserpoland":"12","malopolskie":"12",
- "greaterpoland":"30","wielkopolskie":"30","lower silesian":"02"};
+ "greaterpoland":"30","wielkopolskie":"30","lowersilesian":"02"};
  if(alias[normalized])return alias[normalized];
  const hit=VOIVODESHIPS.find(item=>normalizeRegion(item[1])===normalized);
  return hit?hit[0]:null;
@@ -156,7 +157,7 @@ function draw(){
  chart(r.daily);rank("referrers",r.toprefs,source);
  rank("countries",r.locations,country);rank("browsers",r.browsers,x=>String(x));
  showRegions(r.regions);rank("systems",r.systems,x=>String(x));
- rank("sizes",r.sizes,x=>{const name=String(x);return /^\\d+$/.test(name)?name+" px":name;},6);
+ rank("sizes",r.sizes,x=>{const name=String(x);return /^\d+$/.test(name)?name+" px":name;},6);
  rank("campaigns",r.campaigns,x=>String(x),6);
  language(r.pages);pages(r.pages,total);
 }
