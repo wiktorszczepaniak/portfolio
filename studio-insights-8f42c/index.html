@@ -7,10 +7,11 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
   <title>Portfolio Intelligence | Wiktor Szczepaniak</title>
-  <link rel="stylesheet" href="./style.css?v=studio-2">
-  <link rel="stylesheet" href="./mugen-assets.css">
+  <link rel="stylesheet" href="./style.css?v=sharingan-1">
+
   <script src="./connect.js?v=studio-2" defer></script>
-  <script src="./app.js" defer></script>
+  <script src="./shinobi-score.js" defer></script>
+  <script src="./app.js?v=sharingan-1" defer></script>
   <script src="./appearance.js" defer></script>
 </head>
 <body>
@@ -25,7 +26,7 @@
       <a class="nav-item" href="#audience"><span class="nav-icon">◎</span> Odbiorcy</a>
       <a class="nav-item" href="#regions"><span class="nav-icon">◈</span> Województwa</a><a class="nav-item" href="#devices"><span class="nav-icon">⌘</span> Technologia</a><a class="nav-item" href="#pages"><span class="nav-icon">▤</span> Popularne strony</a>
     </nav>
-    <div class="side-card"><div class="side-mascot" aria-hidden="true"><span class="mugen-pixel side-sasuke"></span><span>THE STUDIO<br><b>IS WATCHING.</b></span></div><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
+    <div class="side-card"><div class="side-rank"><span class="rank-seal" aria-hidden="true">忍</span><div><small>RANGA W TYM OKRESIE</small><strong id="side-rank-name">Nieustalona</strong></div></div><div class="side-card-top"><span class="dot"></span> PORTFOLIO TRACKER</div><strong>Jedno portfolio. Dwa języki. Pełen obraz.</strong><p>Statystyki z GoatCounter. Bez reklamowych trackerów.</p><a href="https://wiktorszczepaniak.github.io/portfolio/" target="_blank" rel="noopener noreferrer">Otwórz portfolio ↗</a></div>
     <div class="side-profile"><div class="profile-avatar">WS</div><div>Wiktor Szczepaniak<small>Creative Copywriter</small></div><span class="profile-more">···</span></div>
   </aside>
   <main class="main" id="overview">
@@ -37,26 +38,32 @@
         <p>Zobacz, kto trafia na Twoje portfolio<br class="desktop-break"> i co zatrzymuje go na dłużej.</p>
         <div class="hero-caption"><span></span> CREATIVE WORK. REAL NUMBERS.</div>
       </div>
-      <div class="mugen-hero-scene" aria-hidden="true">
-        <div class="scene-heading"><span>SHINOBI ARCHIVE</span><span>01 / WS</span></div>
-        <div class="scene-stage"><span class="mugen-halo"></span><span class="scene-kanji">忍</span><span class="mugen-pixel hero-naruto"></span><span class="mugen-pixel hero-chakra"></span></div>
-        <div class="scene-caption"><span>NARUTO UZUMAKI</span><span>SAGE / CHAKRA</span></div>
+      <div class="shinobi-card">
+        <div class="rank-card-top"><span>SHINOBI SCORE</span><span id="score-period">7 DNI</span></div>
+        <div class="rank-card-main">
+          <div class="sharingan-emblem" aria-hidden="true"><svg viewBox="0 0 160 160"><circle class="eye-disc" cx="80" cy="80" r="69"/><circle class="eye-orbit" cx="80" cy="80" r="43"/><circle cx="80" cy="80" r="13" fill="#140b0e"/><g fill="#140b0e"><path d="M80 26c-11 0-16 12-9 20 6 7 17 4 18-4 8 1 14-2 18-9-9 4-17-7-27-7z"/><path d="M80 26c-11 0-16 12-9 20 6 7 17 4 18-4 8 1 14-2 18-9-9 4-17-7-27-7z" transform="rotate(120 80 80)"/><path d="M80 26c-11 0-16 12-9 20 6 7 17 4 18-4 8 1 14-2 18-9-9 4-17-7-27-7z" transform="rotate(240 80 80)"/></g></svg></div>
+          <div class="score-reading"><span>TWÓJ WYNIK</span><strong id="shinobi-score">—</strong><small>PKT / WYBRANY OKRES</small></div>
+        </div>
+        <div class="rank-line"><strong id="shinobi-rank">Ranga nieustalona</strong><span id="rank-next">Połącz dane</span></div>
+        <div class="rank-progress" id="rank-progress" role="progressbar" aria-label="Postęp do kolejnej rangi" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="rank-fill"></span></div>
+        <p class="rank-hint" id="rank-hint">Sharingan obserwuje. Wynik czeka na dane.</p>
       </div>
     </section>
     <div class="controls"><div class="controls-left"><span class="period-label">WYBRANY OKRES</span><div class="period-pills" role="group" aria-label="Wybór okresu"><button data-period="7" class="active" aria-pressed="true">7 dni</button><button data-period="30" aria-pressed="false">30 dni</button><button data-period="90" aria-pressed="false">90 dni</button><button data-period="365" aria-pressed="false">12 miesięcy</button></div></div><div class="control-actions"><label class="focus-toggle"><input type="checkbox" id="focus-mode"><span class="switch-track" aria-hidden="true"></span><span>Tryb skupienia</span></label><button class="refresh" id="refresh" type="button"><span>↻</span> Odśwież</button></div></div>
     <div class="status-row"><span id="status">Oczekiwanie na raport...</span><span id="timestamp">Źródło: GoatCounter</span></div>
+    <details class="score-rules"><summary>Jak działa Shinobi Score i rangi? <span>＋</span></summary><div class="score-rules-content"><p>Własny system punktowy tego dashboardu, liczony osobno dla wybranego okresu. To zabawa z wynikami — nie liczba osób ani ocena jakości portfolio.</p><div class="score-weights"><span><b>+1</b> odsłona</span><span><b>+3</b> uruchomienie filmu</span><span><b>+5</b> dotarcie do końca</span><span><b>+10</b> kliknięcie Kontakt</span></div><div class="rank-ladder"><span>Uczeń <b>0</b></span><span>Genin <b>100</b></span><span>Chūnin <b>500</b></span><span>Jōnin <b>1 500</b></span><span>Kage <b>5 000</b></span></div><p>Punkty sumują zdarzenia, także powtórzone przez tę samą osobę. Dłuższy okres daje więcej okazji do zdobywania punktów. Rangi są umownymi progami tego panelu, nie rankingiem względem innych stron.</p></div></details>
     <section class="metrics" aria-label="Najważniejsze statystyki">
       <article class="metric primary"><div class="metric-top"><span>ODSŁONY PORTFOLIO</span><span class="metric-icon">↗</span></div><div class="metric-value" id="kpi-views">—</div><div class="metric-bottom"><span id="kpi-change" class="delta">—</span><span>względem poprzedniego okresu</span></div><div class="metric-glow"></div></article>
       <article class="metric"><div class="metric-top"><span>ŚREDNIO DZIENNIE</span><span class="metric-icon">◷</span></div><div class="metric-value" id="kpi-average">—</div><div class="metric-bottom"><span class="tiny-mark"></span> Średnia odsłon w tym okresie</div></article>
       <article class="metric"><div class="metric-top"><span>NAJLEPSZY DZIEŃ</span><span class="metric-icon">✦</span></div><div class="metric-value" id="kpi-best">—</div><div class="metric-bottom" id="kpi-best-date">Najwyższy dzienny wynik</div></article>
       <article class="metric"><div class="metric-top"><span>UDZIAŁ WERSJI EN</span><span class="metric-icon">◎</span></div><div class="metric-value" id="kpi-en">—</div><div class="metric-bottom" id="kpi-en-description">Polska i angielska wersja strony</div></article>
     </section>
-    <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span><span class="sprite-badge" aria-hidden="true"><span class="mugen-pixel mugen-kakashi"></span></span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
+    <section class="large-chart panel" id="traffic"><div class="section-heading"><div><div class="eyebrow">01 / PERFORMANCE</div><h2>Ruch w czasie <span class="heading-accent">↗</span></h2><p>Odsłony portfolio na przestrzeni wybranego okresu</p></div><div class="chart-legend"><i></i> Odsłony <span id="chart-period"></span><span class="module-stamp" aria-hidden="true">観</span></div></div><div class="chart-wrap" id="chart" role="img" aria-label="Wykres dziennych odsłon"><div class="empty-state">Dane pojawią się po pierwszej synchronizacji.</div></div><div class="chart-footer"><span id="chart-summary">Dane aktualizowane automatycznie</span><span>ŹRÓDŁO / GOATCOUNTER</span></div></section>
     <section class="panel engagement-panel" id="engagement">
       <div class="section-heading"><div><div class="eyebrow">02 / ENGAGEMENT</div>
         <h2>Co przyciąga uwagę? <span class="heading-accent">✳</span></h2>
         <p>Rzeczywiste zdarzenia od momentu włączenia śledzenia. Bez rozpoznawania konkretnych osób.</p></div>
-        <span class="sprite-badge lee-badge" aria-hidden="true"><span class="mugen-pixel mugen-lee"></span></span></div>
+        <span class="module-stamp" aria-hidden="true">忍</span></div>
       <div class="engagement-stats">
         <div class="engagement-item"><span>DOTARCIA DO KOŃCA</span><strong id="engagement-end">—</strong><small>Wyświetlenie większości slajdów i dotarcie do ostatniego</small></div>
         <div class="engagement-item"><span>URUCHOMIONE FILMY</span><strong id="engagement-video">—</strong><small>Pierwsze uruchomienie danego filmu podczas otwarcia strony</small></div>

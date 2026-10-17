@@ -230,6 +230,7 @@ function draw(){
  const delta=$("kpi-change");delta.classList.remove("negative","neutral");
  if(!old){delta.textContent=total?"NOWY RUCH":"0%";delta.classList.add("neutral")}
  else{const change=(total-old)/old*100;delta.textContent=(change>0?"+":"")+change.toFixed(1)+"%";if(change<0)delta.classList.add("negative")}
+ window.ShinobiScore.render(r,period);
  chart(r.daily);rank("referrers",r.toprefs,source);
  rank("countries",r.locations,country);rank("browsers",r.browsers,x=>String(x));
  showRegions(r.regions);rank("systems",r.systems,x=>String(x));
@@ -262,3 +263,4 @@ document.querySelectorAll(".nav-item").forEach(link=>link.addEventListener("clic
  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===link));
 }));
 refresh();
+
