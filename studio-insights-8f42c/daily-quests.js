@@ -39,11 +39,24 @@
   function todaysRecord(market){
     const date=dayKey();
     const existing=state.days[date];
-    if(existing && Array.isArray(existing.jobs) && existing.jobs.length)return {date,record:existing};
     // Never turn yesterday's or unverified job leads into today's assignments.
-    if(market?.status!=="ready"||!market?.checkedAt||dayKey(new Date(market.checkedAt))!==date)return {date,record:null};
-    const fresh=(Array.isArray(market.jobs)?market.jobs:[])
-      .map(safeJob).filter(Boolean).filter((j,i,a)=>a.findIndex(x=>x.url===j.url)===i).slice(0,3);
+    const isFresh=market?.status==="ready"&&market?.checkedAt
+      &&Number.isFinite(Date.parse(market.checkedAt))&&dayKey(new Date(market.checkedAt))===date;
+    const fresh=isFresh?(Array.isArray(market.jobs)?market.jobs:[])
+      .map(safeJob).filter(Boolean).filter((j,i,a)=>a.findIndex(x=>x.url===j.url)===i).slice(0,3):[];
+    if(existing && Array.isArray(existing.jobs) && existing.jobs.length){
+      // The first report of the day may have fewer than three offers.
+      // Add missing verified offers later without changing finished missions.
+      if(existing.jobs.length<3 && fresh.length){
+        const known=new Set(existing.jobs.map(job=>job.url));
+        for(const job of fresh){
+          if(existing.jobs.length>=3)break;
+          if(!known.has(job.url)){existing.jobs.push(job);known.add(job.url);}
+        }
+        save();
+      }
+      return {date,record:existing};
+    }
     if(!fresh.length)return {date,record:null};
     const record={jobs:fresh,done:[],savedAt:new Date().toISOString()};
     state.days[date]=record;save();
