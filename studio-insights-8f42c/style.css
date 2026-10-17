@@ -78,3 +78,37 @@
 .engagement-videos .rank-name{max-width:76%}
 @media(max-width:850px){.engagement-details{grid-template-columns:1fr}.engagement-stats{gap:9px}.engagement-item{padding:14px}}
 @media(max-width:570px){.engagement-panel{margin-top:12px}.engagement-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.engagement-item:last-child{grid-column:1/-1}.engagement-item{padding:14px 12px}.engagement-item strong{font-size:30px}.engagement-item span{font-size:8px}.engagement-details{gap:13px;padding-top:18px}.two-language{margin-bottom:20px}}
+
+/* What they click: case-study and contact analytics */
+.navigation-tracking{border-top:1px solid var(--line);margin-top:27px;padding-top:25px}
+.navigation-tracking .section-heading h2{font-size:19px}
+.navigation-tracking .section-heading p{max-width:640px}
+.navigation-metrics{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:23px}
+.navigation-metric{padding:19px 20px;border-radius:11px;border:1px solid #3b463a;background:linear-gradient(120deg,#202c23,#1c2221)}
+.navigation-metric.contact{background:linear-gradient(120deg,#292735,#1d2029);border-color:#474457}
+.navigation-metric>span{color:#a2b5a4;font-size:9px;letter-spacing:1.15px;font-weight:740}
+.navigation-metric.contact>span{color:#b8b3d0}
+.navigation-metric>strong{display:block;font-weight:680;font-size:37px;letter-spacing:-1.5px;margin:11px 0 7px;color:var(--green);font-variant-numeric:tabular-nums}
+.navigation-metric.contact>strong{color:#bfadff}
+.navigation-metric>small{font-size:10px;color:#98a59c;line-height:1.7}
+.navigation-rank-title{display:flex;align-items:center;justify-content:space-between;color:#8e99a0;gap:12px;font-size:10px;letter-spacing:1.15px;font-weight:720;margin:27px 0 15px}
+.navigation-rankings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 23px}
+.nav-click-row{padding:14px 15px;border:1px solid #30383a;border-radius:9px;background:#1b2124}
+.nav-click-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px}
+.nav-click-heading strong{color:#d4f8a4;font-variant-numeric:tabular-nums;font-size:16px}
+.nav-click-name{display:flex;gap:12px;align-items:center;min-width:0}
+.nav-click-name>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-click-number{font-size:10px;color:#737d80;font-variant-numeric:tabular-nums}
+.nav-click-meter{height:5px;background:#2b3433;border-radius:5px;overflow:hidden;margin-top:12px}
+.nav-click-meter span{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#889d69,var(--green));min-width:0}
+.nav-click-languages{font-size:10px;color:#88969a;margin-top:9px;white-space:pre-wrap}
+@media(max-width:600px){
+  .navigation-tracking{margin-top:20px;padding-top:21px}
+  .navigation-tracking .section-heading h2{font-size:17px}
+  .navigation-metrics{gap:9px;margin-top:18px}
+  .navigation-metric{padding:15px 12px}
+  .navigation-metric>span{font-size:8px}
+  .navigation-metric>strong{font-size:30px}
+  .navigation-rankings{grid-template-columns:1fr;gap:9px}
+  .navigation-rank-title{font-size:9px;letter-spacing:.5px}
+}
