@@ -83,6 +83,51 @@ function showRegions(rows){
  ranked.push(...other);
  rank("region-list",ranked,x=>String(x),6);
 }
+const MENU_CASES = [
+  {slug:"social-media",label:"Social Media"},
+  {slug:"content-video",label:"Content Video"},
+  {slug:"brand-hero",label:"Brand Hero"},
+  {slug:"big-idea-kampanie",label:"Big Idea i Kampanie"},
+  {slug:"moderacja",label:"Moderacja"}
+];
+function menuAnalytics(rows) {
+  const paths = new Map();
+  for (const item of Array.isArray(rows) ? rows : []) {
+    const key = String(item.path || "");
+    if (/^portfolio-(?:case|contact)-/.test(key)) {
+      paths.set(key, (paths.get(key) || 0) + integer(item.count));
+    }
+  }
+  const count = key => paths.get(key) || 0;
+  const totalContactsPL = count("portfolio-contact-pl");
+  const totalContactsEN = count("portfolio-contact-en");
+  $("contact-click-total").textContent = fmt(totalContactsPL + totalContactsEN);
+  $("contact-split").textContent = "PL: " + fmt(totalContactsPL) + " · EN: " + fmt(totalContactsEN);
+  const sections = MENU_CASES.map(entry => {
+    const pl = count("portfolio-case-" + entry.slug + "-pl");
+    const en = count("portfolio-case-" + entry.slug + "-en");
+    return {...entry, pl, en, count:pl + en};
+  }).sort((a,b) => b.count - a.count);
+  $("case-click-total").textContent = fmt(sections.reduce((sum,item) => sum + item.count,0));
+  const maximum = Math.max(1,...sections.map(item => item.count));
+  const root = $("case-click-rankings");
+  root.replaceChildren();
+  for (const [index,item] of sections.entries()) {
+    const itemEl = txt("div","nav-click-row","");
+    const heading = txt("div","nav-click-heading","");
+    const name = txt("div","nav-click-name","");
+    name.append(txt("span","nav-click-number",String(index+1).padStart(2,"0")),txt("span","",item.label));
+    const value = txt("strong","",fmt(item.count));
+    heading.append(name,value);
+    const meter = txt("div","nav-click-meter","");
+    const fill = txt("span","","");
+    fill.style.width = (100*item.count/maximum) + "%";
+    meter.append(fill);
+    const languages = txt("div","nav-click-languages","PL: "+fmt(item.pl)+"  ·  EN: "+fmt(item.en));
+    itemEl.append(heading,meter,languages);
+    root.append(itemEl);
+  }
+}
 function engagement(rows){
  const items=Array.isArray(rows)?rows:[];
  let completedPL=0,completedEN=0,plToEn=0,enToPl=0;
@@ -190,7 +235,7 @@ function draw(){
  showRegions(r.regions);rank("systems",r.systems,x=>String(x));
  rank("sizes",r.sizes,x=>{const name=String(x);return /^\d+$/.test(name)?name+" px":name;},6);
  rank("campaigns",r.campaigns,x=>String(x),6);
- engagement(r.events);language(r.pages);pages(r.pages,total);
+ engagement(r.events);menuAnalytics(r.events);language(r.pages);pages(r.pages,total);
 }
 async function refresh(){
  const btn=$("refresh");btn.disabled=true;
