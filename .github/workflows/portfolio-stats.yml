@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "scripts/portfolio_stats_secure.mjs"
+      - "scripts/ninja-report.mjs"
       - ".github/workflows/portfolio-stats.yml"
   schedule:
     - cron: "17 * * * *"
@@ -49,3 +50,4 @@ jobs:
             git rebase origin/main
             git push
           fi
+

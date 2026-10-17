@@ -6,6 +6,7 @@
 import {pbkdf2Sync,hkdfSync,randomBytes,createCipheriv} from "node:crypto";
 import {mkdir,writeFile,rename} from "node:fs/promises";
 import {dirname} from "node:path";
+import {collectMarket,buildReport} from "./ninja-report.mjs";
 
 const TOKEN = process.env.GOATCOUNTER_TOKEN || "";
 if (!TOKEN) throw Error("GOATCOUNTER_TOKEN secret missing");
@@ -135,6 +136,14 @@ for(const days of PERIODS){
   snapshot.periods[String(days)]=await makePeriod(days,now);
   console.log("Collected period",days,"days");
 }
+// Build a short report from the last completed 24-hour window. It is encrypted
+// with the analytics snapshot; job boards receive no visitor information.
+const market=await collectMarket(new Date());
+let recent=null;
+try{recent=await get("/stats/hits",{start:new Date(now.getTime()-86400000).toISOString(),end:now.toISOString(),limit:100});}
+catch{console.log("::notice title=Ninja activity check::unavailable; previous analytics remain independent");}
+snapshot.ninjaReport=buildReport(recent,market,now);
+console.log("::notice title=Ninja report::status="+snapshot.ninjaReport.status+"; encrypted=true");
 const master=pbkdf2Sync(TOKEN,MASTER_SALT,ITERATIONS,32,"sha256");
 const salt=randomBytes(16),iv=randomBytes(12);
 const aesKey=Buffer.from(hkdfSync("sha256",master,salt,INFO,32));
@@ -148,4 +157,5 @@ await mkdir(dirname(OUTPUT),{recursive:true});
 await writeFile(OUTPUT+".tmp",output+"\n",{mode:0o600});
 await rename(OUTPUT+".tmp",OUTPUT);
 console.log("Encrypted analytics snapshot ready. No plaintext persisted.");
+
 

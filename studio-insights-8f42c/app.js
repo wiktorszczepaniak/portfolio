@@ -251,7 +251,7 @@ async function refresh(){
  try{
   const json=await window.GoatData.load(period);
   if(json.status!=="ready"||json.schema!==2||!json.periods){throw Error("setup")}
-  data=json;draw();
+  data=json;draw();window.NinjaReport.render(json.ninjaReport);
   const time=Date.parse(json.updated_at),stale=!Number.isFinite(time)||Date.now()-time>6*3600000;
   setStatus(stale?"Raport jest starszy niż 6 godzin. Wyniki mogą być nieaktualne.":"Statystyki pobrane pomyślnie.",stale);
   $("timestamp").textContent="Ostatnia synchronizacja: "+stampFormat.format(new Date(json.updated_at));
@@ -273,3 +273,7 @@ document.querySelectorAll(".nav-item").forEach(link=>link.addEventListener("clic
 refresh();
 
 
+
+
+// Pick up newly published hourly snapshots while the dashboard is open.
+setInterval(()=>{if(data&&!document.hidden){window.GoatData.invalidate();refresh();}},5*60*1000);
