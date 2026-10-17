@@ -66,8 +66,12 @@ function showRegions(rows){
  const summary=$("region-summary");
  summary.classList.toggle("empty",list.length===0);
  summary.textContent=list.length?
-   "Dane regionalne w Polsce · "+fmt(list.reduce((n,r)=>n+integer(r.count),0))+" zarejestrowanych odsłon z przypisanym regionem.":
-   "Brak podziału na województwa. W ustawieniach GoatCounter sprawdź zbieranie regionów dla kraju PL. Wcześniejszych lokalizacji nie da się odtworzyć.";
+   "Dane regionalne w Polsce · "+fmt(list.reduce((n,r)=>n+integer(r.count),0))+" odsłon z przypisanym regionem.":
+   data?.plRegionCollection===false?
+   "Zbieranie województw jest wyłączone. W GoatCounter przejdź do ustawień zbierania regionów i dodaj kraj PL. Nowe dane pojawią się po kolejnych odwiedzinach.":
+   data?.plRegionCollection===true?
+   "Zbieranie regionów PL jest włączone, ale na razie brak danych o województwach. Nie oznacza to zera odwiedzin.":
+   "Brak danych wojewódzkich. Sprawdź zbieranie regionów dla Polski (PL) w ustawieniach GoatCounter.";
  const tiles=$("region-tiles");tiles.replaceChildren();
  for(const [code,name] of VOIVODESHIPS){
   const n=matched.get(code)||0,card=txt("div","region-tile"+(matched.has(code)?"":" unknown"),"");
