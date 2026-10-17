@@ -251,7 +251,7 @@ async function refresh(){
  try{
   const json=await window.GoatData.load(period);
   if(json.status!=="ready"||json.schema!==2||!json.periods){throw Error("setup")}
-  data=json;draw();window.NinjaReport.render(json.ninjaReport);
+  data=json;window.NinjaReport.render(json.ninjaReport);draw();
   const time=Date.parse(json.updated_at),stale=!Number.isFinite(time)||Date.now()-time>6*3600000;
   setStatus(stale?"Raport jest starszy niż 6 godzin. Wyniki mogą być nieaktualne.":"Statystyki pobrane pomyślnie.",stale);
   $("timestamp").textContent="Ostatnia synchronizacja: "+stampFormat.format(new Date(json.updated_at));
@@ -271,9 +271,11 @@ document.querySelectorAll(".nav-item").forEach(link=>link.addEventListener("clic
  document.querySelectorAll(".nav-item").forEach(x=>x.classList.toggle("active",x===link));
 }));
 refresh();
-
-
-
+// Recalculate the displayed score immediately when a daily mission is checked.
+document.addEventListener("daily-quest-change",()=>{
+  const report=current();
+  if(report)window.ShinobiScore.render(report,period);
+});
 
 // Pick up newly published hourly snapshots while the dashboard is open.
 setInterval(()=>{if(data&&!document.hidden){window.GoatData.invalidate();refresh();}},5*60*1000);
