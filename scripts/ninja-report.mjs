@@ -39,8 +39,8 @@ export function parseOffer(html,url,now){
 export async function collectMarket(now=new Date()){
   const candidates=new Set(),errors=[];
   for(const source of marketSources){
-    try{const html=await page(source);for(const m of html.matchAll(/href=["'](\/oferta-pracy\/[^"'?#]+)["']/g)){
-      if(/social|content|copywriter|creative|kreatywn|community/i.test(m[1])&&!/junior|paid-social|performance|intern/i.test(m[1]))candidates.add('https://rocketjobs.pl'+m[1]);
+    try{const html=(await page(source)).replace(/\\\//g,"/");for(const m of html.matchAll(/\/oferta-pracy\/[a-zA-Z0-9_%.-]+/g)){
+      if(/social|content|copywriter|creative|kreatywn|community/i.test(m[0])&&!/junior|paid-social|performance|intern/i.test(m[0]))candidates.add("https://rocketjobs.pl"+m[0]);
     }}catch(error){errors.push(String(error.message));}
   }
   const jobs=[];
@@ -59,7 +59,7 @@ export function buildReport(raw,market,now){
   const contact=sum(/^portfolio-contact-(pl|en)$/),end=sum(/^portfolio-end-(pl|en)$/),video=sum(/^portfolio-video-(pl|en)-/);
   const categories=[['social-media','Social Media','social'],['content-video','Content Video','video'],['brand-hero','Brand Hero','creative'],['big-idea-kampanie','Big Idea i Kampanie','creative'],['moderacja','Moderacja','social']].map(([slug,label,tag])=>({label,tag,count:sum(new RegExp('^portfolio-case-'+slug+'-(pl|en)$'))})).sort((a,b)=>b.count-a.count);
   const top=categories[0];const evidence=top.count>0;
-  let text=views===0&&contact+end+video+top.count===0?'Spokojny patrol: w ostatnich 24 godzinach nie zarejestrowano wejść ani śledzonych akcji.':`Zwiadowca melduje: ${views} zliczeń wejść, ${end} dotarć do końca, ${video} uruchomień filmów i ${contact} kliknięć Kontakt w ostatnich 24 godzinach.`;
+  let text=views===0&&contact+end+video+top.count===0?'Spokojny patrol: w ostatnich 24 godzinach nie zarejestrowano wejść ani śledzonych akcji.':`Zwiadowca melduje za ostatnie 24h: zliczone wejścia — ${views}, dotarcia do końca — ${end}, uruchomienia filmów — ${video}, kliknięcia Kontakt — ${contact}.`;
   if(evidence)text+=` Najczęściej wybierana sekcja: ${top.label} (${top.count} kliknięć).`;
   else if(views>0)text+=' Brakuje kliknięć kategorii, żeby wskazać kierunek zainteresowania.';
   if(contact>0)text+=' Kontakt przyciągnął uwagę; samo kliknięcie nie potwierdza wysłania wiadomości.';
