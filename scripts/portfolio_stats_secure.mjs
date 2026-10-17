@@ -116,12 +116,14 @@ try{
   const response=await get("/sites");
   const site=(Array.isArray(response.sites)?response.sites:[])
     .find(item=>item?.code==="wiktor-portfolio");
-  const regions=site?.settings?.collect_regions;
-  const flags=site?.settings?.collect;
+  // GoatCounter serializes this field as "setttings" in current releases.
+  const settings=site?.settings ?? site?.setttings;
+  const regions=settings?.collect_regions;
+  const flags=settings?.collect;
   if(Array.isArray(regions) && Number.isInteger(flags))
     plRegionCollection=(flags & 16)!==0 && (flags & 32)!==0 && regions.some(code=>String(code).toUpperCase()==="PL");
 }catch(error){
-  console.log("Region collection configuration could not be verified:",String(error.message));
+  console.log("::notice title=PL configuration read error::"+String(error.message));
 }
 console.log("::notice title=PL region configuration::"+(plRegionCollection===null?"unknown":plRegionCollection?"enabled":"disabled"));
 const snapshot={schema:2,status:"ready",updated_at:now.toISOString(),
