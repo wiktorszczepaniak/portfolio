@@ -18,6 +18,10 @@ const range=h=>({start:new Date(now.getTime()-h*3600000).toISOString(),end:now.t
 const sites=await read("/sites");
 const site=sites.sites?.find(s=>s.code==="wiktor-portfolio");
 console.log("DIAGNOSTIC sourceSiteFound="+Boolean(site)+" receivedDataFieldPresent="+(site?Object.hasOwn(site,"received_data"):false)+" receivedDataEver="+(site?.received_data===true)+" firstHitPresent="+Boolean(site?.first_hit_at));
+const state=String(site?.state||"unknown").replace(/[^a-zA-Z0-9_-]/g,"").slice(0,30);
+const normalizedDomain=String(site?.link_domain||"").toLowerCase();
+console.log("DIAGNOSTIC siteState="+state+" githubPagesDomainConfigured="+normalizedDomain.includes("wiktorszczepaniak.github.io")+" configuredDomainPresent="+Boolean(normalizedDomain)+" ignoreIpsConfigured="+(Array.isArray(site?.setttings?.ignore_ips)&&site.setttings.ignore_ips.length>0));
+
 for(const hours of [3,6,24,168]){
  const q=range(hours);
  const hits=await read("/stats/hits",q);
