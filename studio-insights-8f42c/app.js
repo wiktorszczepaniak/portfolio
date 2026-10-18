@@ -253,7 +253,14 @@ async function refresh(){
   if(json.status!=="ready"||json.schema!==2||!json.periods){throw Error("setup")}
   data=json;window.NinjaReport.render(json.ninjaReport);draw();
   const time=Date.parse(json.updated_at),stale=!Number.isFinite(time)||Date.now()-time>6*3600000;
-  setStatus(stale?"Raport jest starszy niż 6 godzin. Wyniki mogą być nieaktualne.":"Statystyki pobrane pomyślnie.",stale);
+  const anyRecorded=Object.values(json.periods).some(p=>
+    integer(p.total)>0||(Array.isArray(p.events)&&p.events.some(e=>integer(e.count)>0)));
+  setStatus(
+    stale?"Raport jest starszy niż 6 godzin. Wyniki mogą być nieaktualne.":
+      !anyRecorded?"Połączenie działa, ale GoatCounter nie zwraca żadnych odwiedzin. Sprawdź śledzenie i blokady przeglądarki.":
+      "Statystyki pobrane pomyślnie.",
+    stale||!anyRecorded
+  );
   $("timestamp").textContent="Ostatnia synchronizacja: "+stampFormat.format(new Date(json.updated_at));
  }catch(err){
   const setup=String(err.message)==="setup";
