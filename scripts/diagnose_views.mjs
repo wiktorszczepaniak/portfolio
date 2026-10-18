@@ -17,11 +17,12 @@ const now=new Date();now.setUTCMinutes(0,0,0);
 const range=h=>({start:new Date(now.getTime()-h*3600000).toISOString(),end:now.toISOString(),limit:100});
 const sites=await read("/sites");
 const site=sites.sites?.find(s=>s.code==="wiktor-portfolio");
-console.log("DIAGNOSTIC sourceSiteFound="+Boolean(site)+" receivedDataEver="+Boolean(site?.received_data));
+console.log("DIAGNOSTIC sourceSiteFound="+Boolean(site)+" receivedDataFieldPresent="+(site?Object.hasOwn(site,"received_data"):false)+" receivedDataEver="+(site?.received_data===true)+" firstHitPresent="+Boolean(site?.first_hit_at));
 for(const hours of [3,6,24,168]){
  const q=range(hours);
  const hits=await read("/stats/hits",q);
- const total=await read("/stats/total",q);
+ const {limit,...totalParams}=q;
+ const total=await read("/stats/total",totalParams);
  const all=Array.isArray(hits.hits)?hits.hits:[];
  const pages=all.filter(h=>!h.event);
  const pl=pages.filter(h=>["/portfolio/","/portfolio/index.html"].includes(h.path));
