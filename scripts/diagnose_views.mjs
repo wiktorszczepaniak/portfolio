@@ -22,6 +22,18 @@ const state=String(site?.state||"unknown").replace(/[^a-zA-Z0-9_-]/g,"").slice(0
 const normalizedDomain=String(site?.link_domain||"").toLowerCase();
 console.log("DIAGNOSTIC siteState="+state+" githubPagesDomainConfigured="+normalizedDomain.includes("wiktorszczepaniak.github.io")+" configuredDomainPresent="+Boolean(normalizedDomain)+" ignoreIpsConfigured="+(Array.isArray(site?.setttings?.ignore_ips)&&site.setttings.ignore_ips.length>0));
 
+for(const path of ["/portfolio/","/portfolio/en.html"]){
+ try{
+  const response=await fetch("https://wiktorszczepaniak.github.io"+path,{signal:AbortSignal.timeout(15000)});
+  const html=await response.text();
+  console.log("DIAGNOSTIC livePage="+(path.endsWith("en.html")?"EN":"PL")+" httpOk="+response.ok+" canonicalTracker="+html.includes('data-goatcounter="https://wiktor-portfolio.goatcounter.com/count"')+" legacyLoaderRemoved="+!html.includes('src="analytics.js"'));
+ }catch(error){console.log("DIAGNOSTIC livePageUnavailable="+(path.endsWith("en.html")?"EN":"PL"))}
+}
+try{
+ const source=await fetch("https://gc.zgo.at/count.js",{signal:AbortSignal.timeout(15000)});
+ const body=await source.text();
+ console.log("DIAGNOSTIC goatcounterScriptAccessible="+source.ok+" countFunctionFound="+body.includes("goatcounter.count"));
+}catch{console.log("DIAGNOSTIC goatcounterScriptAccessible=false");}
 for(const hours of [3,6,24,168]){
  const q=range(hours);
  const hits=await read("/stats/hits",q);
